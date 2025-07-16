@@ -1,8 +1,18 @@
 import "dotenv/config";
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 
 const fastify = Fastify({
   logger: true,
+});
+
+fastify.register(cors, {
+  origin: "*",
+
+  // TODO
+  // origin: "https://...", // TODO взять из .env
+  // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  // allowedHeaders: ["Content-Type", "Authorization"],
 });
 
 fastify.get("/", async () => {
