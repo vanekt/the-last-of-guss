@@ -1,3 +1,4 @@
+import "dotenv/config";
 import Fastify from "fastify";
 
 const fastify = Fastify({
@@ -9,8 +10,15 @@ fastify.get("/", async () => {
 });
 
 const start = async () => {
+  const port = Number(process.env.PORT);
+
+  if (isNaN(port)) {
+    console.error("Please set PORT in your .env file.");
+    process.exit(1);
+  }
+
   try {
-    await fastify.listen({ port: 3000 });
+    await fastify.listen({ port });
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
