@@ -1,24 +1,35 @@
-import { FastifyInstance, FastifyRequest } from "fastify";
+import { FastifyInstance } from "fastify";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
-import { users } from "@/db/schema.js";
+import { users } from "@/db/schema";
 import {
   hashPassword,
   comparePassword,
   generateToken,
   getUserRole,
   verifyToken,
-} from "@/utils/auth.js";
+} from "@/utils/auth";
+import { UserPayload } from "@/types";
 
 type LoginRequest = {
-  Body: {
-    username: string;
-    password: string;
-  };
+  username: string;
+  password: string;
+};
+
+type LoginResponse = {
+  token: string;
+  user: UserPayload;
+};
+
+type VerifyResponse = {
+  user: UserPayload;
 };
 
 export async function authRoutes(fastify: FastifyInstance) {
-  fastify.post(
+  fastify.post<{
+    Body: LoginRequest;
+    Reply: LoginResponse;
+  }>(
     "/auth/login",
     {
       schema: {
@@ -33,7 +44,7 @@ export async function authRoutes(fastify: FastifyInstance) {
         },
       },
     },
-    async (request: FastifyRequest<LoginRequest>, reply) => {
+    async (request, reply) => {
       const { username, password } = request.body;
 
       try {
@@ -46,12 +57,16 @@ export async function authRoutes(fastify: FastifyInstance) {
           const isValid = await comparePassword(password, user.password);
 
           if (!isValid) {
-            return reply.status(401).send({ error: "Invalid credentials" });
+            return reply.status(401).send();
           }
 
-          return reply.send({
+          return reply.status(200).send({
             token: generateToken(user),
-            user,
+            user: {
+              id: user.id,
+              username: user.username,
+              role: user.role,
+            },
           });
         } else {
           const role = getUserRole(username);
@@ -66,29 +81,38 @@ export async function authRoutes(fastify: FastifyInstance) {
             })
             .returning();
 
-          return reply.send({
+          return reply.status(200).send({
             token: generateToken(user),
-            user,
+            user: {
+              id: user.id,
+              username: user.username,
+              role: user.role,
+            },
           });
         }
       } catch (error) {
         console.error("Login error:", error);
-        return reply.status(500).send({ error: "Internal server error" });
+        return reply.status(500).send();
       }
     }
   );
 
-  fastify.post("/auth/verify", async (request, reply) => {
+  fastify.post<{
+    Headers: {
+      authorization: string;
+    };
+    Reply: VerifyResponse;
+  }>("/auth/verify", async (request, reply) => {
     const authHeader = request.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return reply.status(401).send({ error: "No token provided" });
+      return reply.status(401).send();
     }
 
     const token = authHeader.substring(7);
     const user = verifyToken(token);
 
     if (!user) {
-      return reply.status(401).send({ error: "Invalid token" });
+      return reply.status(401).send();
     }
 
     return reply.send({ user });

@@ -29,7 +29,12 @@ export const generateToken = (user: User): string => {
 
 export const verifyToken = (token: string): UserPayload | null => {
   try {
-    return jwt.verify(token, JWT_SECRET) as UserPayload;
+    const userData = jwt.verify(token, JWT_SECRET) as UserPayload;
+    return {
+      id: userData.id,
+      username: userData.username,
+      role: userData.role,
+    };
   } catch {
     return null;
   }
