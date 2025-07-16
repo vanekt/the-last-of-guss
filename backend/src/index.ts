@@ -1,17 +1,7 @@
 import "dotenv/config";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
-import { drizzle } from "drizzle-orm/node-postgres";
-
-const db = drizzle(process.env.DATABASE_URL!);
-
-try {
-  await db.execute("select 1");
-  console.log("✅ Drizzle client connected successfully");
-} catch (error) {
-  console.error("❌ Drizzle connection failed:", error);
-  process.exit(1);
-}
+import { authRoutes } from "./routes/auth";
 
 const fastify = Fastify({
   logger: true,
@@ -21,14 +11,12 @@ fastify.register(cors, {
   origin: "*",
 
   // TODO
-  // origin: "https://...", // TODO взять из .env
+  // origin: process.env.CORS_ORIGIN,
   // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   // allowedHeaders: ["Content-Type", "Authorization"],
 });
 
-fastify.get("/", async () => {
-  return { hello: "world" };
-});
+fastify.register(authRoutes);
 
 const start = async () => {
   const port = Number(process.env.PORT);
