@@ -1,6 +1,17 @@
 import "dotenv/config";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import { drizzle } from "drizzle-orm/node-postgres";
+
+const db = drizzle(process.env.DATABASE_URL!);
+
+try {
+  await db.execute("select 1");
+  console.log("✅ Drizzle client connected successfully");
+} catch (error) {
+  console.error("❌ Drizzle connection failed:", error);
+  process.exit(1);
+}
 
 const fastify = Fastify({
   logger: true,
@@ -30,7 +41,7 @@ const start = async () => {
   try {
     await fastify.listen({ port });
   } catch (err) {
-    fastify.log.error(err);
+    console.error(err);
     process.exit(1);
   }
 };
