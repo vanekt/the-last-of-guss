@@ -2,6 +2,7 @@ import "dotenv/config";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import { authRoutes } from "./routes/auth";
+import { roundRoutes } from "./routes/rounds";
 
 const fastify = Fastify({
   logger: true,
@@ -17,6 +18,7 @@ fastify.register(cors, {
 });
 
 fastify.register(authRoutes);
+fastify.register(roundRoutes);
 
 const start = async () => {
   const port = Number(process.env.PORT);

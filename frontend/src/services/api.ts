@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { User } from "../types";
+import type { RoundWithStatus, User } from "../types";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -27,15 +27,37 @@ interface VerifyResponse {
 
 export const authAPI = {
   login: async (username: string, password: string): Promise<AuthResponse> => {
-    const response = await api.post<AuthResponse>("/auth/login", {
+    const { data } = await api.post<AuthResponse>("/auth/login", {
       username,
       password,
     });
-    return response.data;
+
+    return data;
   },
 
   verify: async (): Promise<VerifyResponse> => {
-    const response = await api.post<VerifyResponse>("/auth/verify");
-    return response.data;
+    const { data } = await api.post<VerifyResponse>("/auth/verify");
+    return data;
+  },
+};
+
+interface RoundsResponse {
+  items: RoundWithStatus[];
+}
+
+export const roundsAPI = {
+  getRounds: async (): Promise<RoundsResponse> => {
+    const { data } = await api.get<RoundsResponse>("/api/rounds");
+    return data;
+  },
+
+  getRound: async (id: string): Promise<RoundWithStatus> => {
+    const { data } = await api.get<RoundWithStatus>(`/api/rounds/${id}`);
+    return data;
+  },
+
+  createRound: async (): Promise<RoundWithStatus> => {
+    const { data } = await api.post<RoundWithStatus>("/api/rounds");
+    return data;
   },
 };
