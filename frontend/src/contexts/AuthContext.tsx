@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { User } from "../types";
 import { authAPI } from "../services/api";
 import type { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextType {
   user: User | null;
@@ -20,19 +21,18 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem("token");
-      if (token) {
-        try {
-          const { user } = await authAPI.verify();
-          setUser(user);
-        } catch (e) {
-          const error = e as AxiosError;
-          if (error.status === 401) {
-            localStorage.removeItem("token");
-          }
+      try {
+        const { user } = await authAPI.verify();
+        setUser(user);
+      } catch (e) {
+        const error = e as AxiosError;
+        if (error.status === 401) {
+          localStorage.removeItem("token");
+          navigate("/login");
         }
       }
       setLoading(false);

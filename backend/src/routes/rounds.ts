@@ -1,14 +1,11 @@
 import { FastifyInstance } from "fastify";
 import { RoundService } from "@/services/roundService";
-import { verifyToken } from "@/utils/auth";
 import { RoundWithStatus } from "@/types";
 
 export async function roundRoutes(fastify: FastifyInstance) {
   fastify.get<{
     Reply: { items: RoundWithStatus[] };
-  }>("/api/rounds", async (_, reply) => {
-    // TODO auth middleware !!!
-
+  }>("/api/rounds", { preHandler: fastify.auth }, async (_, reply) => {
     try {
       const roundsData = await RoundService.getAllRounds();
 
@@ -26,38 +23,33 @@ export async function roundRoutes(fastify: FastifyInstance) {
   fastify.get<{
     Params: { id: string };
     Reply: RoundWithStatus;
-  }>("/api/rounds/:id", async (request, reply) => {
-    // TODO auth middleware !!!
-    const { id } = request.params;
+  }>(
+    "/api/rounds/:id",
+    { preHandler: fastify.auth },
+    async (request, reply) => {
+      const { id } = request.params;
 
-    try {
-      const round = await RoundService.getRoundById(id);
+      try {
+        const round = await RoundService.getRoundById(id);
 
-      if (!round) {
-        return reply.status(404).send();
+        if (!round) {
+          return reply.status(404).send();
+        }
+
+        return reply.send({
+          ...round,
+          status: RoundService.getRoundStatus(round),
+        });
+      } catch (error) {
+        return reply.status(500).send();
       }
-
-      return reply.send({
-        ...round,
-        status: RoundService.getRoundStatus(round),
-      });
-    } catch (error) {
-      return reply.status(500).send();
     }
-  });
+  );
 
   fastify.post<{
     Reply: RoundWithStatus;
-  }>("/api/rounds", async (request, reply) => {
-    // TODO !!!! здесь надо брать юзера из контекста !!! для этого нужно добавить middleware для fastify
-    const authHeader = request.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return reply.status(401).send();
-    }
-
-    const token = authHeader.substring(7);
-    const user = verifyToken(token);
+  }>("/api/rounds", { preHandler: fastify.auth }, async (request, reply) => {
+    const user = request.user;
 
     if (!user || user.role !== "admin") {
       return reply.status(403).send();

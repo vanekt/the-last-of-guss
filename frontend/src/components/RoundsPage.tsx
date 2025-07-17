@@ -5,6 +5,7 @@ import type { RoundWithStatus } from "../types";
 import { roundsAPI } from "../services/api";
 import { Plus, Clock, Play, CheckCircle, User, LogOut } from "lucide-react";
 import toast from "react-hot-toast";
+import Admin from "./Admin";
 
 const RoundsPage: React.FC = () => {
   const [rounds, setRounds] = useState<RoundWithStatus[]>([]);
@@ -16,7 +17,7 @@ const RoundsPage: React.FC = () => {
   const fetchRounds = async () => {
     try {
       const data = await roundsAPI.getRounds();
-      setRounds(data);
+      setRounds(data.items);
     } catch (error) {
       toast.error("Ошибка загрузки раундов");
     } finally {
@@ -135,8 +136,7 @@ const RoundsPage: React.FC = () => {
           </div>
         </div>
 
-        {/* TODO: По идее неплохо было бы добавить компонент <Authorized> для условного рендеринга таких вещей */}
-        {user?.role === "admin" && (
+        <Admin>
           <div className="mb-6">
             <button
               onClick={handleCreateRound}
@@ -147,16 +147,16 @@ const RoundsPage: React.FC = () => {
               <span>{creating ? "Создание..." : "Создать раунд"}</span>
             </button>
           </div>
-        )}
+        </Admin>
 
         <div className="space-y-4">
           {rounds.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-gray-400 text-lg">Раундов пока нет</div>
 
-              {user?.role === "admin" && (
+              <Admin>
                 <p className="text-gray-500 mt-2">Создайте первый раунд</p>
-              )}
+              </Admin>
             </div>
           ) : (
             rounds.map((round) => {

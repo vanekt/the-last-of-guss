@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./contexts/AuthContext";
+import Authorized from "./components/Authorized";
 import LoginPage from "./components/LoginPage";
 import LogoutPage from "./components/LogoutPage";
 import RoundsPage from "./components/RoundsPage";
@@ -13,7 +14,7 @@ import RoundPage from "./components/RoundPage";
 
 function App() {
   return (
-    <AuthProvider>
+    <>
       <Toaster
         position="top-right"
         toastOptions={{
@@ -26,15 +27,31 @@ function App() {
         }}
       />
       <Router>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/logout" element={<LogoutPage />} />
-          <Route path="/rounds" element={<RoundsPage />} />
-          <Route path="/rounds/:id" element={<RoundPage />} />
-          <Route path="/" element={<Navigate to="/rounds" replace />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/logout" element={<LogoutPage />} />
+            <Route
+              path="/rounds"
+              element={
+                <Authorized>
+                  <RoundsPage />
+                </Authorized>
+              }
+            />
+            <Route
+              path="/rounds/:id"
+              element={
+                <Authorized>
+                  <RoundPage />
+                </Authorized>
+              }
+            />
+            <Route path="/" element={<Navigate to="/rounds" replace />} />
+          </Routes>
+        </AuthProvider>
       </Router>
-    </AuthProvider>
+    </>
   );
 }
 

@@ -27,7 +27,7 @@ export const generateToken = (user: User): string => {
   );
 };
 
-export const verifyToken = (token: string): UserPayload | null => {
+export const verifyToken = (token: string): UserPayload => {
   try {
     const userData = jwt.verify(token, JWT_SECRET) as UserPayload;
     return {
@@ -35,8 +35,8 @@ export const verifyToken = (token: string): UserPayload | null => {
       username: userData.username,
       role: userData.role,
     };
-  } catch {
-    return null;
+  } catch (e) {
+    throw e;
   }
 };
 

@@ -7,7 +7,6 @@ import {
   comparePassword,
   generateToken,
   getUserRole,
-  verifyToken,
 } from "@/utils/auth";
 import { UserPayload } from "@/types";
 
@@ -102,19 +101,7 @@ export async function authRoutes(fastify: FastifyInstance) {
       authorization: string;
     };
     Reply: VerifyResponse;
-  }>("/auth/verify", async (request, reply) => {
-    const authHeader = request.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return reply.status(401).send();
-    }
-
-    const token = authHeader.substring(7);
-    const user = verifyToken(token);
-
-    if (!user) {
-      return reply.status(401).send();
-    }
-
-    return reply.send({ user });
+  }>("/auth/verify", { preHandler: fastify.auth }, async (request, reply) => {
+    return reply.send({ user: request.user! });
   });
 }

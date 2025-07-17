@@ -1,6 +1,7 @@
 import "dotenv/config";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import { authMiddleware } from "./middleware";
 import { authRoutes } from "./routes/auth";
 import { roundRoutes } from "./routes/rounds";
 
@@ -16,6 +17,8 @@ fastify.register(cors, {
   // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   // allowedHeaders: ["Content-Type", "Authorization"],
 });
+
+fastify.decorate("auth", authMiddleware);
 
 fastify.register(authRoutes);
 fastify.register(roundRoutes);
