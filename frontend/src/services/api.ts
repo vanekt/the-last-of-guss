@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { RoundWithStatus, User } from "../types";
+import type { RoundWithStatus, User } from "@shared/types";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,

@@ -8,7 +8,7 @@ import {
   generateToken,
   getUserRole,
 } from "@/utils/auth";
-import { UserPayload } from "@/types";
+import { UserPayload } from "@shared/types";
 
 type LoginRequest = {
   username: string;

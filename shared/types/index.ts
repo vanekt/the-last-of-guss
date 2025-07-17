@@ -6,6 +6,7 @@ export interface User {
 }
 
 export type UserPayload = Pick<User, "id" | "username" | "role">;
+
 export interface Round {
   id: string;
   startTime: Date;
@@ -17,10 +18,12 @@ export interface Round {
   winnerScore: number;
   createdAt: Date;
 }
+
 export interface RoundStatus {
   status: "pending" | "active" | "finished";
   timeRemaining: number;
 }
+
 export interface RoundWithStatus extends Round {
   status: RoundStatus;
 }

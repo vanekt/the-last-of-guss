@@ -1,6 +1,6 @@
 import { FastifyInstance } from "fastify";
 import { RoundService } from "@/services/roundService";
-import { RoundWithStatus } from "@/types";
+import { RoundWithStatus } from "@shared/types";
 
 export async function roundRoutes(fastify: FastifyInstance) {
   fastify.get<{

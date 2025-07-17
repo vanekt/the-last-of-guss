@@ -5,12 +5,12 @@ import {
   Navigate,
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { AuthProvider } from "./contexts/AuthContext";
-import Authorized from "./components/Authorized";
-import LoginPage from "./components/LoginPage";
-import LogoutPage from "./components/LogoutPage";
-import RoundsPage from "./components/RoundsPage";
-import RoundPage from "./components/RoundPage";
+import { AuthProvider } from "@/contexts/AuthContext";
+import Authorized from "@/components/Authorized";
+import LoginPage from "@/components/LoginPage";
+import LogoutPage from "@/components/LogoutPage";
+import RoundsPage from "@/components/RoundsPage";
+import RoundPage from "@/components/RoundPage";
 
 function App() {
   return (

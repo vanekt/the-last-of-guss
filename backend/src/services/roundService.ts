@@ -1,7 +1,7 @@
 import { eq, desc } from "drizzle-orm";
 import { db } from "@/db";
 import { rounds } from "@/db/schema";
-import { Round, RoundStatus } from "@/types";
+import { Round, RoundStatus } from "@shared/types";
 
 if (!process.env.ROUND_DURATION || !process.env.COOLDOWN_DURATION) {
   console.error(

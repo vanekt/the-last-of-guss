@@ -1,9 +1,9 @@
 import React, { createContext, useState, useEffect } from "react";
 import type { ReactNode } from "react";
-import type { User } from "../types";
-import { authAPI } from "../services/api";
-import type { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import type { AxiosError } from "axios";
+import type { User } from "@shared/types";
+import { authAPI } from "@/services/api";
 
 interface AuthContextType {
   user: User | null;

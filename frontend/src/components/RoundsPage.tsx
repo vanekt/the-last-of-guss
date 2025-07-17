@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
-import type { RoundWithStatus } from "../types";
-import { roundsAPI } from "../services/api";
 import { Plus, Clock, Play, CheckCircle, User, LogOut } from "lucide-react";
 import toast from "react-hot-toast";
-import Admin from "./Admin";
+import type { RoundWithStatus } from "@shared/types";
+import Admin from "@/components/Admin";
+import { roundsAPI } from "@/services/api";
+import { useAuth } from "@/hooks/useAuth";
 
 const RoundsPage: React.FC = () => {
   const [rounds, setRounds] = useState<RoundWithStatus[]>([]);

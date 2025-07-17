@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { User, UserPayload } from "@/types";
+import { User, UserPayload } from "@shared/types";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) {
