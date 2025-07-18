@@ -6,12 +6,12 @@ import {
 } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider } from "@/components/AuthContext";
 import Authorized from "@/components/Authorized";
-import LoginPage from "@/components/LoginPage";
-import LogoutPage from "@/components/LogoutPage";
-import RoundsPage from "@/components/RoundsPage";
-import RoundPage from "@/components/RoundPage";
+import LoginPage from "@/pages/LoginPage";
+import LogoutPage from "@/pages/LogoutPage";
+import RoundsPage from "@/pages/RoundsPage";
+import RoundPage from "@/pages/RoundPage";
 
 const queryClient = new QueryClient();
 window.__TANSTACK_QUERY_CLIENT__ = queryClient;
@@ -20,7 +20,7 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Toaster
-        position="top-right"
+        position="top-center"
         toastOptions={{
           duration: 3000,
           style: {

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import { useState, type FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Lock } from "lucide-react";
 import toast from "react-hot-toast";
+import PurpleButton from "@/components/PurpleButton";
 import { useAuth } from "@/hooks/useAuth";
 
-const LoginPage: React.FC = () => {
+const LoginPage: FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -89,13 +90,11 @@ const LoginPage: React.FC = () => {
               </div>
             </div>
 
-            <button
+            <PurpleButton
               type="submit"
               disabled={loading}
-              className="w-full py-3 px-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 hover:cursor-pointer"
-            >
-              {loading ? "Вход..." : "Войти"}
-            </button>
+              title={loading ? "Вход..." : "Войти"}
+            />
           </form>
 
           <div className="mt-6 text-center text-sm text-gray-400">

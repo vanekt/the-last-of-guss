@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { roundsAPI } from "@/services/api";
+import { roundsAPI } from "@/api";
 import type { TapResponse } from "@shared/types";
 
 interface UseTapBatchingOptions {
@@ -8,7 +8,7 @@ interface UseTapBatchingOptions {
   maxBatchSize?: number;
   active?: boolean;
   onSuccess?: (response: TapResponse) => void;
-  onError?: (error: any) => void;
+  onError?: (error: unknown) => void;
 }
 
 export const useTapBatching = ({

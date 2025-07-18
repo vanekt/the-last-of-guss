@@ -1,10 +1,12 @@
 import axios from "axios";
 import type {
+  AuthResponse,
+  RoundsResponse,
   RoundStats,
   RoundWinner,
   RoundWithStatus,
   TapResponse,
-  User,
+  VerifyResponse,
 } from "@shared/types";
 
 const api = axios.create({
@@ -22,15 +24,6 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-interface AuthResponse {
-  token: string;
-  user: User;
-}
-
-interface VerifyResponse {
-  user: User;
-}
-
 export const authAPI = {
   login: async (username: string, password: string): Promise<AuthResponse> => {
     const { data } = await api.post<AuthResponse>("/auth/login", {
@@ -46,10 +39,6 @@ export const authAPI = {
     return data;
   },
 };
-
-interface RoundsResponse {
-  items: RoundWithStatus[];
-}
 
 export const roundsAPI = {
   getRounds: async (): Promise<RoundsResponse> => {

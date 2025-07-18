@@ -19,8 +19,9 @@ export interface Round {
   createdAt: Date;
 }
 
+export type RoundStatusValue = "pending" | "active" | "finished";
 export interface RoundStatus {
-  status: "pending" | "active" | "finished";
+  status: RoundStatusValue;
   timeRemaining: number;
 }
 
@@ -44,4 +45,17 @@ export interface TapResponse {
   success: boolean;
   taps: number;
   score: number;
+}
+
+export interface RoundsResponse {
+  items: RoundWithStatus[];
+}
+
+export interface AuthResponse {
+  token: string;
+  user: User;
+}
+
+export interface VerifyResponse {
+  user: User;
 }

@@ -1,13 +1,13 @@
-import React, { createContext, useEffect } from "react";
-import type { ReactNode } from "react";
+import { createContext, useEffect } from "react";
+import type { ReactNode, FC } from "react";
 import { useNavigate } from "react-router-dom";
-import type { AxiosError } from "axios";
-import type { User } from "@shared/types";
-import { authAPI } from "@/services/api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import type { User } from "@shared/types";
+import { authAPI } from "@/api";
 
 interface AuthContextType {
-  user: User | null;
+  user?: User;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
@@ -19,26 +19,23 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data, error, isLoading } = useQuery<User>({
+  const {
+    data: user,
+    error,
+    isLoading: loading,
+  } = useQuery({
     queryKey: ["user"],
-    queryFn: async () => {
-      const data = await authAPI.verify();
-      return data.user;
-    },
+    queryFn: authAPI.verify,
+    select: (data) => data.user,
     retry: false,
   });
 
   useEffect(() => {
-    if (!error) {
-      return;
-    }
-
-    const e = error as AxiosError;
-    if (e.response?.status === 401) {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
       localStorage.removeItem("token");
       navigate("/login");
     }
@@ -47,7 +44,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const login = async (username: string, password: string) => {
     const response = await authAPI.login(username, password);
     localStorage.setItem("token", response.token);
-    queryClient.setQueryData(["user"], response.user);
+    queryClient.setQueryData(["user"], { user: response.user });
   };
 
   const logout = () => {
@@ -56,9 +53,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user: data ?? null, login, logout, loading: isLoading }}
-    >
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

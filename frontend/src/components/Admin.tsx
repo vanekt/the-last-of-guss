@@ -1,18 +1,13 @@
-import React from "react";
+import type { FC, ReactNode } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
 interface AdminProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
-const Admin: React.FC<AdminProps> = ({ children }) => {
+const Admin: FC<AdminProps> = ({ children }) => {
   const { user } = useAuth();
-
-  if (user?.role !== "admin") {
-    return null;
-  }
-
-  return <>{children}</>;
+  return user?.role === "admin" ? children : null;
 };
 
 export default Admin;

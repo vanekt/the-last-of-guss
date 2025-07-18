@@ -1,4 +1,3 @@
-import React from "react";
 import { useAuth } from "@/hooks/useAuth";
 
 interface AuthorizedProps {
@@ -7,12 +6,7 @@ interface AuthorizedProps {
 
 const Authorized: React.FC<AuthorizedProps> = ({ children }) => {
   const { user, loading } = useAuth();
-
-  if (loading || !user) {
-    return null;
-  }
-
-  return <>{children}</>;
+  return !loading && user ? children : null;
 };
 
 export default Authorized;

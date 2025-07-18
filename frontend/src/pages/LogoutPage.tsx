@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import { useEffect, type FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
-const LogoutPage: React.FC = () => {
+const LogoutPage: FC = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
 
