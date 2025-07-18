@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Clock, Play, CheckCircle, User, LogOut } from "lucide-react";
 import toast from "react-hot-toast";
 import type { RoundWithStatus } from "@shared/types";
@@ -8,41 +9,39 @@ import { roundsAPI } from "@/services/api";
 import { useAuth } from "@/hooks/useAuth";
 
 const RoundsPage: React.FC = () => {
-  const [rounds, setRounds] = useState<RoundWithStatus[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [creating, setCreating] = useState(false);
-  const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
 
-  const fetchRounds = async () => {
-    try {
+  const {
+    data: rounds,
+    error,
+    isLoading,
+  } = useQuery<RoundWithStatus[]>({
+    queryKey: ["rounds"],
+    queryFn: async () => {
       const data = await roundsAPI.getRounds();
-      setRounds(data.items);
-    } catch (error) {
-      toast.error("Ошибка загрузки раундов");
-    } finally {
-      setLoading(false);
-    }
-  };
+      return data.items;
+    },
+    refetchInterval: 10000,
+  });
 
-  useEffect(() => {
-    fetchRounds();
-    const interval = setInterval(fetchRounds, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const handleCreateRound = async () => {
-    setCreating(true);
-    try {
-      const newRound = await roundsAPI.createRound();
-      setRounds((prev) => [newRound, ...prev]);
+  const createRound = useMutation({
+    mutationFn: () => {
+      return roundsAPI.createRound();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
       toast.success("Раунд создан!");
-      navigate(`/rounds/${newRound.id}`);
-    } catch (error) {
+      navigate(`/rounds/${data.id}`);
+    },
+    onError: () => {
       toast.error("Ошибка создания раунда");
-    } finally {
-      setCreating(false);
-    }
+    },
+  });
+
+  const handleCreateRound = () => {
+    createRound.mutate();
   };
 
   const formatDate = (date: string | Date) => {
@@ -99,10 +98,18 @@ const RoundsPage: React.FC = () => {
       .padStart(2, "0")}`;
   };
 
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-white text-xl">Загрузка...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-white text-xl">Ошибка</div>
       </div>
     );
   }
@@ -140,17 +147,19 @@ const RoundsPage: React.FC = () => {
           <div className="mb-6">
             <button
               onClick={handleCreateRound}
-              disabled={creating}
+              disabled={createRound.isPending}
               className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-lg hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:scale-105 cursor-pointer"
             >
               <Plus className="w-5 h-5" />
-              <span>{creating ? "Создание..." : "Создать раунд"}</span>
+              <span>
+                {createRound.isPending ? "Создание..." : "Создать раунд"}
+              </span>
             </button>
           </div>
         </Admin>
 
         <div className="space-y-4">
-          {rounds.length === 0 ? (
+          {rounds!.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-gray-400 text-lg">Раундов пока нет</div>
 
@@ -159,7 +168,7 @@ const RoundsPage: React.FC = () => {
               </Admin>
             </div>
           ) : (
-            rounds.map((round) => {
+            rounds!.map((round) => {
               const statusInfo = getStatusInfo(round);
               const StatusIcon = statusInfo.icon;
 
@@ -206,14 +215,14 @@ const RoundsPage: React.FC = () => {
                         </div>
 
                         {round.status?.timeRemaining &&
-                          round.status.status !== "finished" && (
-                            <div className="text-purple-400 font-mono text-sm">
-                              {round.status.status === "pending"
-                                ? "До начала: "
-                                : "Осталось: "}
-                              {formatTimeRemaining(round.status.timeRemaining)}
-                            </div>
-                          )}
+                        round.status.status !== "finished" ? (
+                          <div className="text-purple-400 font-mono text-sm">
+                            {round.status.status === "pending"
+                              ? "До начала: "
+                              : "Осталось: "}
+                            {formatTimeRemaining(round.status.timeRemaining)}
+                          </div>
+                        ) : null}
                       </div>
                     </div>
                   </div>

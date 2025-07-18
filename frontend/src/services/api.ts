@@ -1,5 +1,11 @@
 import axios from "axios";
-import type { RoundWithStatus, User } from "@shared/types";
+import type {
+  RoundStats,
+  RoundWinner,
+  RoundWithStatus,
+  TapResponse,
+  User,
+} from "@shared/types";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -47,17 +53,39 @@ interface RoundsResponse {
 
 export const roundsAPI = {
   getRounds: async (): Promise<RoundsResponse> => {
-    const { data } = await api.get<RoundsResponse>("/api/rounds");
+    const { data } = await api.get<RoundsResponse>("/rounds");
     return data;
   },
 
   getRound: async (id: string): Promise<RoundWithStatus> => {
-    const { data } = await api.get<RoundWithStatus>(`/api/rounds/${id}`);
+    const { data } = await api.get<RoundWithStatus>(`/rounds/${id}`);
     return data;
   },
 
   createRound: async (): Promise<RoundWithStatus> => {
-    const { data } = await api.post<RoundWithStatus>("/api/rounds");
+    const { data } = await api.post<RoundWithStatus>("/rounds");
+    return data;
+  },
+
+  getStats: async (roundId: string) => {
+    const { data } = await api.get<RoundStats>(`/rounds/${roundId}/stats`);
+    return data;
+  },
+
+  getWinner: async (roundId: string) => {
+    const { data } = await api.get<RoundWinner>(`/rounds/${roundId}/winner`);
+    return data;
+  },
+
+  tap: async (roundId: string): Promise<TapResponse> => {
+    const { data } = await api.post(`/rounds/${roundId}/tap`);
+    return data;
+  },
+
+  tapBatch: async (roundId: string, tapCount: number): Promise<TapResponse> => {
+    const { data } = await api.post(`/rounds/${roundId}/tap/batch`, {
+      tapCount,
+    });
     return data;
   },
 };
