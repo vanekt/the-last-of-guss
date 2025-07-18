@@ -12,14 +12,13 @@ import LoginPage from "@/components/LoginPage";
 import LogoutPage from "@/components/LogoutPage";
 import RoundsPage from "@/components/RoundsPage";
 import RoundPage from "@/components/RoundPage";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
+window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ReactQueryDevtools />
       <Toaster
         position="top-right"
         toastOptions={{
