@@ -1,8 +1,9 @@
 import type { FC } from "react";
+import clsx from "clsx/lite";
 
 const LoadingState: FC = () => (
-  <div className="flex items-center justify-center h-30">
-    <div className="text-white text-xl">Загрузка...</div>
+  <div className={clsx("flex", "items-center", "justify-center", "h-30")}>
+    <div className={clsx("text-white", "text-xl")}>Загрузка...</div>
   </div>
 );
 

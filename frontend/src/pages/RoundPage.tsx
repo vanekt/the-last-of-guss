@@ -2,6 +2,7 @@ import { useEffect, type FC } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Trophy, Target, Clock } from "lucide-react";
+import clsx from "clsx/lite";
 import type {
   RoundStats,
   RoundWinner,
@@ -20,16 +21,22 @@ const Header: FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex justify-between items-center mb-8">
+    <div className={clsx("flex", "justify-between", "items-center")}>
       <button
         onClick={() => navigate("/rounds")}
-        className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors cursor-pointer"
+        className={clsx(
+          "flex",
+          "items-center",
+          "space-x-2",
+          "text-gray-400",
+          "hover:text-white",
+          "transition-colors",
+          "cursor-pointer"
+        )}
       >
-        <ArrowLeft className="w-5 h-5" />
-
+        <ArrowLeft className={clsx("w-5", "h-5")} />
         <span>Раунды</span>
       </button>
-
       <UserMenu />
     </div>
   );
@@ -39,15 +46,16 @@ const GooseTapButton: FC<{ status: RoundStatusValue; onTap: () => void }> = ({
   status,
   onTap,
 }) => (
-  <div className="mb-8">
-    <div
-      className={`inline-block transition-transform duration-100 ${
-        status === "active" ? "active:scale-125 cursor-pointer" : ""
-      }`}
-      onClick={onTap}
-    >
-      <div className="text-8xl mb-4 select-none">🪿</div>
-    </div>
+  <div
+    className={clsx(
+      "inline-block",
+      "transition-transform",
+      "duration-100",
+      status === "active" && "active:scale-125 cursor-pointer"
+    )}
+    onClick={onTap}
+  >
+    <div className={clsx("text-9xl", "select-none")}>🪿</div>
   </div>
 );
 
@@ -55,16 +63,22 @@ const StatusTimer: FC<{ status: RoundStatusValue; timeRemaining?: number }> = ({
   status,
   timeRemaining,
 }) => (
-  <div className="mb-6">
-    <h2 className={`text-2xl font-bold mb-2 ${getStatusInfo(status).color}`}>
+  <div className={clsx("align-middle", "space-y-2")}>
+    <h2 className={clsx("text-2xl", "font-bold", getStatusInfo(status).color)}>
       {getStatusInfo(status).titleAlt}
     </h2>
-
     {timeRemaining && status !== "finished" ? (
-      <div className="flex items-center justify-center space-x-2 text-purple-400">
-        <Clock className="w-5 h-5" />
-
-        <span className="text-xl font-mono">
+      <div
+        className={clsx(
+          "flex",
+          "items-center",
+          "justify-center",
+          "space-x-2",
+          "text-purple-400"
+        )}
+      >
+        <Clock className={clsx("w-5", "h-5")} />
+        <span className={clsx("text-xl", "font-mono")}>
           {status === "pending" ? "До начала раунда: " : "До конца осталось: "}
           {formatTimeRemaining(timeRemaining)}
         </span>
@@ -74,20 +88,36 @@ const StatusTimer: FC<{ status: RoundStatusValue; timeRemaining?: number }> = ({
 );
 
 const UserStats: FC<{ taps: number; score: number }> = ({ taps, score }) => (
-  <div className="grid grid-cols-2 gap-4 mb-6">
-    <div className="bg-white/5 rounded-lg p-4">
-      <div className="flex items-center justify-center space-x-2 text-blue-400 mb-2">
-        <Target className="w-5 h-5" />
-        <span className="font-medium">Мои тапы</span>
+  <div className={clsx("grid", "grid-cols-2", "gap-4")}>
+    <div className={clsx("bg-white/5", "rounded-lg", "p-4")}>
+      <div
+        className={clsx(
+          "flex",
+          "items-center",
+          "justify-center",
+          "space-x-2",
+          "text-blue-400"
+        )}
+      >
+        <Target className={clsx("w-5", "h-5")} />
+        <span className={clsx("font-medium")}>Мои тапы</span>
       </div>
-      <div className="text-2xl font-bold text-white">{taps}</div>
+      <div className={clsx("text-2xl", "font-bold", "text-white")}>{taps}</div>
     </div>
-    <div className="bg-white/5 rounded-lg p-4">
-      <div className="flex items-center justify-center space-x-2 text-purple-400 mb-2">
-        <Trophy className="w-5 h-5" />
-        <span className="font-medium">Мои очки</span>
+    <div className={clsx("bg-white/5", "rounded-lg", "p-4")}>
+      <div
+        className={clsx(
+          "flex",
+          "items-center",
+          "justify-center",
+          "space-x-2",
+          "text-purple-400"
+        )}
+      >
+        <Trophy className={clsx("w-5", "h-5")} />
+        <span className={clsx("font-medium")}>Мои очки</span>
       </div>
-      <div className="text-2xl font-bold text-white">{score}</div>
+      <div className={clsx("text-2xl", "font-bold", "text-white")}>{score}</div>
     </div>
   </div>
 );
@@ -97,20 +127,34 @@ const RoundSummary: FC<{
   totalScore: number;
   winner?: RoundWinner | null;
 }> = ({ totalTaps, totalScore, winner }) => (
-  <div className="border-t border-white/20 pt-6">
-    <h3 className="text-lg font-semibold text-white mb-4">Статистика раунда</h3>
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
-      <div className="bg-white/5 rounded-lg p-3">
-        <div className="text-gray-400 mb-1">Всего тапов</div>
-        <div className="text-xl font-bold text-white">{totalTaps}</div>
+  <div className={clsx("border-t", "border-white/10", "space-y-4", "pt-4")}>
+    <h3 className={clsx("text-lg", "font-semibold", "text-white")}>
+      Статистика раунда
+    </h3>
+    <div
+      className={clsx(
+        "grid",
+        "grid-cols-1",
+        "sm:grid-cols-3",
+        "gap-4",
+        "text-sm"
+      )}
+    >
+      <div className={clsx("bg-white/5", "rounded-lg", "p-3")}>
+        <div className={clsx("text-gray-400")}>Всего тапов</div>
+        <div className={clsx("text-xl", "font-bold", "text-white")}>
+          {totalTaps}
+        </div>
       </div>
-      <div className="bg-white/5 rounded-lg p-3">
-        <div className="text-gray-400 mb-1">Всего очков</div>
-        <div className="text-xl font-bold text-white">{totalScore}</div>
+      <div className={clsx("bg-white/5", "rounded-lg", "p-3")}>
+        <div className={clsx("text-gray-400")}>Всего очков</div>
+        <div className={clsx("text-xl", "font-bold", "text-white")}>
+          {totalScore}
+        </div>
       </div>
-      <div className="bg-white/5 rounded-lg p-3">
-        <div className="text-gray-400 mb-1">Победитель</div>
-        <div className="text-lg font-bold text-yellow-400">
+      <div className={clsx("bg-white/5", "rounded-lg", "p-3")}>
+        <div className={clsx("text-gray-400")}>Победитель</div>
+        <div className={clsx("text-lg", "font-bold", "text-yellow-400")}>
           {winner ? `${winner.username} (${winner.score})` : "Нет"}
         </div>
       </div>
@@ -119,8 +163,16 @@ const RoundSummary: FC<{
 );
 
 const NikitaWarning: FC = () => (
-  <div className="mt-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg">
-    <p className="text-red-400 text-sm">
+  <div
+    className={clsx(
+      "p-4",
+      "bg-red-500/20",
+      "border",
+      "border-red-500/30",
+      "rounded-lg"
+    )}
+  >
+    <p className={clsx("text-red-400", "text-sm")}>
       ⚠️ Никита, твои тапы не засчитываются, но ты можешь тапать для
       удовольствия!
     </p>
@@ -209,17 +261,30 @@ const RoundPage: FC = () => {
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
+    <div className={clsx("min-h-screen")}>
+      <div
+        className={clsx("container", "mx-auto", "px-4", "py-8", "space-y-12")}
+      >
         <Header />
 
-        <div className="max-w-2xl mx-auto">
+        <div className={clsx("max-w-2xl", "mx-auto")}>
           {isLoading && <LoadingState />}
 
           {error && <ErrorState />}
 
           {isSuccess && (
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 text-center">
+            <div
+              className={clsx(
+                "bg-white/10",
+                "backdrop-blur-lg",
+                "rounded-2xl",
+                "p-8",
+                "border",
+                "border-white/20",
+                "text-center",
+                "space-y-4"
+              )}
+            >
               <GooseTapButton status={round.status.status} onTap={handleTap} />
               <StatusTimer
                 status={round.status.status}

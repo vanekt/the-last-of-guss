@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import toast from "react-hot-toast";
+import clsx from "clsx/lite";
 import type { RoundWithStatus } from "@shared/types";
 import Admin from "@/components/Admin";
 import ErrorState from "@/components/ErrorState";
@@ -21,39 +22,63 @@ const RoundCard: FC<{ round: RoundWithStatus; onClick: () => void }> = ({
   return (
     <div
       onClick={onClick}
-      className="bg-white/10 backdrop-blur-lg rounded-xl p-6 border border-white/20 hover:border-purple-400/50 cursor-pointer transition-all transform hover:shadow-2xl"
+      className={clsx(
+        "bg-white/10",
+        "backdrop-blur-lg",
+        "rounded-xl",
+        "p-6",
+        "border",
+        "border-white/20",
+        "hover:border-purple-400/50",
+        "cursor-pointer",
+        "transition-all",
+        "transform",
+        "hover:shadow-2xl"
+      )}
     >
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <div className="flex items-center space-x-3 mb-3">
-            <div className="w-3 h-3 rounded-full bg-purple-500"></div>
-            <h3 className="text-white font-mono text-sm">
+      <div className={clsx("flex", "items-start", "justify-between")}>
+        <div className={clsx("flex-1", "space-y-2")}>
+          <div className={clsx("flex", "items-center", "space-x-3")}>
+            <div
+              className={clsx("w-3", "h-3", "rounded-full", "bg-purple-500")}
+            ></div>
+            <h3 className={clsx("text-white", "font-mono", "text-sm")}>
               Round ID: {round.id}
             </h3>
           </div>
-          <div className="space-y-2 text-gray-300 text-sm">
+          <div className={clsx("space-y-1", "text-gray-300", "text-sm")}>
             <div>
-              <span className="text-gray-400">Start:</span>{" "}
+              <span className={clsx("text-gray-400")}>Start:</span>{" "}
               {formatDate(round.startTime)}
             </div>
             <div>
-              <span className="text-gray-400">End:</span>{" "}
+              <span className={clsx("text-gray-400")}>End:</span>{" "}
               {formatDate(round.endTime)}
             </div>
           </div>
-          <div className="border-t border-white/10 my-4"></div>
-          <div className="flex items-center justify-between">
+          <div className={clsx("border-t", "border-white/10", "my-4")}></div>
+          <div className={clsx("flex", "items-center", "justify-between")}>
             <div
-              className={`flex items-center space-x-2 px-3 py-1 rounded-full ${statusInfo.bgColor}`}
+              className={clsx(
+                "flex",
+                "items-center",
+                "space-x-2",
+                "px-3",
+                "py-1",
+                "rounded-full",
+                statusInfo.bgColor
+              )}
             >
-              <StatusIcon className={`w-4 h-4 ${statusInfo.color}`} />
-              <span className={`text-sm font-medium ${statusInfo.color}`}>
+              <StatusIcon className={clsx("w-4", "h-4", statusInfo.color)} />
+              <span
+                className={clsx("text-sm", "font-medium", statusInfo.color)}
+              >
                 Статус: {statusInfo.title}
               </span>
             </div>
             {round.status?.timeRemaining &&
             round.status.status !== "finished" ? (
-              <div className="text-purple-400 font-mono text-sm">
+              <div className={clsx("text-purple-400", "font-mono", "text-sm")}>
                 {round.status.status === "pending"
                   ? "До начала: "
                   : "Осталось: "}
@@ -68,23 +93,24 @@ const RoundCard: FC<{ round: RoundWithStatus; onClick: () => void }> = ({
 };
 
 const EmptyState: FC = () => (
-  <div className="text-center py-12">
-    <div className="text-gray-400 text-lg">Раундов пока нет</div>
+  <div className={clsx("text-center", "py-12")}>
+    <div className={clsx("text-gray-400", "text-lg")}>Раундов пока нет</div>
     <Admin>
-      <p className="text-gray-500 mt-2">Создайте первый раунд</p>
+      <p className={clsx("text-gray-500", "mt-2")}>Создайте первый раунд</p>
     </Admin>
   </div>
 );
 
 const Header: FC = () => (
-  <div className="flex justify-between items-center mb-8">
-    <div>
-      <h1 className="text-4xl font-bold text-white mb-2">Список раундов</h1>
-      <p className="text-gray-300">Выберите раунд для участия</p>
+  <div className={clsx("flex", "justify-between", "items-start")}>
+    <div className={clsx("space-y-2")}>
+      <h1 className={clsx("text-4xl", "font-bold", "text-white")}>
+        Список раундов
+      </h1>
+      <p className={clsx("text-gray-300")}>Выберите раунд для участия</p>
     </div>
-    <div className="flex items-center space-x-4">
-      <UserMenu />
-    </div>
+
+    <UserMenu />
   </div>
 );
 
@@ -117,38 +143,40 @@ const RoundsPage: FC = () => {
   });
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-8">
+    <div className={clsx("min-h-screen")}>
+      <div
+        className={clsx("container", "mx-auto", "px-4", "py-8", "space-y-12")}
+      >
         <Header />
 
-        <Admin>
-          <div className="mb-6">
+        <div className={clsx("space-y-6")}>
+          <Admin>
             <GreenButton
               title={createMutation.isPending ? "Создание..." : "Создать раунд"}
               onClick={() => createMutation.mutate()}
               disabled={createMutation.isPending}
-              icon={<Plus className="w-5 h-5" />}
+              icon={<Plus className={clsx("w-5", "h-5")} />}
             />
-          </div>
-        </Admin>
+          </Admin>
 
-        {isLoading && <LoadingState />}
-        {error && <ErrorState />}
-        {isSuccess && (
-          <div className="space-y-4">
-            {rounds.length === 0 ? (
-              <EmptyState />
-            ) : (
-              rounds.map((round) => (
-                <RoundCard
-                  key={round.id}
-                  round={round}
-                  onClick={() => navigate(`/rounds/${round.id}`)}
-                />
-              ))
-            )}
-          </div>
-        )}
+          {isLoading && <LoadingState />}
+          {error && <ErrorState />}
+          {isSuccess && (
+            <div className={clsx("space-y-6")}>
+              {rounds.length === 0 ? (
+                <EmptyState />
+              ) : (
+                rounds.map((round) => (
+                  <RoundCard
+                    key={round.id}
+                    round={round}
+                    onClick={() => navigate(`/rounds/${round.id}`)}
+                  />
+                ))
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
