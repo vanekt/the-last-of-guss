@@ -52,8 +52,8 @@ export function getStatusInfo(status: RoundStatusValue) {
   }
 }
 
-export function formatTimeRemaining(timeRemaining?: number) {
-  if (!timeRemaining) {
+export function formatTime(value?: number) {
+  if (!value) {
     return "";
   }
 
@@ -61,9 +61,9 @@ export function formatTimeRemaining(timeRemaining?: number) {
   const MS_PER_MINUTE = 60 * MS_PER_SECOND;
   const MS_PER_HOUR = 60 * MS_PER_MINUTE;
 
-  const hours = Math.floor(timeRemaining / MS_PER_HOUR);
-  const minutes = Math.floor((timeRemaining % MS_PER_HOUR) / MS_PER_MINUTE);
-  const seconds = Math.floor((timeRemaining % MS_PER_MINUTE) / MS_PER_SECOND);
+  const hours = Math.floor(value / MS_PER_HOUR);
+  const minutes = Math.floor((value % MS_PER_HOUR) / MS_PER_MINUTE);
+  const seconds = Math.floor((value % MS_PER_MINUTE) / MS_PER_SECOND);
 
   const padZero = (num: number) => num.toString().padStart(2, "0");
 

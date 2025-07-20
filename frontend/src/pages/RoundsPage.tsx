@@ -11,22 +11,20 @@ import GreenButton from "@/components/GreenButton";
 import LoadingState from "@/components/LoadingState";
 import UserMenu from "@/components/UserMenu";
 import { roundsAPI } from "@/api";
-import { formatDate, getStatusInfo, formatTimeRemaining } from "@/utils/round";
+import { formatDate, getStatusInfo, formatTime } from "@/utils/round";
 
 const RoundCard: FC<{
   round: RoundWithStatus;
   onClick: () => void;
   onTimeout: () => void;
 }> = ({ round, onClick, onTimeout }) => {
-  const status = round.status.status;
-  const initTimeRemaining = round.status.timeRemaining;
-  const [timeRemaining, setTimeRemaining] = useState(
-    round.status.timeRemaining
-  );
+  const status = round.status.value;
+  const initTimeLeft = round.status.timer;
+  const [timeLeft, setTimeLeft] = useState(round.status.timer);
 
   useEffect(() => {
-    setTimeRemaining(initTimeRemaining);
-  }, [initTimeRemaining]);
+    setTimeLeft(initTimeLeft);
+  }, [initTimeLeft]);
 
   useEffect(() => {
     if (status === "finished") {
@@ -34,7 +32,7 @@ const RoundCard: FC<{
     }
 
     const interval = setInterval(() => {
-      setTimeRemaining((prev) => {
+      setTimeLeft((prev) => {
         const newVal = prev - 1000;
         if (newVal < 0) {
           onTimeout();
@@ -47,7 +45,7 @@ const RoundCard: FC<{
     return () => clearInterval(interval);
   }, [status]);
 
-  const statusInfo = getStatusInfo(round.status?.status);
+  const statusInfo = getStatusInfo(round.status?.value);
   const StatusIcon = statusInfo.icon;
   return (
     <div
@@ -127,11 +125,11 @@ const RoundCard: FC<{
                 Статус: {statusInfo.title}
               </span>
             </div>
-            {timeRemaining && status !== "finished" ? (
+            {timeLeft && status !== "finished" ? (
               <div className={clsx("text-purple-400", "flex", "space-x-2")}>
                 <Clock className={clsx("w-5", "h-5")} />
                 <span className={clsx("font-mono", "text-sm")}>
-                  {formatTimeRemaining(timeRemaining)}
+                  {formatTime(timeLeft)}
                 </span>
               </div>
             ) : null}

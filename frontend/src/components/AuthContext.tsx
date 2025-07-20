@@ -3,11 +3,11 @@ import type { ReactNode, FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import type { User } from "@shared/types";
+import type { UserPayload } from "@shared/types";
 import { authAPI } from "@/api";
 
 interface AuthContextType {
-  user?: User;
+  user?: UserPayload;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
   loading: boolean;
@@ -42,7 +42,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   }, [error, navigate]);
 
   const login = async (username: string, password: string) => {
-    const response = await authAPI.login(username, password);
+    const response = await authAPI.login({ username, password });
     localStorage.setItem("token", response.token);
     queryClient.setQueryData(["user"], { user: response.user });
   };

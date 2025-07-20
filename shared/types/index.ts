@@ -21,8 +21,8 @@ export interface Round {
 
 export type RoundStatusValue = "pending" | "active" | "finished";
 export interface RoundStatus {
-  status: RoundStatusValue;
-  timeRemaining: number;
+  value: RoundStatusValue;
+  timer: number;
 }
 
 export interface RoundStats {
@@ -51,11 +51,15 @@ export interface RoundsResponse {
   items: RoundWithStatus[];
 }
 
-export interface AuthResponse {
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+export interface LoginResponse {
   token: string;
-  user: User;
+  user: UserPayload;
 }
 
 export interface VerifyResponse {
-  user: User;
+  user: UserPayload;
 }

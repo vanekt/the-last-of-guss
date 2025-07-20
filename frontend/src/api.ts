@@ -1,6 +1,7 @@
 import axios from "axios";
 import type {
-  AuthResponse,
+  LoginRequest,
+  LoginResponse,
   RoundsResponse,
   RoundStats,
   RoundWinner,
@@ -25,12 +26,8 @@ api.interceptors.request.use((config) => {
 });
 
 export const authAPI = {
-  login: async (username: string, password: string): Promise<AuthResponse> => {
-    const { data } = await api.post<AuthResponse>("/auth/login", {
-      username,
-      password,
-    });
-
+  login: async (requestBody: LoginRequest): Promise<LoginResponse> => {
+    const { data } = await api.post<LoginResponse>("/auth/login", requestBody);
     return data;
   },
 

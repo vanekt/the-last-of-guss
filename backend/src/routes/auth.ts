@@ -8,21 +8,7 @@ import {
   generateToken,
   getUserRole,
 } from "@/utils/auth";
-import { UserPayload } from "@shared/types";
-
-type LoginRequest = {
-  username: string;
-  password: string;
-};
-
-type LoginResponse = {
-  token: string;
-  user: UserPayload;
-};
-
-type VerifyResponse = {
-  user: UserPayload;
-};
+import { LoginRequest, LoginResponse, VerifyResponse } from "@shared/types";
 
 export async function authRoutes(fastify: FastifyInstance) {
   fastify.post<{

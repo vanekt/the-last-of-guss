@@ -59,18 +59,18 @@ export class RoundService {
     switch (true) {
       case now < startTime:
         return {
-          status: "pending",
-          timeRemaining: startTime.getTime() - now.getTime(),
+          value: "pending",
+          timer: startTime.getTime() - now.getTime(),
         };
       case now >= startTime && now < endTime:
         return {
-          status: "active",
-          timeRemaining: endTime.getTime() - now.getTime(),
+          value: "active",
+          timer: endTime.getTime() - now.getTime(),
         };
       default:
         return {
-          status: "finished",
-          timeRemaining: 0,
+          value: "finished",
+          timer: 0,
         };
     }
   }
@@ -81,13 +81,13 @@ export class RoundService {
       return false;
     }
 
-    const { status } = this.getRoundStatus(round);
+    const { value: status } = this.getRoundStatus(round);
 
     return status === "active";
   }
 
   static async isRoundFinished(round: Round): Promise<boolean> {
-    const { status } = this.getRoundStatus(round);
+    const { value: status } = this.getRoundStatus(round);
     return status === "finished";
   }
 

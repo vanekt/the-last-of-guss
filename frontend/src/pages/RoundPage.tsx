@@ -1,4 +1,4 @@
-import { useEffect, type FC } from "react";
+import { type FC, memo, useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Trophy, Target, Clock } from "lucide-react";
@@ -14,7 +14,7 @@ import LoadingState from "@/components/LoadingState";
 import Nikita from "@/components/Nikita";
 import UserMenu from "@/components/UserMenu";
 import { useAuth } from "@/hooks/useAuth";
-import { getStatusInfo, formatTimeRemaining } from "@/utils/round";
+import { getStatusInfo, formatTime } from "@/utils/round";
 import { roundsAPI } from "@/api";
 import { useTapBatching } from "@/hooks/useTapBatching";
 
@@ -43,83 +43,121 @@ const Header: FC = () => {
   );
 };
 
-const GooseTapButton: FC<{ status: RoundStatusValue; onTap: () => void }> = ({
-  status,
-  onTap,
-}) => (
-  <div
-    className={clsx(
-      "inline-block",
-      "transition-transform",
-      "duration-100",
-      status === "active" && "active:scale-125 cursor-pointer"
-    )}
-    onClick={onTap}
-  >
-    <div className={clsx("text-9xl", "select-none")}>🪿</div>
-  </div>
+const GooseTapButton: FC<{
+  disabled: boolean;
+  tapsCount: number;
+  onTap: () => void;
+}> = memo(({ disabled, onTap, tapsCount }) => {
+  const [key, setKey] = useState(0);
+  const [touched, setTouched] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (tapsCount > 0 && tapsCount % 11 === 0 && touched) {
+      setKey((prev) => prev + 1);
+    }
+  }, [tapsCount, touched]);
+
+  const handleClick = () => {
+    if (disabled) {
+      return;
+    }
+
+    if (!isAnimating) {
+      setIsAnimating(true);
+      setTimeout(() => setIsAnimating(false), 100);
+    }
+
+    setTouched(true);
+    onTap();
+  };
+
+  return (
+    <div
+      key={key}
+      className={clsx(
+        "inline-block",
+        "cursor-pointer",
+        "transition-transform",
+        "duration-100",
+        isAnimating && "scale-125",
+        key > 0 && "animate-spin",
+        disabled && "opacity-50"
+      )}
+      onClick={handleClick}
+    >
+      <div className={clsx("text-9xl", "select-none")}>🪿</div>
+    </div>
+  );
+});
+
+const StatusTimer: FC<{ status: RoundStatusValue; timeLeft?: number }> = memo(
+  ({ status, timeLeft }) => (
+    <div className={clsx("align-middle", "space-y-2")}>
+      <h2
+        className={clsx("text-2xl", "font-bold", getStatusInfo(status).color)}
+      >
+        {getStatusInfo(status).titleAlt}
+      </h2>
+      {timeLeft && status !== "finished" ? (
+        <div
+          className={clsx(
+            "flex",
+            "items-center",
+            "justify-center",
+            "space-x-2",
+            "text-purple-200"
+          )}
+        >
+          <Clock className={clsx("w-5", "h-5")} />
+          <span className={clsx("text-xl", "font-mono")}>
+            {formatTime(timeLeft)}
+          </span>
+        </div>
+      ) : null}
+    </div>
+  )
 );
 
-const StatusTimer: FC<{ status: RoundStatusValue; timeRemaining?: number }> = ({
-  status,
-  timeRemaining,
-}) => (
-  <div className={clsx("align-middle", "space-y-2")}>
-    <h2 className={clsx("text-2xl", "font-bold", getStatusInfo(status).color)}>
-      {getStatusInfo(status).titleAlt}
-    </h2>
-    {timeRemaining && status !== "finished" ? (
-      <div
-        className={clsx(
-          "flex",
-          "items-center",
-          "justify-center",
-          "space-x-2",
-          "text-purple-200"
-        )}
-      >
-        <Clock className={clsx("w-5", "h-5")} />
-        <span className={clsx("text-xl", "font-mono")}>
-          {formatTimeRemaining(timeRemaining)}
-        </span>
+const UserStats: FC<{ taps: number; score: number }> = memo(
+  ({ taps, score }) => (
+    <div className={clsx("grid", "grid-cols-1", "sm:grid-cols-2", "gap-4")}>
+      <div className={clsx("bg-white/5", "rounded-lg", "p-4")}>
+        <div
+          className={clsx(
+            "flex",
+            "items-center",
+            "justify-center",
+            "space-x-2",
+            "text-blue-400"
+          )}
+        >
+          <Target className={clsx("w-5", "h-5")} />
+          <span className={clsx("font-medium")}>Мои тапы</span>
+        </div>
+        <div className={clsx("text-2xl", "font-bold", "text-white")}>
+          {taps}
+        </div>
       </div>
-    ) : null}
-  </div>
-);
-
-const UserStats: FC<{ taps: number; score: number }> = ({ taps, score }) => (
-  <div className={clsx("grid", "grid-cols-1", "sm:grid-cols-2", "gap-4")}>
-    <div className={clsx("bg-white/5", "rounded-lg", "p-4")}>
-      <div
-        className={clsx(
-          "flex",
-          "items-center",
-          "justify-center",
-          "space-x-2",
-          "text-blue-400"
-        )}
-      >
-        <Target className={clsx("w-5", "h-5")} />
-        <span className={clsx("font-medium")}>Мои тапы</span>
+      <div className={clsx("bg-white/5", "rounded-lg", "p-4")}>
+        <div
+          className={clsx(
+            "flex",
+            "items-center",
+            "justify-center",
+            "space-x-2",
+            "text-purple-400"
+          )}
+        >
+          <Trophy className={clsx("w-5", "h-5")} />
+          <span className={clsx("font-medium")}>Мои очки</span>
+        </div>
+        <div className={clsx("text-2xl", "font-bold", "text-white")}>
+          {score}
+        </div>
       </div>
-      <div className={clsx("text-2xl", "font-bold", "text-white")}>{taps}</div>
     </div>
-    <div className={clsx("bg-white/5", "rounded-lg", "p-4")}>
-      <div
-        className={clsx(
-          "flex",
-          "items-center",
-          "justify-center",
-          "space-x-2",
-          "text-purple-400"
-        )}
-      >
-        <Trophy className={clsx("w-5", "h-5")} />
-        <span className={clsx("font-medium")}>Мои очки</span>
-      </div>
-      <div className={clsx("text-2xl", "font-bold", "text-white")}>{score}</div>
-    </div>
-  </div>
+  )
 );
 
 const RoundSummary: FC<{
@@ -188,35 +226,35 @@ const RoundPage: FC = () => {
     data: round,
     error,
     isLoading,
-    isSuccess,
+    isSuccess: hasRound,
   } = useQuery<RoundWithStatus>({
     queryKey: ["round", id],
     queryFn: () => roundsAPI.getRound(id!),
     enabled: !!id && !!user,
     refetchInterval: ({ state }) => {
       const { data } = state;
-      if (data?.status.status === "finished") {
+      if (data?.status.value === "finished") {
         return false;
       }
-      return data?.status.timeRemaining || 1000;
+      return data?.status.timer || 1000;
     },
   });
 
   const { data: stats } = useQuery<RoundStats>({
-    queryKey: ["stats", id, round?.status.status],
+    queryKey: ["stats", id, round?.status.value],
     queryFn: () => roundsAPI.getStats(id!),
-    enabled: isSuccess && ["active", "finished"].includes(round.status.status),
+    enabled: hasRound && ["active", "finished"].includes(round.status.value),
     initialData: { taps: 0, score: 0 },
   });
 
   const { data: winner } = useQuery<RoundWinner | null>({
     queryKey: ["winner", id],
     queryFn: () => roundsAPI.getWinner(id!),
-    enabled: isSuccess && round.status.status === "finished",
+    enabled: hasRound && round.status.value === "finished",
   });
 
   useEffect(() => {
-    if (!isSuccess || round.status.status === "finished") {
+    if (!hasRound || round.status.value === "finished") {
       return;
     }
 
@@ -226,7 +264,7 @@ const RoundPage: FC = () => {
           ...old,
           status: {
             ...old.status,
-            timeRemaining: Math.max(0, old.status.timeRemaining - 1000),
+            timer: Math.max(0, old.status.timer - 1000),
           },
         };
       });
@@ -235,7 +273,7 @@ const RoundPage: FC = () => {
     return () => {
       clearInterval(interval);
     };
-  }, [isSuccess, round?.status.status]);
+  }, [hasRound, round?.status.value]);
 
   const { addTaps } = useTapBatching({
     roundId: id!,
@@ -243,17 +281,17 @@ const RoundPage: FC = () => {
     maxBatchSize: 10,
   });
 
-  const handleTap = () => {
+  const handleTap = useCallback(() => {
     if (
-      !isSuccess ||
-      round.status.status !== "active" ||
+      !hasRound ||
+      round.status.value !== "active" ||
       user?.role === "nikita"
     ) {
       return;
     }
 
     queryClient.setQueryData(
-      ["stats", id, round.status.status],
+      ["stats", id, round.status.value],
       (old: RoundStats) => {
         const newTaps = old.taps + 1;
         return {
@@ -264,7 +302,7 @@ const RoundPage: FC = () => {
     );
 
     addTaps();
-  };
+  }, [hasRound, round?.status.value, user?.role, queryClient]);
 
   return (
     <div className={clsx("min-h-screen")}>
@@ -285,7 +323,7 @@ const RoundPage: FC = () => {
 
           {error && <ErrorState />}
 
-          {isSuccess && (
+          {hasRound && (
             <div
               className={clsx(
                 "bg-white/10",
@@ -298,14 +336,18 @@ const RoundPage: FC = () => {
                 "space-y-4"
               )}
             >
-              <GooseTapButton status={round.status.status} onTap={handleTap} />
+              <GooseTapButton
+                disabled={round.status.value !== "active"}
+                onTap={handleTap}
+                tapsCount={stats.taps}
+              />
               <StatusTimer
-                status={round.status.status}
-                timeRemaining={round.status.timeRemaining}
+                status={round.status.value}
+                timeLeft={round.status.timer}
               />
               <UserStats taps={stats.taps} score={stats.score} />
 
-              {round.status.status === "finished" && (
+              {round.status.value === "finished" && (
                 <RoundSummary
                   totalTaps={round.totalTaps}
                   totalScore={round.totalScore}
@@ -313,7 +355,7 @@ const RoundPage: FC = () => {
                 />
               )}
 
-              {round.status.status === "active" && (
+              {round.status.value === "active" && (
                 <Nikita>
                   <NikitaWarning />
                 </Nikita>
