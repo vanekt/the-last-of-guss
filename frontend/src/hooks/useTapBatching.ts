@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useCallback } from "react";
 import { roundsAPI } from "@/api";
 import type { TapResponse } from "@shared/types";
 import { useMutation } from "@tanstack/react-query";
@@ -26,12 +26,12 @@ export const useTapBatching = ({
     },
   });
 
-  function addTaps() {
+  const addTaps = useCallback(() => {
     pendingTaps.current++;
     if (pendingTaps.current >= maxBatchSize) {
       tapMutation.mutate();
     }
-  }
+  }, [pendingTaps, tapMutation.mutate]);
 
   useEffect(() => {
     const interval = setInterval(() => {

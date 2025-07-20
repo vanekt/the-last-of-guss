@@ -8,6 +8,8 @@ import {
   RoundWinner,
   TapResponse,
 } from "@shared/types";
+import { isSuperTap } from "@shared/helpers";
+import { SUPER_TAP_SCORE } from "@shared/constants";
 
 if (!process.env.ROUND_DURATION || !process.env.COOLDOWN_DURATION) {
   console.error(
@@ -175,8 +177,8 @@ export class RoundService {
       const newTaps = currentTaps + tapCount;
       let totalTapScore = 0;
       for (let i = 1; i <= tapCount; i++) {
-        if ((currentTaps + i) % 11 === 0) {
-          totalTapScore += 10;
+        if (isSuperTap(currentTaps + i)) {
+          totalTapScore += SUPER_TAP_SCORE;
         } else {
           totalTapScore += 1;
         }
