@@ -1,10 +1,16 @@
 import { FastifyInstance } from "fastify";
 import { RoundService } from "@/services/roundService";
-import { RoundStats, RoundWithStatus, RoundWinner } from "@shared/types";
+import {
+  RoundsResponse,
+  RoundResponse,
+  RoundStatsResponse,
+  RoundWinnerResponse,
+  TapBatchRequest,
+} from "@shared/types";
 
 export async function roundRoutes(fastify: FastifyInstance) {
   fastify.get<{
-    Reply: { items: RoundWithStatus[] };
+    Reply: RoundsResponse;
   }>("/rounds", { preHandler: fastify.auth }, async (_, reply) => {
     try {
       const roundsData = await RoundService.getAllRounds();
@@ -22,7 +28,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
 
   fastify.get<{
     Params: { id: string };
-    Reply: RoundWithStatus;
+    Reply: RoundResponse;
   }>("/rounds/:id", { preHandler: fastify.auth }, async (request, reply) => {
     const { id } = request.params;
     try {
@@ -42,7 +48,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
   });
 
   fastify.post<{
-    Reply: RoundWithStatus;
+    Reply: RoundResponse;
   }>("/rounds", { preHandler: fastify.auth }, async (request, reply) => {
     const user = request.user;
 
@@ -64,7 +70,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
 
   fastify.get<{
     Params: { id: string };
-    Reply: RoundStats;
+    Reply: RoundStatsResponse;
   }>(
     "/rounds/:id/stats",
     { preHandler: fastify.auth },
@@ -88,7 +94,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
 
   fastify.get<{
     Params: { id: string };
-    Reply: RoundWinner | null;
+    Reply: RoundWinnerResponse;
   }>(
     "/rounds/:id/winner",
     { preHandler: fastify.auth },
@@ -118,7 +124,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
 
   fastify.post<{
     Params: { roundId: string };
-    Body: { tapCount: number };
+    Body: TapBatchRequest;
   }>(
     "/rounds/:roundId/tap/batch",
     { preHandler: fastify.auth },

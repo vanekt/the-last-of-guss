@@ -38,19 +38,7 @@ export interface RoundWithStatus extends Round {
   status: RoundStatus;
 }
 
-// TODO сюда поместить все типы requestParams, response и т д, которые переиспользуются и на фронте и на бэке
-// а лучше в отдельный файл
-
-export interface TapResponse {
-  success: boolean;
-  taps: number;
-  score: number;
-}
-
-export interface RoundsResponse {
-  items: RoundWithStatus[];
-}
-
+// -------
 export interface LoginRequest {
   username: string;
   password: string;
@@ -62,4 +50,21 @@ export interface LoginResponse {
 
 export interface VerifyResponse {
   user: UserPayload;
+}
+
+export interface RoundsResponse {
+  items: RoundWithStatus[];
+}
+
+export type RoundResponse = RoundWithStatus;
+export type RoundStatsResponse = RoundStats;
+export type RoundWinnerResponse = RoundWinner | null;
+
+export interface TapResponse {
+  success: boolean;
+  taps: number;
+  score: number;
+}
+export interface TapBatchRequest {
+  tapCount: number;
 }
