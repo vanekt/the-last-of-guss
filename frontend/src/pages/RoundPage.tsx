@@ -74,12 +74,11 @@ const StatusTimer: FC<{ status: RoundStatusValue; timeRemaining?: number }> = ({
           "items-center",
           "justify-center",
           "space-x-2",
-          "text-purple-400"
+          "text-purple-200"
         )}
       >
         <Clock className={clsx("w-5", "h-5")} />
         <span className={clsx("text-xl", "font-mono")}>
-          {status === "pending" ? "До начала раунда: " : "До конца осталось: "}
           {formatTimeRemaining(timeRemaining)}
         </span>
       </div>
@@ -88,7 +87,7 @@ const StatusTimer: FC<{ status: RoundStatusValue; timeRemaining?: number }> = ({
 );
 
 const UserStats: FC<{ taps: number; score: number }> = ({ taps, score }) => (
-  <div className={clsx("grid", "grid-cols-2", "gap-4")}>
+  <div className={clsx("grid", "grid-cols-1", "sm:grid-cols-2", "gap-4")}>
     <div className={clsx("bg-white/5", "rounded-lg", "p-4")}>
       <div
         className={clsx(
@@ -263,7 +262,14 @@ const RoundPage: FC = () => {
   return (
     <div className={clsx("min-h-screen")}>
       <div
-        className={clsx("container", "mx-auto", "px-4", "py-8", "space-y-12")}
+        className={clsx(
+          "container",
+          "mx-auto",
+          "px-4",
+          "py-4",
+          "sm:py-8",
+          "space-y-12"
+        )}
       >
         <Header />
 
