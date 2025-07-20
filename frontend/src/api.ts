@@ -66,11 +66,6 @@ export const roundsAPI = {
     return data;
   },
 
-  tap: async (roundId: string): Promise<TapResponse> => {
-    const { data } = await api.post(`/rounds/${roundId}/tap`);
-    return data;
-  },
-
   tapBatch: async (roundId: string, tapCount: number): Promise<TapResponse> => {
     const { data } = await api.post(`/rounds/${roundId}/tap/batch`, {
       tapCount,

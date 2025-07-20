@@ -135,14 +135,12 @@ export class RoundService {
     };
   }
 
-  static async processTap(
+  static async processBatchTaps(
     userId: string,
-    roundId: string
+    roundId: string,
+    tapCount: number
   ): Promise<TapResponse> {
-    const t0 = Date.now();
-    const isActive = await this.isRoundActive(roundId);
-    const t1 = Date.now();
-
+    const isActive = await RoundService.isRoundActive(roundId);
     if (!isActive) {
       return {
         success: false,
@@ -151,47 +149,56 @@ export class RoundService {
       };
     }
 
-    const t2 = Date.now();
-    const result = await db.transaction(async (tx) => {
-      const t3 = Date.now();
-      const [userStats] = await tx
-        .insert(userRoundStats)
-        .values({
+    return await db.transaction(async (tx) => {
+      let [stats] = await tx
+        .select({ taps: userRoundStats.taps, score: userRoundStats.score })
+        .from(userRoundStats)
+        .where(
+          and(
+            eq(userRoundStats.userId, userId),
+            eq(userRoundStats.roundId, roundId)
+          )
+        );
+
+      let currentTaps = stats?.taps ?? 0;
+      let currentScore = stats?.score ?? 0;
+
+      if (!stats) {
+        await tx.insert(userRoundStats).values({
           userId,
           roundId,
-          taps: 1,
-          score: 1,
-        })
-        .onConflictDoUpdate({
-          target: [userRoundStats.userId, userRoundStats.roundId],
-          set: {
-            taps: sql`${userRoundStats.taps} + 1`,
-            score: sql`${userRoundStats.score} + CASE WHEN (${userRoundStats.taps} + 1) % 11 = 0 THEN 10 ELSE 1 END`,
-          },
-        })
-        .returning({ taps: userRoundStats.taps, score: userRoundStats.score });
-      const t4 = Date.now();
+          taps: 0,
+          score: 0,
+        });
+      }
+
+      const newTaps = currentTaps + tapCount;
+      let totalTapScore = 0;
+      for (let i = 1; i <= tapCount; i++) {
+        if ((currentTaps + i) % 11 === 0) {
+          totalTapScore += 10;
+        } else {
+          totalTapScore += 1;
+        }
+      }
+      const newScore = currentScore + totalTapScore;
+
       await tx
-        .update(rounds)
-        .set({
-          totalTaps: sql`${rounds.totalTaps} + 1`,
-          totalScore: sql`${rounds.totalScore} + CASE WHEN (${rounds.totalTaps} + 1) % 11 = 0 THEN 10 ELSE 1 END`,
-        })
-        .where(eq(rounds.id, roundId));
-      const t5 = Date.now();
-      console.log("[processTap] upsert userRoundStats:", t4 - t3, "ms");
-      console.log("[processTap] update rounds:", t5 - t4, "ms");
+        .update(userRoundStats)
+        .set({ taps: newTaps, score: newScore })
+        .where(
+          and(
+            eq(userRoundStats.userId, userId),
+            eq(userRoundStats.roundId, roundId)
+          )
+        );
+
       return {
         success: true,
-        taps: userStats.taps,
-        score: userStats.score,
+        taps: newTaps,
+        score: newScore,
       };
     });
-    const t6 = Date.now();
-    console.log("[processTap] isRoundActive:", t1 - t0, "ms");
-    console.log("[processTap] transaction start:", t2 - t1, "ms");
-    console.log("[processTap] transaction total:", t6 - t2, "ms");
-    return result;
   }
 
   static async finishRound(roundId: string): Promise<string> {

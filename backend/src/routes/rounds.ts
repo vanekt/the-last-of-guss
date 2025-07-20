@@ -116,23 +116,44 @@ export async function roundRoutes(fastify: FastifyInstance) {
     }
   );
 
-  fastify.post(
-    "/rounds/:roundId/tap",
+  fastify.post<{
+    Params: { roundId: string };
+    Body: { tapCount: number };
+  }>(
+    "/rounds/:roundId/tap/batch",
     { preHandler: fastify.auth },
     async (request, reply) => {
-      const { roundId } = request.params as { roundId: string };
+      const { roundId } = request.params;
       const user = request.user;
 
       if (!user) {
         return reply.status(401).send({ error: "Invalid token" });
       }
 
+      const { tapCount } = request.body;
+      if (!tapCount || tapCount <= 0) {
+        return reply.status(400).send({ error: "Invalid tap count" });
+      }
+
+      if (user.role === "nikita") {
+        return reply.send({
+          success: false,
+          taps: 0,
+          score: 0,
+        });
+      }
+
       try {
-        const result = await RoundService.processTap(user.id, roundId);
+        const result = await RoundService.processBatchTaps(
+          user.id,
+          roundId,
+          tapCount
+        );
         return reply.send(result);
       } catch (error) {
-        console.error(error);
-        return reply.status(500).send({ error: "Failed to process tap" });
+        return reply
+          .status(500)
+          .send({ error: "Failed to process batch taps" });
       }
     }
   );

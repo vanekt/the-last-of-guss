@@ -1,12 +1,12 @@
 import { useRef, useEffect } from "react";
 import { roundsAPI } from "@/api";
 import type { TapResponse } from "@shared/types";
+import { useMutation } from "@tanstack/react-query";
 
 interface UseTapBatchingOptions {
   roundId: string;
   batchTimeout?: number;
   maxBatchSize?: number;
-  active?: boolean;
   onSuccess?: (response: TapResponse) => void;
   onError?: (error: unknown) => void;
 }
@@ -15,55 +15,39 @@ export const useTapBatching = ({
   roundId,
   batchTimeout = 300,
   maxBatchSize = 10,
-  active = true,
-  onSuccess,
-  onError,
 }: UseTapBatchingOptions) => {
   const pendingTaps = useRef<number>(0);
 
-  async function processBatch() {
-    const tapsToProcess = pendingTaps.current;
-    pendingTaps.current = 0;
+  const tapMutation = useMutation({
+    mutationFn: async () => {
+      const tapsToProcess = pendingTaps.current;
+      pendingTaps.current = 0;
+      roundsAPI.tapBatch(roundId, tapsToProcess);
+    },
+  });
 
-    console.log("batch", tapsToProcess);
-
-    try {
-      const response = await roundsAPI.tapBatch(roundId, tapsToProcess);
-      onSuccess?.(response);
-    } catch (error) {
-      console.error("Error processing batch taps:", error);
-      onError?.(error);
-    }
-  }
-
-  function addTap() {
+  function addTaps() {
     pendingTaps.current++;
-    console.log(pendingTaps.current); // TODO удалить
-
     if (pendingTaps.current >= maxBatchSize) {
-      processBatch();
+      tapMutation.mutate();
     }
   }
 
   useEffect(() => {
-    if (!active) {
-      return;
-    }
-
     const interval = setInterval(() => {
       if (pendingTaps.current < 1) {
         return;
       }
 
-      processBatch();
+      tapMutation.mutate();
     }, batchTimeout);
 
     return () => {
       clearInterval(interval);
     };
-  }, [active]);
+  }, []);
 
   return {
-    addTap,
+    addTaps,
   };
 };

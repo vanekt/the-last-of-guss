@@ -1,6 +1,6 @@
 import { useEffect, type FC } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Trophy, Target, Clock } from "lucide-react";
 import clsx from "clsx/lite";
 import type {
@@ -16,6 +16,7 @@ import UserMenu from "@/components/UserMenu";
 import { useAuth } from "@/hooks/useAuth";
 import { getStatusInfo, formatTimeRemaining } from "@/utils/round";
 import { roundsAPI } from "@/api";
+import { useTapBatching } from "@/hooks/useTapBatching";
 
 const Header: FC = () => {
   const navigate = useNavigate();
@@ -236,12 +237,18 @@ const RoundPage: FC = () => {
     };
   }, [isSuccess, round?.status.status]);
 
-  const tapMutation = useMutation({
-    mutationFn: () => roundsAPI.tap(id!),
+  const { addTaps } = useTapBatching({
+    roundId: id!,
+    batchTimeout: 1000,
+    maxBatchSize: 10,
   });
 
   const handleTap = () => {
-    if (!isSuccess || round.status.status !== "active") {
+    if (
+      !isSuccess ||
+      round.status.status !== "active" ||
+      user?.role === "nikita"
+    ) {
       return;
     }
 
@@ -256,7 +263,7 @@ const RoundPage: FC = () => {
       }
     );
 
-    tapMutation.mutate();
+    addTaps();
   };
 
   return (
