@@ -123,13 +123,13 @@ export async function roundRoutes(fastify: FastifyInstance) {
   );
 
   fastify.post<{
-    Params: { roundId: string };
+    Params: { id: string };
     Body: TapBatchRequest;
   }>(
-    "/rounds/:roundId/tap/batch",
+    "/rounds/:id/tap/batch",
     { preHandler: fastify.auth },
     async (request, reply) => {
-      const { roundId } = request.params;
+      const { id } = request.params;
       const user = request.user;
 
       if (!user) {
@@ -152,7 +152,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
       try {
         const result = await RoundService.processBatchTaps(
           user.id,
-          roundId,
+          id,
           tapCount
         );
         return reply.send(result);

@@ -282,24 +282,22 @@ const RoundPage: FC = () => {
   });
 
   const handleTap = useCallback(() => {
-    if (
-      !hasRound ||
-      round.status.value !== "active" ||
-      user?.role === "nikita"
-    ) {
+    if (!hasRound || round.status.value !== "active") {
       return;
     }
 
-    queryClient.setQueryData(
-      ["stats", id, round.status.value],
-      (old: RoundStats) => {
-        const newTaps = old.taps + 1;
-        return {
-          taps: newTaps,
-          score: old.score + (newTaps % 11 === 0 ? 10 : 1),
-        };
-      }
-    );
+    if (user?.role !== "nikita") {
+      queryClient.setQueryData(
+        ["stats", id, round.status.value],
+        (old: RoundStats) => {
+          const newTaps = old.taps + 1;
+          return {
+            taps: newTaps,
+            score: old.score + (newTaps % 11 === 0 ? 10 : 1),
+          };
+        }
+      );
+    }
 
     addTaps();
   }, [hasRound, round?.status.value, user?.role, queryClient]);
