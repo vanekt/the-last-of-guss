@@ -18,7 +18,7 @@ import LoadingState from "@/components/LoadingState";
 import Nikita from "@/components/Nikita";
 import UserMenu from "@/components/UserMenu";
 import { useAuth } from "@/hooks/useAuth";
-import { getStatusInfo, formatTime } from "@/helpers/round";
+import { getStatusInfo, formatTime } from "@/utils/round";
 import { roundsAPI } from "@/api";
 import { useTapBatching } from "@/hooks/useTapBatching";
 import { useTimer } from "@/hooks/useTimer";

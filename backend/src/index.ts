@@ -10,12 +10,9 @@ const fastify = Fastify({
 });
 
 fastify.register(cors, {
-  origin: "*",
-
-  // TODO
-  // origin: process.env.CORS_ORIGIN,
-  // methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  // allowedHeaders: ["Content-Type", "Authorization"],
+  origin: process.env.CORS_ORIGIN,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 });
 
 fastify.decorate("auth", authMiddleware);

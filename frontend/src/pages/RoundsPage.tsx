@@ -11,7 +11,7 @@ import GreenButton from "@/components/GreenButton";
 import LoadingState from "@/components/LoadingState";
 import UserMenu from "@/components/UserMenu";
 import { roundsAPI } from "@/api";
-import { formatDate, getStatusInfo, formatTime } from "@/helpers/round";
+import { formatDate, getStatusInfo, formatTime } from "@/utils/round";
 
 function useRoundTimer({
   initialTimeLeft,
