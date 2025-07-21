@@ -11,7 +11,46 @@ import GreenButton from "@/components/GreenButton";
 import LoadingState from "@/components/LoadingState";
 import UserMenu from "@/components/UserMenu";
 import { roundsAPI } from "@/api";
-import { formatDate, getStatusInfo, formatTime } from "@/utils/round";
+import { formatDate, getStatusInfo, formatTime } from "@/helpers/round";
+
+function useRoundTimer({
+  initialTimeLeft,
+  disabled,
+  onTimeout,
+}: {
+  initialTimeLeft: number;
+  disabled: boolean;
+  onTimeout: () => void;
+}) {
+  const [timeLeft, setTimeLeft] = useState(initialTimeLeft);
+
+  useEffect(() => {
+    setTimeLeft(initialTimeLeft);
+  }, [initialTimeLeft]);
+
+  useEffect(() => {
+    if (disabled) {
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        const newVal = prev - 1000;
+
+        if (newVal < 0) {
+          onTimeout();
+          return 0;
+        }
+
+        return newVal;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [disabled, onTimeout]);
+
+  return timeLeft;
+}
 
 const RoundCard: FC<{
   round: RoundWithStatus;
@@ -19,34 +58,15 @@ const RoundCard: FC<{
   onTimeout: () => void;
 }> = ({ round, onClick, onTimeout }) => {
   const status = round.status.value;
-  const initTimeLeft = round.status.timer;
-  const [timeLeft, setTimeLeft] = useState(round.status.timer);
-
-  useEffect(() => {
-    setTimeLeft(initTimeLeft);
-  }, [initTimeLeft]);
-
-  useEffect(() => {
-    if (status === "finished") {
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        const newVal = prev - 1000;
-        if (newVal < 0) {
-          onTimeout();
-          return 0;
-        }
-        return newVal;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [status]);
+  const timeLeft = useRoundTimer({
+    initialTimeLeft: round.status.timer,
+    disabled: status === "finished",
+    onTimeout,
+  });
 
   const statusInfo = getStatusInfo(round.status?.value);
   const StatusIcon = statusInfo.icon;
+
   return (
     <div
       onClick={onClick}
@@ -125,6 +145,7 @@ const RoundCard: FC<{
                 Статус: {statusInfo.title}
               </span>
             </div>
+
             {timeLeft && status !== "finished" ? (
               <div className={clsx("text-purple-400", "flex", "space-x-2")}>
                 <Clock className={clsx("w-5", "h-5")} />
@@ -225,7 +246,9 @@ const RoundsPage: FC = () => {
           </Admin>
 
           {isLoading && <LoadingState />}
+
           {error && <ErrorState />}
+
           {isSuccess && (
             <div className={clsx("space-y-6")}>
               {rounds.length === 0 ? (

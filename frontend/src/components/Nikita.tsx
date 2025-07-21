@@ -1,5 +1,6 @@
 import type { FC, ReactNode } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { isNikita } from "@shared/helpers";
 
 interface NikitaProps {
   children: ReactNode;
@@ -7,7 +8,7 @@ interface NikitaProps {
 
 const Nikita: FC<NikitaProps> = ({ children }) => {
   const { user } = useAuth();
-  return user?.role === "nikita" ? children : null;
+  return user && isNikita(user.role) ? children : null;
 };
 
 export default Nikita;

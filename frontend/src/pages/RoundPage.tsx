@@ -1,15 +1,8 @@
-import {
-  type FC,
-  type MouseEvent,
-  memo,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { type FC, type MouseEvent, memo, useCallback, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Trophy, Target, Clock } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import clsx from "clsx/lite";
 import type {
   RoundStats,
@@ -17,16 +10,18 @@ import type {
   RoundWithStatus,
   RoundStatusValue,
 } from "@shared/types";
-import { isSuperTap } from "@shared/helpers";
+import { isNikita, isSuperTap } from "@shared/helpers";
 import { SUPER_TAP_SCORE } from "@shared/constants";
 import ErrorState from "@/components/ErrorState";
+import { type Floatable, FloatableText } from "@/components/FloatableText";
 import LoadingState from "@/components/LoadingState";
 import Nikita from "@/components/Nikita";
 import UserMenu from "@/components/UserMenu";
 import { useAuth } from "@/hooks/useAuth";
-import { getStatusInfo, formatTime } from "@/utils/round";
+import { getStatusInfo, formatTime } from "@/helpers/round";
 import { roundsAPI } from "@/api";
 import { useTapBatching } from "@/hooks/useTapBatching";
+import { useTimer } from "@/hooks/useTimer";
 
 const Header: FC = () => {
   const navigate = useNavigate();
@@ -52,41 +47,6 @@ const Header: FC = () => {
     </div>
   );
 };
-
-interface Floatable {
-  accent: boolean;
-  key: number;
-  label: string;
-  x: number;
-  y: number;
-}
-
-interface FloatableTextProps extends Floatable {
-  onComplete: () => void;
-}
-
-const FloatableText: FC<FloatableTextProps> = ({
-  x,
-  y,
-  label,
-  accent,
-  onComplete,
-}) => (
-  <motion.div
-    initial={{ opacity: 1, y: 0, scale: accent ? 2 : 1 }}
-    animate={{ opacity: 0, y: -150, scale: accent ? 3 : 1.5 }}
-    exit={{ opacity: 0 }}
-    transition={{ duration: 2, ease: "easeOut" }}
-    className={clsx(
-      "absolute pointer-events-none font-bold text-2xl",
-      accent ? "text-green-500" : "text-white"
-    )}
-    style={{ left: x, top: y, transform: "translate(-50%, -50%)" }}
-    onAnimationComplete={onComplete}
-  >
-    {label}
-  </motion.div>
-);
 
 interface GooseTapButtonProps {
   accent: boolean;
@@ -140,10 +100,11 @@ const GooseTapButton: FC<GooseTapButtonProps> = memo(
       <div className="relative inline-block select-none">
         <div
           className={clsx(
-            "inline-flex cursor-pointer transition-transform duration-100",
+            "inline-flex transition-transform duration-100",
             isScaling && "scale-125",
             isSpinning && "animate-spin",
-            disabled && "opacity-50"
+            disabled && "opacity-50",
+            disabled ? "cursor-not-allowed" : "cursor-pointer"
           )}
           onClick={handleClick}
         >
@@ -293,31 +254,10 @@ const NikitaWarning: FC = () => (
     )}
   >
     <p className={clsx("text-red-400", "text-sm")}>
-      ⚠️ Никита, твои тапы не засчитываются, но ты можешь тапать для
-      удовольствия!
+      Никита, твои тапы не засчитываются!
     </p>
   </div>
 );
-
-interface TimerConfig {
-  delay?: number;
-  disabled: boolean;
-  callback: () => void;
-}
-
-function useTimer({ delay = 1000, disabled, callback }: TimerConfig) {
-  useEffect(() => {
-    if (disabled) {
-      return;
-    }
-
-    const interval = setInterval(callback, delay);
-
-    return () => {
-      clearInterval(interval);
-    };
-  }, [delay, disabled, callback]);
-}
 
 function useHandleTap({
   disabled,
@@ -393,8 +333,9 @@ const RoundPage: FC = () => {
     callback: timerCallback,
   });
 
+  const shouldIgnoreTap = user && isNikita(user.role);
   const handleTapOptimistic = useCallback(() => {
-    if (user?.role === "nikita") {
+    if (shouldIgnoreTap) {
       return;
     }
 
@@ -408,13 +349,19 @@ const RoundPage: FC = () => {
         };
       }
     );
-  }, [user?.role, round?.id, round?.status.value, queryClient]);
+  }, [shouldIgnoreTap, round?.id, round?.status.value, queryClient]);
 
   const handleTap = useHandleTap({
     roundId: round?.id!,
     disabled: !isRoundLoaded || !round || round.status.value !== "active",
     callbackOptimistic: handleTapOptimistic,
   });
+
+  const floatableLabel = shouldIgnoreTap
+    ? "+0"
+    : isSuperTap(stats.taps + 1)
+    ? `+${SUPER_TAP_SCORE}`
+    : "+1";
 
   return (
     <div className={clsx("min-h-screen")}>
@@ -452,9 +399,7 @@ const RoundPage: FC = () => {
                 disabled={round.status.value !== "active"}
                 onTap={handleTap}
                 accent={isSuperTap(stats.taps + 1)}
-                floatableLabel={
-                  isSuperTap(stats.taps + 1) ? `+${SUPER_TAP_SCORE}` : "+1"
-                }
+                floatableLabel={floatableLabel}
               />
 
               <div className={clsx("align-middle", "space-y-2")}>

@@ -1,14 +1,11 @@
 import { useRef, useEffect, useCallback } from "react";
 import { roundsAPI } from "@/api";
-import type { TapResponse } from "@shared/types";
 import { useMutation } from "@tanstack/react-query";
 
 interface UseTapBatchingOptions {
   roundId: string;
   batchTimeout?: number;
   maxBatchSize?: number;
-  onSuccess?: (response: TapResponse) => void;
-  onError?: (error: unknown) => void;
 }
 
 export const useTapBatching = ({

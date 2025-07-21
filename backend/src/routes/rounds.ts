@@ -7,6 +7,7 @@ import {
   RoundWinnerResponse,
   TapBatchRequest,
 } from "@shared/types";
+import { isNikita } from "@shared/helpers";
 
 export async function roundRoutes(fastify: FastifyInstance) {
   fastify.get<{
@@ -141,7 +142,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
         return reply.status(400).send({ error: "Invalid tap count" });
       }
 
-      if (user.role === "nikita") {
+      if (isNikita(user.role)) {
         return reply.send({
           success: false,
           taps: 0,
