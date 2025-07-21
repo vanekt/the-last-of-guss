@@ -217,8 +217,8 @@ export class RoundService {
     });
   }
 
-  static async finishRound(roundId: string): Promise<string> {
-    const [winner] = await db
+  static async finishRound(roundId: string): Promise<string | null> {
+    const topUsers = await db
       .select({
         userId: userRoundStats.userId,
         score: userRoundStats.score,
@@ -226,24 +226,31 @@ export class RoundService {
       .from(userRoundStats)
       .where(eq(userRoundStats.roundId, roundId))
       .orderBy(desc(userRoundStats.score))
-      .limit(1);
+      .limit(2);
 
-    if (winner) {
-      await db
-        .update(rounds)
-        .set({
-          winnerId: winner.userId,
-          winnerScore: winner.score,
-          isActive: false,
-        })
-        .where(eq(rounds.id, roundId));
-    } else {
-      await db
-        .update(rounds)
-        .set({ isActive: false })
-        .where(eq(rounds.id, roundId));
+    if (topUsers.length > 0) {
+      const maxScore = topUsers[0].score;
+      const winners = topUsers.filter((u) => u.score === maxScore);
+
+      if (winners.length === 1) {
+        await db
+          .update(rounds)
+          .set({
+            isActive: false,
+            winnerId: winners[0].userId,
+            winnerScore: winners[0].score,
+          })
+          .where(eq(rounds.id, roundId));
+
+        return winners[0].userId;
+      }
     }
 
-    return winner?.userId;
+    await db
+      .update(rounds)
+      .set({ isActive: false })
+      .where(eq(rounds.id, roundId));
+
+    return null;
   }
 }
