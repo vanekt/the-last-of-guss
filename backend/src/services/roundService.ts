@@ -152,7 +152,7 @@ export class RoundService {
     }
 
     return await db.transaction(async (tx) => {
-      let [stats] = await tx
+      let [userStats] = await tx
         .select({ taps: userRoundStats.taps, score: userRoundStats.score })
         .from(userRoundStats)
         .where(
@@ -162,10 +162,7 @@ export class RoundService {
           )
         );
 
-      let currentTaps = stats?.taps ?? 0;
-      let currentScore = stats?.score ?? 0;
-
-      if (!stats) {
+      if (!userStats) {
         await tx.insert(userRoundStats).values({
           userId,
           roundId,
@@ -174,20 +171,29 @@ export class RoundService {
         });
       }
 
-      const newTaps = currentTaps + tapCount;
-      let totalTapScore = 0;
+      let currentUserTaps = userStats?.taps ?? 0;
+      let currentUserScore = userStats?.score ?? 0;
+
+      const [round] = await tx
+        .select({ totalTaps: rounds.totalTaps, totalScore: rounds.totalScore })
+        .from(rounds)
+        .where(eq(rounds.id, roundId));
+
+      let tapScoreTotal = 0;
       for (let i = 1; i <= tapCount; i++) {
-        if (isSuperTap(currentTaps + i)) {
-          totalTapScore += SUPER_TAP_SCORE;
+        if (isSuperTap(currentUserTaps + i)) {
+          tapScoreTotal += SUPER_TAP_SCORE;
         } else {
-          totalTapScore += 1;
+          tapScoreTotal += 1;
         }
       }
-      const newScore = currentScore + totalTapScore;
+
+      const newUserTaps = currentUserTaps + tapCount;
+      const newUserScore = currentUserScore + tapScoreTotal;
 
       await tx
         .update(userRoundStats)
-        .set({ taps: newTaps, score: newScore })
+        .set({ taps: newUserTaps, score: newUserScore })
         .where(
           and(
             eq(userRoundStats.userId, userId),
@@ -195,10 +201,18 @@ export class RoundService {
           )
         );
 
+      await tx
+        .update(rounds)
+        .set({
+          totalTaps: round.totalTaps + tapCount,
+          totalScore: round.totalScore + tapScoreTotal,
+        })
+        .where(eq(rounds.id, roundId));
+
       return {
         success: true,
-        taps: newTaps,
-        score: newScore,
+        taps: newUserTaps,
+        score: newUserScore,
       };
     });
   }
