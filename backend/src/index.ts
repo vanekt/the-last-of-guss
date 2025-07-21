@@ -29,7 +29,7 @@ const start = async () => {
   }
 
   try {
-    await fastify.listen({ port });
+    await fastify.listen({ port, host: "0.0.0.0" });
   } catch (err) {
     console.error(err);
     process.exit(1);
