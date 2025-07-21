@@ -4,7 +4,8 @@
   "main": "src/index.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs",
+    "start": "node dist/index.cjs",
     "dev": "npx tsx --watch ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -25,6 +26,7 @@
     "@types/node": "^24.0.14",
     "@types/pg": "^8.15.4",
     "drizzle-kit": "^0.31.4",
+    "esbuild": "^0.25.8",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   }
