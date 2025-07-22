@@ -1,9 +1,21 @@
 import type { FC } from "react";
+import { LoaderCircle } from "lucide-react";
 import clsx from "clsx/lite";
 
 const LoadingState: FC = () => (
-  <div className={clsx("flex", "items-center", "justify-center", "h-30")}>
-    <div className={clsx("text-white", "text-xl")}>Загрузка...</div>
+  <div
+    className={clsx(
+      "flex",
+      "items-center",
+      "justify-center",
+      "fixed",
+      "top-0",
+      "left-0",
+      "h-screen",
+      "w-screen"
+    )}
+  >
+    <LoaderCircle className="animate-spin text-white w-12 h-12 opacity-50" />
   </div>
 );
 

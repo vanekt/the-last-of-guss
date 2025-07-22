@@ -5,12 +5,12 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import type { UserPayload } from "@shared/types";
 import { authAPI } from "@/api";
+import LoadingState from "./LoadingState";
 
 interface AuthContextType {
   user?: UserPayload;
   login: (username: string, password: string) => Promise<void>;
   logout: () => void;
-  loading: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -52,8 +52,12 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     queryClient.clear();
   };
 
+  if (loading) {
+    return <LoadingState />;
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

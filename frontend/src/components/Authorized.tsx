@@ -5,8 +5,8 @@ interface AuthorizedProps {
 }
 
 const Authorized: React.FC<AuthorizedProps> = ({ children }) => {
-  const { user, loading } = useAuth();
-  return !loading && user ? children : null;
+  const { user } = useAuth();
+  return user ? children : null;
 };
 
 export default Authorized;

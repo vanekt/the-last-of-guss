@@ -8,7 +8,7 @@
   100% { transform: rotate(360deg); }
 }
 
-.animate-spin {
+.spin-goose {
   animation: spin 0.5s ease-in reverse;
 }
 

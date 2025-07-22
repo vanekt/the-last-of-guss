@@ -102,7 +102,7 @@ const GooseTapButton: FC<GooseTapButtonProps> = memo(
           className={clsx(
             "inline-flex transition-transform duration-100",
             isScaling && "scale-125",
-            isSpinning && "animate-spin",
+            isSpinning && "spin-goose",
             disabled && "opacity-50",
             disabled ? "cursor-not-allowed" : "cursor-pointer"
           )}
