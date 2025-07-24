@@ -160,7 +160,8 @@ export class RoundService {
             eq(userRoundStats.userId, userId),
             eq(userRoundStats.roundId, roundId)
           )
-        );
+        )
+        .for("update");
 
       if (!userStats) {
         await tx.insert(userRoundStats).values({
@@ -177,7 +178,8 @@ export class RoundService {
       const [round] = await tx
         .select({ totalTaps: rounds.totalTaps, totalScore: rounds.totalScore })
         .from(rounds)
-        .where(eq(rounds.id, roundId));
+        .where(eq(rounds.id, roundId))
+        .for("update");
 
       let tapScoreTotal = 0;
       for (let i = 1; i <= tapCount; i++) {
