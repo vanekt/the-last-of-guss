@@ -153,27 +153,26 @@ export class RoundService {
 
     return await db.transaction(async (tx) => {
       let [userStats] = await tx
-        .select({ taps: userRoundStats.taps, score: userRoundStats.score })
-        .from(userRoundStats)
-        .where(
-          and(
-            eq(userRoundStats.userId, userId),
-            eq(userRoundStats.roundId, roundId)
-          )
-        )
-        .for("update");
+        .insert(userRoundStats)
+        .values({ userId, roundId, taps: 0, score: 0 })
+        .onConflictDoNothing()
+        .returning({
+          taps: userRoundStats.taps,
+          score: userRoundStats.score,
+        });
 
       if (!userStats) {
-        await tx.insert(userRoundStats).values({
-          userId,
-          roundId,
-          taps: 0,
-          score: 0,
-        });
+        [userStats] = await tx
+          .select({ taps: userRoundStats.taps, score: userRoundStats.score })
+          .from(userRoundStats)
+          .where(
+            and(
+              eq(userRoundStats.userId, userId),
+              eq(userRoundStats.roundId, roundId)
+            )
+          )
+          .for("update");
       }
-
-      let currentUserTaps = userStats?.taps ?? 0;
-      let currentUserScore = userStats?.score ?? 0;
 
       const [round] = await tx
         .select({ totalTaps: rounds.totalTaps, totalScore: rounds.totalScore })
@@ -181,17 +180,21 @@ export class RoundService {
         .where(eq(rounds.id, roundId))
         .for("update");
 
+      if (!round) {
+        throw new Error(`Round with ID ${roundId} not found.`);
+      }
+
       let tapScoreTotal = 0;
       for (let i = 1; i <= tapCount; i++) {
-        if (isSuperTap(currentUserTaps + i)) {
+        if (isSuperTap(userStats.taps + i)) {
           tapScoreTotal += SUPER_TAP_SCORE;
         } else {
           tapScoreTotal += 1;
         }
       }
 
-      const newUserTaps = currentUserTaps + tapCount;
-      const newUserScore = currentUserScore + tapScoreTotal;
+      const newUserTaps = userStats.taps + tapCount;
+      const newUserScore = userStats.score + tapScoreTotal;
 
       await tx
         .update(userRoundStats)
