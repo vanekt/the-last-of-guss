@@ -10,7 +10,7 @@ import ErrorState from "@/components/ErrorState";
 import GreenButton from "@/components/GreenButton";
 import LoadingState from "@/components/LoadingState";
 import UserMenu from "@/components/UserMenu";
-import { roundsAPI } from "@/api";
+import { roundsAPI } from "@/core/api";
 import { formatDate, getStatusInfo, formatTime } from "@/utils/round";
 
 function useRoundTimer({

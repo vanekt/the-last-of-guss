@@ -1,5 +1,5 @@
 import { useRef, useEffect, useCallback } from "react";
-import { roundsAPI } from "@/api";
+import { roundsAPI } from "@/core/api";
 import { useMutation } from "@tanstack/react-query";
 
 interface UseTapBatchingOptions {

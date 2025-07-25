@@ -19,7 +19,7 @@ import Nikita from "@/components/Nikita";
 import UserMenu from "@/components/UserMenu";
 import { useAuth } from "@/hooks/useAuth";
 import { getStatusInfo, formatTime } from "@/utils/round";
-import { roundsAPI } from "@/api";
+import { roundsAPI } from "@/core/api";
 import { useTapBatching } from "@/hooks/useTapBatching";
 import { useTimer } from "@/hooks/useTimer";
 

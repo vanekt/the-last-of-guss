@@ -7,12 +7,8 @@ const LogoutPage: FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    try {
-      logout();
-    } finally {
-      localStorage.removeItem("token");
-      navigate("/login");
-    }
+    logout();
+    navigate("/login");
   }, []);
 
   return null;

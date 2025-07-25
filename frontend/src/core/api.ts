@@ -9,6 +9,7 @@ import type {
   TapResponse,
   VerifyResponse,
 } from "@shared/types";
+import { queryClient } from "./queryClient";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -24,6 +25,18 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (axios.isAxiosError(error) && error.response?.status === 401) {
+      localStorage.removeItem("token");
+      queryClient.setQueryData(["user"], { user: null });
+    }
+
+    return Promise.reject(error);
+  }
+);
 
 export const authAPI = {
   login: async (requestBody: LoginRequest): Promise<LoginResponse> => {

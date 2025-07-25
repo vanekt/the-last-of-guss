@@ -1,10 +1,8 @@
-import { createContext, useEffect } from "react";
+import { createContext } from "react";
 import type { ReactNode, FC } from "react";
-import { useNavigate } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
 import type { UserPayload } from "@shared/types";
-import { authAPI } from "@/api";
+import { authAPI } from "@/core/api";
 import LoadingState from "./LoadingState";
 
 interface AuthContextType {
@@ -20,26 +18,14 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const {
-    data: user,
-    error,
-    isLoading: loading,
-  } = useQuery({
+  const { data: user, isLoading: loading } = useQuery({
     queryKey: ["user"],
     queryFn: authAPI.verify,
     select: (data) => data.user,
     retry: false,
   });
-
-  useEffect(() => {
-    if (axios.isAxiosError(error) && error.response?.status === 401) {
-      localStorage.removeItem("token");
-      navigate("/login");
-    }
-  }, [error, navigate]);
 
   const login = async (username: string, password: string) => {
     const response = await authAPI.login({ username, password });
