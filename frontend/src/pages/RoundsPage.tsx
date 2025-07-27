@@ -1,6 +1,4 @@
-import { useEffect, useState, type FC } from "react";
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import { Clock, Plus } from "lucide-react";
 import clsx from "clsx/lite";
@@ -10,56 +8,19 @@ import ErrorState from "@/components/ErrorState";
 import GreenButton from "@/components/GreenButton";
 import LoadingState from "@/components/LoadingState";
 import UserMenu from "@/components/UserMenu";
-import { roundsAPI } from "@/core/api";
+import { useRoundsQuery } from "@/queries/rounds";
+import { useCreateRoundMutation } from "@/mutations/rounds";
 import { formatDate, getStatusInfo, formatTime } from "@/utils/round";
+import { useRoundTimer } from "@/hooks/useRoundTimer";
 
-function useRoundTimer({
-  initialTimeLeft,
-  disabled,
-  onTimeout,
-}: {
-  initialTimeLeft: number;
-  disabled: boolean;
-  onTimeout: () => void;
-}) {
-  const [timeLeft, setTimeLeft] = useState(initialTimeLeft);
-
-  useEffect(() => {
-    setTimeLeft(initialTimeLeft);
-  }, [initialTimeLeft]);
-
-  useEffect(() => {
-    if (disabled) {
-      return;
-    }
-
-    const interval = setInterval(() => {
-      setTimeLeft((prev) => {
-        const newVal = prev - 1000;
-
-        if (newVal < 0) {
-          onTimeout();
-          return 0;
-        }
-
-        return newVal;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [disabled, onTimeout]);
-
-  return timeLeft;
-}
-
-const RoundCard: FC<{
+const RoundCard: React.FC<{
   round: RoundWithStatus;
   onClick: () => void;
   onTimeout: () => void;
 }> = ({ round, onClick, onTimeout }) => {
   const status = round.status.value;
   const timeLeft = useRoundTimer({
-    initialTimeLeft: round.status.timer,
+    initTimeLeft: round.status.timer,
     disabled: status === "finished",
     onTimeout,
   });
@@ -161,7 +122,7 @@ const RoundCard: FC<{
   );
 };
 
-const EmptyState: FC = () => (
+const EmptyState: React.FC = () => (
   <div className={clsx("text-center", "py-12")}>
     <div className={clsx("text-gray-400", "text-lg")}>Раундов пока нет</div>
     <Admin>
@@ -170,7 +131,7 @@ const EmptyState: FC = () => (
   </div>
 );
 
-const Header: FC = () => (
+const Header: React.FC = () => (
   <div
     className={clsx(
       "flex",
@@ -192,9 +153,8 @@ const Header: FC = () => (
   </div>
 );
 
-const RoundsPage: FC = () => {
+const RoundsPage: React.FC = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const {
     data: rounds,
@@ -202,24 +162,17 @@ const RoundsPage: FC = () => {
     isLoading,
     isSuccess,
     refetch,
-  } = useQuery({
-    queryKey: ["rounds"],
-    queryFn: roundsAPI.getRounds,
-    select: (data) => data.items,
-    refetchInterval: 10000,
-  });
+  } = useRoundsQuery();
 
-  const createMutation = useMutation({
-    mutationFn: roundsAPI.createRound,
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["rounds"] });
+  const createMutation = useCreateRoundMutation(
+    (data) => {
       toast.success("Раунд создан!");
       navigate(`/rounds/${data.id}`);
     },
-    onError: () => {
+    () => {
       toast.error("Ошибка создания раунда");
-    },
-  });
+    }
+  );
 
   return (
     <div className={clsx("min-h-screen")}>

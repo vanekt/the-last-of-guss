@@ -1,6 +1,6 @@
 import { type FC, type MouseEvent, memo, useCallback, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Trophy, Target, Clock } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import clsx from "clsx/lite";
@@ -18,11 +18,15 @@ import { type Floatable, FloatableText } from "@/components/FloatableText";
 import LoadingState from "@/components/LoadingState";
 import Nikita from "@/components/Nikita";
 import UserMenu from "@/components/UserMenu";
-import { getStatusInfo, formatTime } from "@/utils/round";
-import { roundsAPI } from "@/core/api";
-import { useTapBatching } from "@/hooks/useTapBatching";
-import { useTimer } from "@/hooks/useTimer";
+import {
+  useRoundQuery,
+  useRoundStatsQuery,
+  useRoundWinnerQuery,
+} from "@/queries/rounds";
 import { userRoleAtom } from "@/store/authAtoms";
+import { useInterval } from "@/hooks/useInterval";
+import { getStatusInfo, formatTime } from "@/utils/round";
+import { useHandleTap } from "@/hooks/useHandleTap";
 
 const Header: FC = () => {
   const navigate = useNavigate();
@@ -260,28 +264,6 @@ const NikitaWarning: FC = () => (
   </div>
 );
 
-function useHandleTap({
-  disabled,
-  roundId,
-  callbackOptimistic,
-}: {
-  disabled: boolean;
-  roundId: string;
-  callbackOptimistic: () => void;
-}) {
-  const { addTaps } = useTapBatching({ roundId });
-
-  return useCallback(() => {
-    if (disabled) {
-      return;
-    }
-
-    callbackOptimistic();
-
-    addTaps();
-  }, [disabled, callbackOptimistic, addTaps]);
-}
-
 const RoundPage: FC = () => {
   const { id } = useParams<{ id: string }>();
   const role = useAtomValue(userRoleAtom)!;
@@ -292,32 +274,19 @@ const RoundPage: FC = () => {
     error,
     isLoading,
     isSuccess: isRoundLoaded,
-  } = useQuery<RoundWithStatus>({
-    queryKey: ["round", id],
-    queryFn: () => roundsAPI.getRound(id!),
-    enabled: !!id,
-    refetchInterval: ({ state }) => {
-      const { data } = state;
-      if (data?.status.value === "finished") {
-        return false;
-      }
-      return data?.status.timer || 1000;
-    },
-  });
+  } = useRoundQuery(id!);
 
-  const { data: stats } = useQuery<RoundStats>({
-    queryKey: ["stats", id, round?.status.value],
-    queryFn: () => roundsAPI.getStats(id!),
-    enabled:
-      isRoundLoaded && ["active", "finished"].includes(round.status.value),
-    initialData: { taps: 0, score: 0 },
-  });
+  const { data: stats } = useRoundStatsQuery(
+    id!,
+    isRoundLoaded,
+    round?.status.value
+  );
 
-  const { data: winner } = useQuery<RoundWinner | null>({
-    queryKey: ["winner", id],
-    queryFn: () => roundsAPI.getWinner(id!),
-    enabled: isRoundLoaded && round.status.value === "finished",
-  });
+  const { data: winner } = useRoundWinnerQuery(
+    id!,
+    isRoundLoaded,
+    round?.status.value
+  );
 
   const timerCallback = useCallback(() => {
     queryClient.setQueryData(["round", round?.id], (old: RoundWithStatus) => ({
@@ -329,7 +298,8 @@ const RoundPage: FC = () => {
     }));
   }, [isRoundLoaded, round?.id, round?.status.value, queryClient]);
 
-  useTimer({
+  useInterval({
+    delay: 1000,
     disabled: !isRoundLoaded || round?.status.value === "finished",
     callback: timerCallback,
   });
@@ -355,7 +325,7 @@ const RoundPage: FC = () => {
   const handleTap = useHandleTap({
     roundId: round?.id!,
     disabled: !isRoundLoaded || !round || round.status.value !== "active",
-    callbackOptimistic: handleTapOptimistic,
+    callback: handleTapOptimistic,
   });
 
   const floatableLabel = shouldIgnoreTap

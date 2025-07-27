@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 
-interface TimerConfig {
+interface IntervalConfig {
   delay?: number;
   disabled: boolean;
   callback: () => void;
 }
 
-export function useTimer({ delay = 1000, disabled, callback }: TimerConfig) {
+export function useInterval({ delay, disabled, callback }: IntervalConfig) {
   useEffect(() => {
     if (disabled) {
       return;

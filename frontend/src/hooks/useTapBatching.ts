@@ -1,6 +1,5 @@
 import { useRef, useEffect, useCallback } from "react";
-import { roundsAPI } from "@/core/api";
-import { useMutation } from "@tanstack/react-query";
+import { useTapBatchMutation } from "@/mutations/rounds";
 
 interface UseTapBatchingOptions {
   roundId: string;
@@ -14,21 +13,15 @@ export const useTapBatching = ({
   maxBatchSize = 10,
 }: UseTapBatchingOptions) => {
   const pendingTaps = useRef<number>(0);
-
-  const tapMutation = useMutation({
-    mutationFn: async () => {
-      const tapsToProcess = pendingTaps.current;
-      pendingTaps.current = 0;
-      roundsAPI.tapBatch(roundId, tapsToProcess);
-    },
-  });
+  const tapMutation = useTapBatchMutation(roundId);
 
   const addTaps = useCallback(() => {
     pendingTaps.current++;
     if (pendingTaps.current >= maxBatchSize) {
-      tapMutation.mutate();
+      tapMutation.mutate(pendingTaps.current);
+      pendingTaps.current = 0;
     }
-  }, [pendingTaps, tapMutation.mutate]);
+  }, [pendingTaps, tapMutation.mutate, maxBatchSize]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -36,13 +29,14 @@ export const useTapBatching = ({
         return;
       }
 
-      tapMutation.mutate();
+      tapMutation.mutate(pendingTaps.current);
+      pendingTaps.current = 0;
     }, batchTimeout);
 
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [batchTimeout, tapMutation.mutate]);
 
   return {
     addTaps,
