@@ -1,16 +1,13 @@
 import type { FC } from "react";
-import { User, LogOut } from "lucide-react";
+import { useAtomValue } from "jotai";
 import { useNavigate } from "react-router-dom";
+import { User, LogOut } from "lucide-react";
 import clsx from "clsx/lite";
-import { useAuth } from "@/hooks/useAuth";
+import { userAtom } from "@/store/authAtoms";
 
 const UserMenu: FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-
-  if (!user) {
-    return null;
-  }
+  const user = useAtomValue(userAtom)!;
 
   return (
     <div className={clsx("flex", "items-center", "space-x-4")}>

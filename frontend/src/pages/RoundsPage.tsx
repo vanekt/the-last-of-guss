@@ -1,8 +1,8 @@
 import { useEffect, useState, type FC } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Clock, Plus } from "lucide-react";
 import toast from "react-hot-toast";
+import { Clock, Plus } from "lucide-react";
 import clsx from "clsx/lite";
 import type { RoundWithStatus } from "@shared/types";
 import Admin from "@/components/Admin";
@@ -212,7 +212,7 @@ const RoundsPage: FC = () => {
   const createMutation = useMutation({
     mutationFn: roundsAPI.createRound,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["todos"] });
+      queryClient.invalidateQueries({ queryKey: ["rounds"] });
       toast.success("Раунд создан!");
       navigate(`/rounds/${data.id}`);
     },

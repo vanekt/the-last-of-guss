@@ -1,17 +1,32 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { Provider as StoreProvider } from "jotai";
+import { Toaster } from "react-hot-toast";
 import { queryClient } from "@/core/queryClient";
-import { AuthProvider } from "@/components/AuthContext";
-import Protected from "@/components/Protected";
-import LoginPage from "@/pages/LoginPage";
+import { store } from "@/core/jotaiStore";
+import AuthGuard from "@/components/AuthGuard";
 import LogoutPage from "@/pages/LogoutPage";
 import RoundsPage from "@/pages/RoundsPage";
 import RoundPage from "@/pages/RoundPage";
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
+      <StoreProvider store={store}>
+        <QueryClientProvider client={queryClient}>
+          <AuthGuard>
+            <BrowserRouter>
+              <Routes>
+                <Route path="/logout" element={<LogoutPage />} />
+                <Route path="/rounds" element={<RoundsPage />} />
+                <Route path="/rounds/:id" element={<RoundPage />} />
+                <Route path="*" element={<Navigate to="/rounds" replace />} />
+              </Routes>
+            </BrowserRouter>
+          </AuthGuard>
+        </QueryClientProvider>
+      </StoreProvider>
+
       <Toaster
         position="top-center"
         toastOptions={{
@@ -23,30 +38,7 @@ function App() {
           },
         }}
       />
-      <AuthProvider>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="*"
-              element={
-                <Protected>
-                  <Routes>
-                    <Route path="/logout" element={<LogoutPage />} />
-                    <Route path="/rounds" element={<RoundsPage />} />
-                    <Route path="/rounds/:id" element={<RoundPage />} />
-                    <Route
-                      path="*"
-                      element={<Navigate to="/rounds" replace />}
-                    />
-                  </Routes>
-                </Protected>
-              }
-            />
-          </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </QueryClientProvider>
+    </>
   );
 }
 

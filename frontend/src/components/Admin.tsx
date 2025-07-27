@@ -1,13 +1,14 @@
 import type { FC, ReactNode } from "react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAtomValue } from "jotai";
+import { userRoleAtom } from "@/store/authAtoms";
 
 interface AdminProps {
   children: ReactNode;
 }
 
 const Admin: FC<AdminProps> = ({ children }) => {
-  const { user } = useAuth();
-  return user?.role === "admin" ? children : null;
+  const role = useAtomValue(userRoleAtom);
+  return role === "admin" ? children : null;
 };
 
 export default Admin;

@@ -9,7 +9,8 @@ import type {
   TapResponse,
   VerifyResponse,
 } from "@shared/types";
-import { queryClient } from "./queryClient";
+import { store } from "@/core/jotaiStore";
+import { tokenAtom, resetTokenAtom } from "@/store/authAtoms";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
@@ -19,7 +20,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
+  const token = store.get(tokenAtom);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -30,8 +31,7 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      localStorage.removeItem("token");
-      queryClient.setQueryData(["user"], { user: null });
+      store.set(resetTokenAtom);
     }
 
     return Promise.reject(error);

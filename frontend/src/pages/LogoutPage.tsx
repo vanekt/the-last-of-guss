@@ -1,14 +1,15 @@
 import { useEffect, type FC } from "react";
+import { useSetAtom } from "jotai";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
+import { logoutAtom } from "@/store/authAtoms";
 
 const LogoutPage: FC = () => {
-  const { logout } = useAuth();
+  const logout = useSetAtom(logoutAtom);
   const navigate = useNavigate();
 
   useEffect(() => {
     logout();
-    navigate("/login");
+    navigate("/");
   }, []);
 
   return null;

@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft, Trophy, Target, Clock } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import clsx from "clsx/lite";
+import { useAtomValue } from "jotai";
 import type {
   RoundStats,
   RoundWinner,
@@ -17,11 +18,11 @@ import { type Floatable, FloatableText } from "@/components/FloatableText";
 import LoadingState from "@/components/LoadingState";
 import Nikita from "@/components/Nikita";
 import UserMenu from "@/components/UserMenu";
-import { useAuth } from "@/hooks/useAuth";
 import { getStatusInfo, formatTime } from "@/utils/round";
 import { roundsAPI } from "@/core/api";
 import { useTapBatching } from "@/hooks/useTapBatching";
 import { useTimer } from "@/hooks/useTimer";
+import { userRoleAtom } from "@/store/authAtoms";
 
 const Header: FC = () => {
   const navigate = useNavigate();
@@ -283,7 +284,7 @@ function useHandleTap({
 
 const RoundPage: FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const role = useAtomValue(userRoleAtom)!;
   const queryClient = useQueryClient();
 
   const {
@@ -294,7 +295,7 @@ const RoundPage: FC = () => {
   } = useQuery<RoundWithStatus>({
     queryKey: ["round", id],
     queryFn: () => roundsAPI.getRound(id!),
-    enabled: !!id && !!user,
+    enabled: !!id,
     refetchInterval: ({ state }) => {
       const { data } = state;
       if (data?.status.value === "finished") {
@@ -333,7 +334,7 @@ const RoundPage: FC = () => {
     callback: timerCallback,
   });
 
-  const shouldIgnoreTap = user && isNikita(user.role);
+  const shouldIgnoreTap = isNikita(role);
   const handleTapOptimistic = useCallback(() => {
     if (shouldIgnoreTap) {
       return;

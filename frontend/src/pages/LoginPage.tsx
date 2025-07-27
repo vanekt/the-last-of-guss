@@ -1,17 +1,16 @@
-import { useState, type FC } from "react";
-import { useNavigate } from "react-router-dom";
-import { User, Lock } from "lucide-react";
+import { useState } from "react";
+import { useSetAtom } from "jotai";
 import toast from "react-hot-toast";
+import { User, Lock } from "lucide-react";
 import clsx from "clsx/lite";
 import PurpleButton from "@/components/PurpleButton";
-import { useAuth } from "@/hooks/useAuth";
+import { loginAtom } from "@/store/authAtoms";
 
-const LoginPage: FC = () => {
+const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const login = useSetAtom(loginAtom);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,10 +23,8 @@ const LoginPage: FC = () => {
     setLoading(true);
 
     try {
-      await login(username, password);
+      await login({ username, password });
       toast.success("Добро пожаловать в игру!");
-
-      navigate("/");
     } catch {
       toast.error("Ошибка входа");
     } finally {
@@ -119,6 +116,7 @@ const LoginPage: FC = () => {
                   placeholder="Введите имя пользователя"
                   disabled={loading}
                   autoFocus
+                  autoComplete="username"
                 />
               </div>
             </div>
@@ -174,6 +172,7 @@ const LoginPage: FC = () => {
                   )}
                   placeholder="Введите пароль"
                   disabled={loading}
+                  autoComplete="current-password"
                 />
               </div>
             </div>
