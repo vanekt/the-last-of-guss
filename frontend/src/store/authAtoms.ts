@@ -45,20 +45,3 @@ export const userAtom = atom(
 );
 
 export const userRoleAtom = atom((get) => get(userAtom)?.role);
-
-export const loginAtom = atom(
-  null,
-  async (
-    _,
-    set,
-    { username, password }: { username: string; password: string }
-  ) => {
-    const response = await authAPI.login({ username, password });
-    set(tokenAtom, response.token);
-    set(userAtom, response.user);
-  }
-);
-
-export const logoutAtom = atom(null, async (_, set) => {
-  set(resetTokenAtom);
-});

@@ -1,35 +1,30 @@
 import { useState } from "react";
-import { useSetAtom } from "jotai";
 import toast from "react-hot-toast";
 import { User, Lock } from "lucide-react";
 import clsx from "clsx/lite";
 import PurpleButton from "@/components/PurpleButton";
-import { loginAtom } from "@/store/authAtoms";
+import { useLoginMutation } from "@/mutations/auth";
 
 const LoginPage: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const login = useSetAtom(loginAtom);
+
+  const loginMutation = useLoginMutation(
+    () => {
+      toast.success("Добро пожаловать в игру!");
+    },
+    () => {
+      toast.error("Ошибка входа");
+    }
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!username.trim() || !password.trim()) {
       toast.error("Пожалуйста, заполните все поля");
       return;
     }
-
-    setLoading(true);
-
-    try {
-      await login({ username, password });
-      toast.success("Добро пожаловать в игру!");
-    } catch {
-      toast.error("Ошибка входа");
-    } finally {
-      setLoading(false);
-    }
+    loginMutation.mutate({ username, password });
   };
 
   return (
@@ -114,7 +109,7 @@ const LoginPage: React.FC = () => {
                     "transition-all"
                   )}
                   placeholder="Введите имя пользователя"
-                  disabled={loading}
+                  disabled={loginMutation.isPending}
                   autoFocus
                   autoComplete="username"
                 />
@@ -171,7 +166,7 @@ const LoginPage: React.FC = () => {
                     "transition-all"
                   )}
                   placeholder="Введите пароль"
-                  disabled={loading}
+                  disabled={loginMutation.isPending}
                   autoComplete="current-password"
                 />
               </div>
@@ -179,8 +174,8 @@ const LoginPage: React.FC = () => {
 
             <PurpleButton
               type="submit"
-              disabled={loading}
-              title={loading ? "Вход..." : "Войти"}
+              disabled={loginMutation.isPending}
+              title={loginMutation.isPending ? "Вход..." : "Войти"}
             />
           </form>
 
