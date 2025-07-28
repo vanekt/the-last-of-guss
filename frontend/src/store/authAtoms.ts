@@ -2,8 +2,8 @@ import { atom } from "jotai";
 import { atomWithStorage, RESET } from "jotai/utils";
 import { atomWithQuery } from "jotai-tanstack-query";
 import { queryClient } from "@/core/queryClient";
-import { authAPI } from "@/core/api";
 import type { UserPayload } from "@shared/types";
+import { getVerifyQuery } from "@/queries/auth";
 
 export const tokenAtom = atomWithStorage<string | null>(
   "token",
@@ -19,12 +19,7 @@ export const resetTokenAtom = atom(null, (_, set) => {
 });
 
 export const verifyAtom = atomWithQuery(
-  (get) => ({
-    queryKey: ["user"],
-    queryFn: authAPI.verify,
-    enabled: !!get(tokenAtom),
-    retry: false,
-  }),
+  (get) => getVerifyQuery(!!get(tokenAtom)),
   () => queryClient
 );
 
@@ -44,4 +39,4 @@ export const userAtom = atom(
   }
 );
 
-export const userRoleAtom = atom((get) => get(userAtom)?.role);
+export const userRoleAtom = atom((get) => get(userAtom)?.role || "");

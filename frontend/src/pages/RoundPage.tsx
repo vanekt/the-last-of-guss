@@ -266,7 +266,7 @@ const NikitaWarning: FC = () => (
 
 const RoundPage: FC = () => {
   const { id } = useParams<{ id: string }>();
-  const role = useAtomValue(userRoleAtom)!;
+  const role = useAtomValue(userRoleAtom);
   const queryClient = useQueryClient();
 
   const {

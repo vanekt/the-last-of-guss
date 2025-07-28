@@ -8,7 +8,7 @@ interface NikitaProps {
 }
 
 const Nikita: FC<NikitaProps> = ({ children }) => {
-  const role = useAtomValue(userRoleAtom)!;
+  const role = useAtomValue(userRoleAtom);
   return isNikita(role) ? children : null;
 };
 
