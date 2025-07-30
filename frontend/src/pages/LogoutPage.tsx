@@ -4,11 +4,11 @@ import { useLogoutMutation } from "@/mutations/auth";
 
 const LogoutPage: FC = () => {
   const navigate = useNavigate();
-  const logoutMutation = useLogoutMutation(() => navigate("/"));
+  const { mutate: logout } = useLogoutMutation(() => navigate("/"));
 
   useEffect(() => {
-    logoutMutation.mutate();
-  }, []);
+    logout();
+  }, [logout]);
 
   return null;
 };

@@ -296,7 +296,7 @@ const RoundPage: FC = () => {
         timer: Math.max(0, old.status.timer - 1000),
       },
     }));
-  }, [isRoundLoaded, round?.id, round?.status.value, queryClient]);
+  }, [round?.id, queryClient]);
 
   useInterval({
     delay: 1000,
@@ -323,8 +323,8 @@ const RoundPage: FC = () => {
   }, [shouldIgnoreTap, round?.id, round?.status.value, queryClient]);
 
   const handleTap = useHandleTap({
-    roundId: round?.id!,
-    disabled: !isRoundLoaded || !round || round.status.value !== "active",
+    roundId: round?.id || "",
+    disabled: !isRoundLoaded || !round || round?.status.value !== "active",
     callback: handleTapOptimistic,
   });
 

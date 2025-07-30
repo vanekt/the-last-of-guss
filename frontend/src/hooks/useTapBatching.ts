@@ -13,15 +13,15 @@ export const useTapBatching = ({
   maxBatchSize = 10,
 }: UseTapBatchingOptions) => {
   const pendingTaps = useRef<number>(0);
-  const tapMutation = useTapBatchMutation(roundId);
+  const { mutate } = useTapBatchMutation(roundId);
 
   const addTaps = useCallback(() => {
     pendingTaps.current++;
     if (pendingTaps.current >= maxBatchSize) {
-      tapMutation.mutate(pendingTaps.current);
+      mutate(pendingTaps.current);
       pendingTaps.current = 0;
     }
-  }, [pendingTaps, tapMutation.mutate, maxBatchSize]);
+  }, [pendingTaps, mutate, maxBatchSize]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -29,14 +29,14 @@ export const useTapBatching = ({
         return;
       }
 
-      tapMutation.mutate(pendingTaps.current);
+      mutate(pendingTaps.current);
       pendingTaps.current = 0;
     }, batchTimeout);
 
     return () => {
       clearInterval(interval);
     };
-  }, [batchTimeout, tapMutation.mutate]);
+  }, [batchTimeout, mutate]);
 
   return {
     addTaps,
