@@ -1,5 +1,3 @@
 <template>
-  <div class="text-white">
-    Hello Vue
-  </div>
+  <RouterView />
 </template>
