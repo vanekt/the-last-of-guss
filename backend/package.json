@@ -9,7 +9,8 @@
     "dev": "npx tsx --watch ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "mg": "npx drizzle-kit push",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prod": "pnpm typecheck && pnpm build"
   },
   "author": "vanekt",
   "license": "ISC",

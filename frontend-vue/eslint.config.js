@@ -5,7 +5,7 @@ import tseslint from "typescript-eslint";
 import { globalIgnores } from "eslint/config";
 
 export default tseslint.config([
-  globalIgnores(["dist"]),
+  globalIgnores(["dist", "**/*.d.ts"]),
   {
     files: ["**/*.{ts,vue}"],
     extends: [

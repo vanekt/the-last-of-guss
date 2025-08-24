@@ -1,3 +1,5 @@
 <template>
-  <div class="text-white">Hello Vue</div>
+  <div class="text-white">
+    Hello Vue
+  </div>
 </template>
