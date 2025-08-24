@@ -6,11 +6,6 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-console.log(
-  "process.env.VITE_BACKEND_URL (build):",
-  process.env.VITE_BACKEND_URL
-);
-
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],

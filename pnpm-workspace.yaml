@@ -3,7 +3,3 @@ packages:
   - frontend-vue
   - backend
   - shared
-
-onlyBuiltDependencies:
-  - '@tailwindcss/oxide'
-  - esbuild
