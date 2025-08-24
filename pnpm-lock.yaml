@@ -135,6 +135,12 @@ importers:
         specifier: ^7.0.4
         version: 7.0.5(@types/node@24.0.15)(jiti@2.4.2)(lightningcss@1.30.1)(tsx@4.20.3)
 
+  shared:
+    dependencies:
+      axios:
+        specifier: ^1.10.0
+        version: 1.10.0
+
 packages:
 
   '@ampproject/remapping@2.3.0':

@@ -1,0 +1,7 @@
+{
+  "name": "shared",
+  "private": true,
+  "dependencies": {
+    "axios": "^1.10.0"
+  }
+}
