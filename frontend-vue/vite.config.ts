@@ -3,6 +3,7 @@ import vue from "@vitejs/plugin-vue";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import { fileURLToPath } from "url";
+import { getBuildInfo } from "../shared/frontend/helpers/getBuildInfo";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -14,5 +15,8 @@ export default defineConfig({
       "@": path.resolve(__dirname, "src"),
       "@shared": path.resolve(__dirname, "../shared"),
     },
+  },
+  define: {
+    ...getBuildInfo(),
   },
 });
