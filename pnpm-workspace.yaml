@@ -1,4 +1,9 @@
 packages:
-  - "frontend"
-  - "backend"
-  - "shared"
+  - frontend
+  - frontend-vue
+  - backend
+  - shared
+
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - esbuild
