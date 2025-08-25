@@ -140,6 +140,9 @@ importers:
 
   frontend-vue:
     dependencies:
+      '@steveyuowo/vue-hot-toast':
+        specifier: ^1.4.3
+        version: 1.4.3(typescript@5.8.3)
       lucide-vue-next:
         specifier: ^0.541.0
         version: 0.541.0(vue@3.5.19(typescript@5.8.3))
@@ -785,6 +788,9 @@ packages:
     resolution: {integrity: sha512-M/fKi4sasCdM8i0aWJjCSFm2qEnYRR8AMLG2kxp6wD13+tMGA4Z1tVAuHkNRjud5SW2EM3naLuK35w9twvf6aA==}
     cpu: [x64]
     os: [win32]
+
+  '@steveyuowo/vue-hot-toast@1.4.3':
+    resolution: {integrity: sha512-kd8XdSOIt12h2DgfBhpEEFcTL5w+FL5mGBoPTK/WYBO2W8vRG40RdZPwwsJCaqa7uPbMFwqTDonGEQkOhRuHow==}
 
   '@tailwindcss/node@4.1.11':
     resolution: {integrity: sha512-yzhzuGRmv5QyU9qLNg4GTlYI6STedBWRE7NjxP45CsFYYq9taI0zJXZBMqIC/c8fViNLhmrbpSFS57EoxUmD6Q==}
@@ -2947,6 +2953,12 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.45.1':
     optional: true
+
+  '@steveyuowo/vue-hot-toast@1.4.3(typescript@5.8.3)':
+    dependencies:
+      vue: 3.5.19(typescript@5.8.3)
+    transitivePeerDependencies:
+      - typescript
 
   '@tailwindcss/node@4.1.11':
     dependencies:

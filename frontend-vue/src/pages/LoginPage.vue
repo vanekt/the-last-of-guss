@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import { Lock, User } from "lucide-vue-next";
+import { toast } from "@steveyuowo/vue-hot-toast";
 import PurpleButton from "@/components/PurpleButton.vue";
 import { authAPI } from "@/core/api";
 import { useAuthStore } from "@/store/authStore";
@@ -8,16 +9,13 @@ import { useAuthStore } from "@/store/authStore";
 const username = ref("");
 const password = ref("");
 const isPending = ref(false);
-const error = ref("");
 
 const buttonTitle = computed(() => (isPending.value ? "Вход..." : "Войти"));
 const { setUser, setToken } = useAuthStore();
 
 const handleSubmit = async () => {
-  error.value = "";
-
   if (!username.value.trim() || !password.value.trim()) {
-    error.value = "Пожалуйста, заполните все поля";
+    toast.error("Пожалуйста, заполните все поля");
     return;
   }
 
@@ -31,10 +29,11 @@ const handleSubmit = async () => {
     .then((res) => {
       setToken(res.token);
       setUser(res.user);
-      // TODO show success toast
+
+      toast.success("Добро пожаловать в игру!");
     })
     .catch(() => {
-      error.value = "Ошибка входа"; // TODO use toast
+      toast.error("Ошибка входа");
     })
     .finally(() => {
       isPending.value = false;
@@ -108,10 +107,6 @@ const handleSubmit = async () => {
             :disabled="isPending"
           />
         </form>
-
-        <div v-if="error" class="mt-4 text-center text-sm text-red-400">
-          {{ error }}
-        </div>
 
         <div class="mt-6 text-center text-sm text-gray-400">
           <p>Если аккаунта нет, он будет создан автоматически</p>
