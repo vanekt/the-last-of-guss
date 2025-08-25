@@ -5,9 +5,9 @@ import "@steveyuowo/vue-hot-toast/vue-hot-toast.css";
 </script>
 
 <template>
+  <Toaster />
+
   <AuthGuard>
     <RouterView />
   </AuthGuard>
-
-  <Toaster />
 </template>
