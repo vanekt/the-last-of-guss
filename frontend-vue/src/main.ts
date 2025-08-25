@@ -1,9 +1,10 @@
 import { createApp } from "vue";
 import { router } from "./router";
-import "./index.css";
+import { store } from "./core/store";
 import App from "./App.vue";
+import "./index.css";
 
-createApp(App).use(router).mount("#root");
+createApp(App).use(store).use(router).mount("#root");
 
 window.BUILD_INFO = {
   branch: import.meta.env.VITE_BRANCH_NAME,

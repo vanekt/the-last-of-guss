@@ -1,3 +1,9 @@
+<script setup lang="ts">
+import AuthGuard from '@/components/AuthGuard.vue';
+</script>
+
 <template>
-  <RouterView />
+  <AuthGuard>
+    <RouterView />
+  </AuthGuard>
 </template>
