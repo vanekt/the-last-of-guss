@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthStore } from "@/store/authStore";
+import { useLogoutMutation } from "@/mutations/auth";
 
 const router = useRouter();
-const authStore = useAuthStore();
+const logoutMutation = useLogoutMutation(() => router.replace("/"));
 
 onMounted(() => {
-  authStore.resetToken();
-  authStore.setUser(null);
-  router.replace("/");
+  logoutMutation.mutate();
 });
 </script>

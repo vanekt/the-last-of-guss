@@ -1,24 +1,20 @@
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { watch } from "vue";
 import LoadingState from "@/components/LoadingState.vue";
 import LoginPage from "@/pages/LoginPage.vue";
-import { authAPI } from "@/core/api";
 import { useAuthStore } from "@/store/authStore";
+import { useVerifyQuery } from "@/queries/auth";
 
 const authStore = useAuthStore();
-const isLoading = ref(false);
+const { data, isLoading } = useVerifyQuery(!!authStore.token);
 
-onMounted(() => {
-  isLoading.value = true;
-  authAPI
-    .verify()
-    .then((res) => {
-      authStore.setUser(res.user);
-    })
-    .finally(() => {
-      isLoading.value = false;
-    });
-});
+watch(
+  data,
+  () => {
+    authStore.setUser(data.value?.user || null);
+  },
+  { immediate: true },
+);
 </script>
 
 <template>

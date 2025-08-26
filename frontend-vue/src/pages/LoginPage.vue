@@ -3,15 +3,23 @@ import { ref, computed } from "vue";
 import { Lock, User } from "lucide-vue-next";
 import { toast } from "@steveyuowo/vue-hot-toast";
 import PurpleButton from "@/components/PurpleButton.vue";
-import { authAPI } from "@/core/api";
-import { useAuthStore } from "@/store/authStore";
+import { useLoginMutation } from "@/mutations/auth";
 
 const username = ref("");
 const password = ref("");
-const isPending = ref(false);
 
-const buttonTitle = computed(() => (isPending.value ? "Вход..." : "Войти"));
-const { setUser, setToken } = useAuthStore();
+const loginMutation = useLoginMutation(
+  () => {
+    toast.success("Добро пожаловать в игру!");
+  },
+  () => {
+    toast.error("Ошибка входа");
+  },
+);
+
+const buttonTitle = computed(() =>
+  loginMutation.isPending.value ? "Вход..." : "Войти",
+);
 
 const handleSubmit = async () => {
   if (!username.value.trim() || !password.value.trim()) {
@@ -19,25 +27,7 @@ const handleSubmit = async () => {
     return;
   }
 
-  isPending.value = true;
-
-  authAPI
-    .login({
-      username: username.value,
-      password: password.value,
-    })
-    .then((res) => {
-      setToken(res.token);
-      setUser(res.user);
-
-      toast.success("Добро пожаловать в игру!");
-    })
-    .catch(() => {
-      toast.error("Ошибка входа");
-    })
-    .finally(() => {
-      isPending.value = false;
-    });
+  loginMutation.mutate({ username: username.value, password: password.value });
 };
 </script>
 
@@ -71,7 +61,7 @@ const handleSubmit = async () => {
                 type="text"
                 class="w-full rounded-lg border border-white/20 bg-white/10 py-3 pr-4 pl-10 text-white placeholder-gray-400 transition-all focus:border-transparent focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 placeholder="Введите имя пользователя"
-                :disabled="isPending"
+                :disabled="loginMutation.isPending.value"
                 autofocus
                 autocomplete="username"
               />
@@ -95,7 +85,7 @@ const handleSubmit = async () => {
                 type="password"
                 class="w-full rounded-lg border border-white/20 bg-white/10 py-3 pr-4 pl-10 text-white placeholder-gray-400 transition-all focus:border-transparent focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 placeholder="Введите пароль"
-                :disabled="isPending"
+                :disabled="loginMutation.isPending.value"
                 autocomplete="current-password"
               />
             </div>
@@ -104,7 +94,7 @@ const handleSubmit = async () => {
           <PurpleButton
             type="submit"
             :title="buttonTitle"
-            :disabled="isPending"
+            :disabled="loginMutation.isPending.value"
           />
         </form>
 

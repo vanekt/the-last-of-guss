@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
+import { computed } from "vue";
 import { useRouter } from "vue-router";
 import { Plus } from "lucide-vue-next";
 import { toast } from "@steveyuowo/vue-hot-toast";
-import type { RoundWithStatus } from "@shared/types";
 import IfAdmin from "@/components/IfAdmin.vue";
 import GreenButton from "@/components/GreenButton.vue";
 import RoundsPageHeader from "@/components/RoundsPageHeader.vue";
@@ -11,61 +10,30 @@ import LoadingState from "@/components/LoadingState.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import NoRoundsBlock from "@/components/NoRoundsBlock.vue";
 import RoundCard from "@/components/RoundCard.vue";
-import { roundsAPI } from "@/core/api";
+import { useRoundsQuery } from "@/queries/rounds";
+import { useCreateRoundMutation } from "@/mutations/rounds";
 
 const router = useRouter();
 
-const isCreateNewRoundPending = ref(false);
-const createButtonTitle = computed(() =>
-  isCreateNewRoundPending.value ? "Создание..." : "Создать раунд",
+const { data: rounds, error, isLoading, isSuccess, refetch } = useRoundsQuery();
+
+const createMutation = useCreateRoundMutation(
+  (data) => {
+    toast.success("Раунд создан!");
+    router.push(`/rounds/${data.id}`);
+  },
+  () => {
+    toast.error("Ошибка создания раунда");
+  },
 );
-const createNewRound = () => {
-  isCreateNewRoundPending.value = true;
-  roundsAPI
-    .createRound()
-    .then((data) => {
-      toast.success("Раунд создан!");
-      router.push(`/rounds/${data.id}`);
-    })
-    .catch(() => {
-      toast.error("Ошибка создания раунда");
-    })
-    .finally(() => {
-      isCreateNewRoundPending.value = false;
-    });
-};
 
-const isLoading = ref(true);
-const isSuccess = ref(false);
-const error = ref(false);
-const rounds = ref<RoundWithStatus[]>([]);
-const hasRounds = computed(() => rounds.value.length > 0);
+const createButtonTitle = computed(() =>
+  createMutation.isPending.value ? "Создание..." : "Создать раунд",
+);
 
-function fetchRounds(shouldFetchInBackground = false) {
-  if (!shouldFetchInBackground) {
-    isLoading.value = true;
-    error.value = false;
-    isSuccess.value = false;
-  }
-
-  roundsAPI
-    .getRounds()
-    .then((resp) => {
-      rounds.value = resp.items;
-      isSuccess.value = true;
-    })
-    .catch((e) => {
-      console.error(e);
-      error.value = true;
-    })
-    .finally(() => {
-      isLoading.value = false;
-    });
-}
-
-onMounted(() => {
-  fetchRounds();
-});
+const hasRounds = computed(
+  () => Array.isArray(rounds.value) && rounds.value.length > 0,
+);
 </script>
 
 <template>
@@ -77,8 +45,8 @@ onMounted(() => {
         <IfAdmin>
           <GreenButton
             :title="createButtonTitle"
-            :disabled="isCreateNewRoundPending"
-            @click="createNewRound"
+            :disabled="createMutation.isPending.value"
+            @click="createMutation.mutate"
           >
             <template #icon>
               <Plus class="h-5 w-5" />
@@ -95,7 +63,7 @@ onMounted(() => {
               v-for="round in rounds"
               :key="round.id"
               :round="round"
-              :on-timeout="() => fetchRounds(true)"
+              :on-timeout="refetch"
               @click="() => router.push(`/rounds/${round.id}`)"
             >
               {{ round.id }}
