@@ -24,8 +24,8 @@ export function getStatusInfo(status: RoundStatusValue) {
       };
     case "finished":
       return {
-        title: "Завершен",
-        titleAlt: "Раунд завершен",
+        title: "Завершён",
+        titleAlt: "Раунд завершён",
         color: "text-gray-400",
         bgColor: "bg-gray-500/20",
         bgColorAlt: "bg-gray-500",

@@ -5,5 +5,5 @@ const authStore = useAuthStore();
 </script>
 
 <template>
-  <slot v-if="authStore.userRole === 'admin'"></slot>
+  <slot v-if="authStore.userRole === 'admin'" />
 </template>

@@ -1,11 +1,5 @@
-import {
-  ref,
-  watch,
-  onMounted,
-  onUnmounted,
-  type ComputedRef,
-  type Ref,
-} from "vue";
+import { ref, watch, onMounted, onUnmounted } from "vue";
+import type { ComputedRef, Ref } from "vue";
 
 interface UseRoundTimerOptions {
   initTimeLeft: ComputedRef<number>;

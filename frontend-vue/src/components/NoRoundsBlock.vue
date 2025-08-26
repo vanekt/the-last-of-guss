@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import Admin from "./Admin.vue";
+import IfAdmin from "./IfAdmin.vue";
 </script>
 
 <template>
   <div class="py-12 text-center">
     <div class="text-lg text-gray-400">Раундов пока нет</div>
-    <Admin>
+
+    <IfAdmin>
       <p class="mt-2 text-gray-500">Создайте первый раунд</p>
-    </Admin>
+    </IfAdmin>
   </div>
 </template>

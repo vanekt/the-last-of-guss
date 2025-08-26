@@ -24,7 +24,7 @@ onMounted(() => {
 <template>
   <LoadingState v-if="isLoading" />
   <template v-else>
-    <slot v-if="!!authStore.user"></slot>
+    <slot v-if="!!authStore.user" />
     <LoginPage v-else />
   </template>
 </template>

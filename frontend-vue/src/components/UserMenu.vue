@@ -17,9 +17,9 @@ const authStore = useAuthStore();
       </span>
     </div>
     <button
-      @click="router.replace('/logout')"
       class="cursor-pointer p-2 text-gray-400 transition-colors hover:text-white"
       title="Выйти"
+      @click="router.replace('/logout')"
     >
       <LogOut class="h-5 w-5" />
     </button>

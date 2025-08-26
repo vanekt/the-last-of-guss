@@ -5,7 +5,7 @@ import type { UserPayload } from "@shared/types";
 export const useAuthStore = defineStore(
   "auth",
   () => {
-    const token = ref<string | null>();
+    const token = ref<string | null>(null);
 
     function setToken(value: string) {
       token.value = value;
@@ -15,7 +15,7 @@ export const useAuthStore = defineStore(
       token.value = null;
     }
 
-    const user = ref<UserPayload | null>();
+    const user = ref<UserPayload | null>(null);
     const userRole = computed(() => user.value?.role);
     const userName = computed(() => user.value?.username);
 

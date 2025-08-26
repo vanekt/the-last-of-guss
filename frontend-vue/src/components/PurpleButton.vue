@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAttrs } from "vue";
 
-const { title } = defineProps<{ title: string }>();
+const props = defineProps<{ title: string }>();
 const attrs = useAttrs();
 </script>
 
@@ -17,6 +17,6 @@ const attrs = useAttrs();
     ]"
     v-bind="attrs"
   >
-    <span>{{ title }}</span>
+    <span>{{ props.title }}</span>
   </button>
 </template>

@@ -4,7 +4,7 @@ import { useRouter } from "vue-router";
 import { Plus } from "lucide-vue-next";
 import { toast } from "@steveyuowo/vue-hot-toast";
 import type { RoundWithStatus } from "@shared/types";
-import Admin from "@/components/Admin.vue";
+import IfAdmin from "@/components/IfAdmin.vue";
 import GreenButton from "@/components/GreenButton.vue";
 import RoundsPageHeader from "@/components/RoundsPageHeader.vue";
 import LoadingState from "@/components/LoadingState.vue";
@@ -74,7 +74,7 @@ onMounted(() => {
       <RoundsPageHeader />
 
       <div class="space-y-6">
-        <Admin>
+        <IfAdmin>
           <GreenButton
             :title="createButtonTitle"
             :disabled="isCreateNewRoundPending"
@@ -84,7 +84,7 @@ onMounted(() => {
               <Plus class="h-5 w-5" />
             </template>
           </GreenButton>
-        </Admin>
+        </IfAdmin>
 
         <LoadingState v-if="isLoading" />
         <ErrorState v-if="error" />
@@ -95,7 +95,7 @@ onMounted(() => {
               v-for="round in rounds"
               :key="round.id"
               :round="round"
-              :onTimeout="() => fetchRounds(true)"
+              :on-timeout="() => fetchRounds(true)"
               @click="() => router.push(`/rounds/${round.id}`)"
             >
               {{ round.id }}

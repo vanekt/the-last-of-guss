@@ -52,7 +52,7 @@ const handleSubmit = async () => {
           <p class="text-gray-300">Войдите, чтобы начать игру</p>
         </div>
 
-        <form @submit.prevent="handleSubmit" class="space-y-6">
+        <form class="space-y-6" @submit.prevent="handleSubmit">
           <div>
             <label
               for="username"
@@ -67,8 +67,8 @@ const handleSubmit = async () => {
 
               <input
                 id="username"
-                type="text"
                 v-model="username"
+                type="text"
                 class="w-full rounded-lg border border-white/20 bg-white/10 py-3 pr-4 pl-10 text-white placeholder-gray-400 transition-all focus:border-transparent focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 placeholder="Введите имя пользователя"
                 :disabled="isPending"
@@ -91,8 +91,8 @@ const handleSubmit = async () => {
 
               <input
                 id="password"
-                type="password"
                 v-model="password"
+                type="password"
                 class="w-full rounded-lg border border-white/20 bg-white/10 py-3 pr-4 pl-10 text-white placeholder-gray-400 transition-all focus:border-transparent focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 placeholder="Введите пароль"
                 :disabled="isPending"
