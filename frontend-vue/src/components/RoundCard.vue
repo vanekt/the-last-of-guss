@@ -6,10 +6,12 @@ import { getStatusInfo } from "@/utils/getStatusInfo";
 import { useRoundTimer } from "@/composables/useRoundTimer";
 import type { RoundWithStatus } from "@shared/types";
 
-const props = defineProps<{
+interface Props {
   round: RoundWithStatus;
   onTimeout: () => void;
-}>();
+}
+
+const props = defineProps<Props>();
 
 const { round, onTimeout } = toRefs(props);
 const status = computed(() => round.value.status.value);

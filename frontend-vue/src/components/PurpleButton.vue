@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { useAttrs } from "vue";
 
-const props = defineProps<{ title: string }>();
+interface Props {
+  title: string;
+}
+
+const props = defineProps<Props>();
 const attrs = useAttrs();
 </script>
 

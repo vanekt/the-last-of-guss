@@ -1,4 +1,4 @@
-import { ref, watch, onMounted, onUnmounted } from "vue";
+import { ref, watch, onWatcherCleanup } from "vue";
 import type { ComputedRef, Ref } from "vue";
 
 interface UseRoundTimerOptions {
@@ -13,57 +13,36 @@ export function useRoundTimer({
   onTimeout,
 }: UseRoundTimerOptions): Ref<number> {
   const timeLeft = ref(initTimeLeft.value);
-  let interval: ReturnType<typeof setInterval> | null = null;
 
-  const clear = () => {
-    if (interval) {
-      clearInterval(interval);
-      interval = null;
-    }
-  };
+  watch([initTimeLeft], ([newTime]) => {
+    timeLeft.value = newTime;
+  });
 
-  const start = () => {
-    clear();
-
-    if (disabled.value) {
-      return;
-    }
-
-    interval = setInterval(() => {
-      if (timeLeft.value <= 0) {
-        clear();
-
-        timeLeft.value = 0;
-
-        onTimeout();
+  watch(
+    [disabled],
+    ([isDisabled]) => {
+      if (isDisabled) {
         return;
       }
 
-      timeLeft.value -= 1000;
-    }, 1000);
-  };
+      const interval = setInterval(() => {
+        const newValue = timeLeft.value - 1000;
 
-  watch(
-    [initTimeLeft, disabled],
-    ([newTime, isDisabled]) => {
-      clear();
+        if (newValue < 0) {
+          onTimeout();
+          timeLeft.value = 0;
+          return;
+        }
 
-      timeLeft.value = newTime;
+        timeLeft.value = newValue;
+      }, 1000);
 
-      if (!isDisabled) {
-        start();
-      }
+      onWatcherCleanup(() => {
+        clearInterval(interval);
+      });
     },
     { immediate: true },
   );
-
-  onMounted(() => {
-    if (!disabled.value) {
-      start();
-    }
-  });
-
-  onUnmounted(clear);
 
   return timeLeft;
 }

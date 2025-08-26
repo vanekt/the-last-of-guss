@@ -8,7 +8,7 @@ export function useRoundTimer({
   initTimeLeft: number;
   disabled: boolean;
   onTimeout: () => void;
-}) {
+}): number {
   const [timeLeft, setTimeLeft] = useState(initTimeLeft);
 
   useEffect(() => {

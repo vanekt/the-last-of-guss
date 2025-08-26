@@ -64,7 +64,7 @@ const hasRounds = computed(
               :key="round.id"
               :round="round"
               :on-timeout="refetch"
-              @click="() => router.push(`/rounds/${round.id}`)"
+              @click="router.push(`/rounds/${round.id}`)"
             >
               {{ round.id }}
             </RoundCard>
