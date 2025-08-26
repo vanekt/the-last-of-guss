@@ -8,7 +8,8 @@ import Admin from "@/components/Admin";
 import ErrorState from "@/components/ErrorState";
 import GreenButton from "@/components/GreenButton";
 import LoadingState from "@/components/LoadingState";
-import UserMenu from "@/components/UserMenu";
+import PageContainer from "@/components/PageContainer";
+import RoundsPageHeader from "@/components/RoundsPageHeader";
 import { useRoundsQuery } from "@/queries/rounds";
 import { useCreateRoundMutation } from "@/mutations/rounds";
 import { getStatusInfo } from "@/utils/getStatusInfo";
@@ -132,28 +133,6 @@ const EmptyState: React.FC = () => (
   </div>
 );
 
-const Header: React.FC = () => (
-  <div
-    className={clsx(
-      "flex",
-      "flex-col",
-      "space-y-12",
-      "justify-between",
-      "items-end",
-      "sm:flex-row-reverse"
-    )}
-  >
-    <UserMenu />
-
-    <div className={clsx("space-y-2", "self-start")}>
-      <h1 className={clsx("text-4xl", "font-bold", "text-white")}>
-        The Last of Guss
-      </h1>
-      <p className={clsx("text-gray-300")}>Выберите раунд для участия</p>
-    </div>
-  </div>
-);
-
 const RoundsPage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -176,52 +155,41 @@ const RoundsPage: React.FC = () => {
   );
 
   return (
-    <div className={clsx("min-h-screen")}>
-      <div
-        className={clsx(
-          "container",
-          "mx-auto",
-          "px-4",
-          "py-4",
-          "sm:p-8",
-          "space-y-12"
+    <PageContainer>
+      <RoundsPageHeader />
+
+      <div className={clsx("space-y-6")}>
+        <Admin>
+          <GreenButton
+            title={createMutation.isPending ? "Создание..." : "Создать раунд"}
+            onClick={() => createMutation.mutate()}
+            disabled={createMutation.isPending}
+            icon={<Plus className={clsx("w-5", "h-5")} />}
+          />
+        </Admin>
+
+        {isLoading && <LoadingState />}
+
+        {error && <ErrorState />}
+
+        {isSuccess && (
+          <div className={clsx("space-y-6")}>
+            {rounds.length === 0 ? (
+              <EmptyState />
+            ) : (
+              rounds.map((round) => (
+                <RoundCard
+                  key={round.id}
+                  round={round}
+                  onClick={() => navigate(`/rounds/${round.id}`)}
+                  onTimeout={refetch}
+                />
+              ))
+            )}
+          </div>
         )}
-      >
-        <Header />
-
-        <div className={clsx("space-y-6")}>
-          <Admin>
-            <GreenButton
-              title={createMutation.isPending ? "Создание..." : "Создать раунд"}
-              onClick={() => createMutation.mutate()}
-              disabled={createMutation.isPending}
-              icon={<Plus className={clsx("w-5", "h-5")} />}
-            />
-          </Admin>
-
-          {isLoading && <LoadingState />}
-
-          {error && <ErrorState />}
-
-          {isSuccess && (
-            <div className={clsx("space-y-6")}>
-              {rounds.length === 0 ? (
-                <EmptyState />
-              ) : (
-                rounds.map((round) => (
-                  <RoundCard
-                    key={round.id}
-                    round={round}
-                    onClick={() => navigate(`/rounds/${round.id}`)}
-                    onTimeout={refetch}
-                  />
-                ))
-              )}
-            </div>
-          )}
-        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 

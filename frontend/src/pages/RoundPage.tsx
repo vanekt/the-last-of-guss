@@ -1,7 +1,7 @@
 import { type FC, type MouseEvent, memo, useCallback, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Trophy, Target, Clock } from "lucide-react";
+import { Trophy, Target, Clock } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
 import clsx from "clsx/lite";
 import { useAtomValue } from "jotai";
@@ -18,7 +18,8 @@ import ErrorState from "@/components/ErrorState";
 import { type Floatable, FloatableText } from "@/components/FloatableText";
 import LoadingState from "@/components/LoadingState";
 import Nikita from "@/components/Nikita";
-import UserMenu from "@/components/UserMenu";
+import PageContainer from "@/components/PageContainer";
+import RoundPageHeader from "@/components/RoundPageHeader";
 import {
   useRoundQuery,
   useRoundStatsQuery,
@@ -28,31 +29,6 @@ import { userRoleAtom } from "@/store/authAtoms";
 import { useInterval } from "@/hooks/useInterval";
 import { useHandleTap } from "@/hooks/useHandleTap";
 import { getStatusInfo } from "@/utils/getStatusInfo";
-
-const Header: FC = () => {
-  const navigate = useNavigate();
-
-  return (
-    <div className={clsx("flex", "justify-between", "items-center")}>
-      <button
-        onClick={() => navigate("/rounds")}
-        className={clsx(
-          "flex",
-          "items-center",
-          "space-x-2",
-          "text-gray-400",
-          "hover:text-white",
-          "transition-colors",
-          "cursor-pointer"
-        )}
-      >
-        <ArrowLeft className={clsx("w-5", "h-5")} />
-        <span>Раунды</span>
-      </button>
-      <UserMenu />
-    </div>
-  );
-};
 
 interface GooseTapButtonProps {
   accent: boolean;
@@ -336,72 +312,61 @@ const RoundPage: FC = () => {
       : "+1";
 
   return (
-    <div className={clsx("min-h-screen")}>
-      <div
-        className={clsx(
-          "container",
-          "mx-auto",
-          "px-4",
-          "py-4",
-          "sm:py-8",
-          "space-y-12"
-        )}
-      >
-        <Header />
+    <PageContainer>
+      <RoundPageHeader />
 
-        <div className={clsx("max-w-2xl", "mx-auto")}>
-          {isLoading && <LoadingState />}
+      <div className={clsx("max-w-2xl", "mx-auto")}>
+        {isLoading && <LoadingState />}
 
-          {error && <ErrorState />}
+        {error && <ErrorState />}
 
-          {isRoundLoaded && (
-            <div
-              className={clsx(
-                "bg-white/10",
-                "backdrop-blur-lg",
-                "rounded-2xl",
-                "p-8",
-                "border",
-                "border-white/20",
-                "text-center",
-                "space-y-4"
-              )}
-            >
-              <GooseTapButton
-                disabled={round.status.value !== "active"}
-                onTap={handleTap}
-                accent={isSuperTap(stats.taps + 1)}
-                floatableLabel={floatableLabel}
-              />
+        {isRoundLoaded && (
+          <div
+            className={clsx(
+              "bg-white/10",
+              "backdrop-blur-lg",
+              "rounded-2xl",
+              "p-8",
+              "border",
+              "border-white/20",
+              "text-center",
+              "space-y-4"
+            )}
+          >
+            <GooseTapButton
+              disabled={round.status.value !== "active"}
+              onTap={handleTap}
+              accent={isSuperTap(stats.taps + 1)}
+              floatableLabel={floatableLabel}
+            />
 
-              <div className={clsx("align-middle", "space-y-2")}>
-                <RoundStatus status={round.status.value} />
+            <div className={clsx("align-middle", "space-y-2")}>
+              <RoundStatus status={round.status.value} />
 
-                {round.status.timer && round.status.value !== "finished" ? (
-                  <RoundTimer value={round.status.timer} />
-                ) : null}
-              </div>
-
-              <UserStats taps={stats.taps} score={stats.score} />
-
-              {round.status.value === "finished" && (
-                <RoundSummary
-                  totalTaps={round.totalTaps}
-                  totalScore={round.totalScore}
-                  winner={winner}
-                />
-              )}
-
-              {round.status.value === "active" && (
-                <Nikita>
-                  <NikitaWarning />
-                </Nikita>
-              )}
+              {round.status.timer && round.status.value !== "finished" ? (
+                <RoundTimer value={round.status.timer} />
+              ) : null}
             </div>
-          )}
-        </div>
+
+            <UserStats taps={stats.taps} score={stats.score} />
+
+            {round.status.value === "finished" && (
+              <RoundSummary
+                totalTaps={round.totalTaps}
+                totalScore={round.totalScore}
+                winner={winner}
+              />
+            )}
+
+            {round.status.value === "active" && (
+              <Nikita>
+                <NikitaWarning />
+              </Nikita>
+            )}
+          </div>
+        )}
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
