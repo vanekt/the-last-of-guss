@@ -30,39 +30,46 @@ const RoundPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const role = useAtomValue(userRoleAtom);
   const queryClient = useQueryClient();
+  const roundId = id ?? "";
 
   const {
     data: round,
     error,
     isLoading,
     isSuccess: isRoundLoaded,
-  } = useRoundQuery(id!);
+  } = useRoundQuery(id ?? "");
+
+  const roundStatus = isRoundLoaded ? round.status.value : "pending";
 
   const { data: stats } = useRoundStatsQuery(
-    id!,
+    roundId,
     isRoundLoaded,
-    round?.status.value
+    roundStatus
   );
 
   const { data: winner } = useRoundWinnerQuery(
-    id!,
+    roundId,
     isRoundLoaded,
-    round?.status.value
+    roundStatus
   );
 
   const timerCallback = useCallback(() => {
-    queryClient.setQueryData(["round", round?.id], (old: RoundWithStatus) => ({
+    if (roundStatus === "finished") {
+      return;
+    }
+
+    queryClient.setQueryData(["round", roundId], (old: RoundWithStatus) => ({
       ...old,
       status: {
         ...old.status,
         timer: Math.max(0, old.status.timer - 1000),
       },
     }));
-  }, [round?.id, queryClient]);
+  }, [roundId, roundStatus, queryClient]);
 
   useInterval({
     delay: 1000,
-    disabled: !isRoundLoaded || round?.status.value === "finished",
+    disabled: !isRoundLoaded || roundStatus === "finished",
     callback: timerCallback,
   });
 
@@ -73,7 +80,7 @@ const RoundPage: React.FC = () => {
     }
 
     queryClient.setQueryData(
-      ["stats", round?.id, round?.status.value],
+      ["stats", roundId, roundStatus],
       (old: RoundStats) => {
         const newTaps = old.taps + 1;
         return {
@@ -82,11 +89,11 @@ const RoundPage: React.FC = () => {
         };
       }
     );
-  }, [shouldIgnoreTap, round?.id, round?.status.value, queryClient]);
+  }, [shouldIgnoreTap, roundId, roundStatus, queryClient]);
 
   const handleTap = useHandleTap({
-    roundId: round?.id || "",
-    disabled: !isRoundLoaded || !round || round?.status.value !== "active",
+    roundId,
+    disabled: !isRoundLoaded || roundStatus !== "active",
     callback: handleTapOptimistic,
   });
 
@@ -119,23 +126,23 @@ const RoundPage: React.FC = () => {
             )}
           >
             <GooseTapButton
-              disabled={round.status.value !== "active"}
+              disabled={roundStatus !== "active"}
               onTap={handleTap}
               accent={isSuperTap(stats.taps + 1)}
               floatableLabel={floatableLabel}
             />
 
             <div className={clsx("align-middle", "space-y-2")}>
-              <RoundStatus status={round.status.value} />
+              <RoundStatus status={roundStatus} />
 
-              {round.status.timer && round.status.value !== "finished" ? (
+              {round.status.timer && roundStatus !== "finished" ? (
                 <RoundTimer value={round.status.timer} />
               ) : null}
             </div>
 
             <UserStats taps={stats.taps} score={stats.score} />
 
-            {round.status.value === "finished" && (
+            {roundStatus === "finished" && (
               <RoundSummary
                 totalTaps={round.totalTaps}
                 totalScore={round.totalScore}
@@ -143,7 +150,7 @@ const RoundPage: React.FC = () => {
               />
             )}
 
-            {round.status.value === "active" && (
+            {roundStatus === "active" && (
               <IfNikita>
                 <NikitaWarning />
               </IfNikita>
