@@ -4,7 +4,8 @@
 
 ## Демо
 
-Демо-версия доступна по адресу: [https://the-last-of-guss-frontend.onrender.com/](https://the-last-of-guss-frontend.onrender.com/)
+- React: [https://the-last-of-guss-frontend.onrender.com/](https://the-last-of-guss-frontend.onrender.com/)
+- Vue: [https://the-last-of-guss-frontend-vue.onrender.com/](https://the-last-of-guss-frontend-vue.onrender.com/)
 
 Бэкенд демо-версии размещён на бесплатном хостинге, поэтому после долгого простоя первый запрос может выполняться с задержкой.
 
