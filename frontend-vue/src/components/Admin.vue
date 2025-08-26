@@ -2,9 +2,8 @@
 import { useAuthStore } from "@/store/authStore";
 
 const authStore = useAuthStore();
-const isAdmin = authStore.userRole === "admin";
 </script>
 
 <template>
-  <slot v-if="isAdmin"></slot>
+  <slot v-if="authStore.userRole === 'admin'"></slot>
 </template>

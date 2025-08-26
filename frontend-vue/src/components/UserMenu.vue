@@ -11,7 +11,7 @@ const authStore = useAuthStore();
   <div class="flex items-center space-x-4">
     <div class="flex items-center space-x-2 text-white">
       <User class="h-5 w-5" />
-      <span class="font-medium">{{ authStore.user?.role }}</span>
+      <span class="font-medium">{{ authStore.userName }}</span>
       <span class="rounded-full bg-purple-600 px-2 py-1 text-xs">
         {{ authStore.userRole }}
       </span>

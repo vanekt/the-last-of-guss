@@ -13,6 +13,7 @@ import type {
 } from "@shared/types";
 import { isNikita, isSuperTap } from "@shared/helpers";
 import { SUPER_TAP_SCORE } from "@shared/constants";
+import { formatTime } from "@shared/frontend/helpers/rounds";
 import ErrorState from "@/components/ErrorState";
 import { type Floatable, FloatableText } from "@/components/FloatableText";
 import LoadingState from "@/components/LoadingState";
@@ -25,8 +26,8 @@ import {
 } from "@/queries/rounds";
 import { userRoleAtom } from "@/store/authAtoms";
 import { useInterval } from "@/hooks/useInterval";
-import { getStatusInfo, formatTime } from "@/utils/round";
 import { useHandleTap } from "@/hooks/useHandleTap";
+import { getStatusInfo } from "@/utils/getStatusInfo";
 
 const Header: FC = () => {
   const navigate = useNavigate();
@@ -331,8 +332,8 @@ const RoundPage: FC = () => {
   const floatableLabel = shouldIgnoreTap
     ? "+0"
     : isSuperTap(stats.taps + 1)
-    ? `+${SUPER_TAP_SCORE}`
-    : "+1";
+      ? `+${SUPER_TAP_SCORE}`
+      : "+1";
 
   return (
     <div className={clsx("min-h-screen")}>

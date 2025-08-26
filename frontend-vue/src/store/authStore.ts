@@ -17,12 +17,13 @@ export const useAuthStore = defineStore(
 
     const user = ref<UserPayload | null>();
     const userRole = computed(() => user.value?.role);
+    const userName = computed(() => user.value?.username);
 
     function setUser(u: UserPayload | null) {
       user.value = u;
     }
 
-    return { token, setToken, resetToken, user, setUser, userRole };
+    return { token, setToken, resetToken, user, setUser, userName, userRole };
   },
   {
     persist: {

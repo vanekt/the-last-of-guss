@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import { Clock, Plus } from "lucide-react";
 import clsx from "clsx/lite";
 import type { RoundWithStatus } from "@shared/types";
+import { formatDate, formatTime } from "@shared/frontend/helpers/rounds";
 import Admin from "@/components/Admin";
 import ErrorState from "@/components/ErrorState";
 import GreenButton from "@/components/GreenButton";
@@ -10,7 +11,7 @@ import LoadingState from "@/components/LoadingState";
 import UserMenu from "@/components/UserMenu";
 import { useRoundsQuery } from "@/queries/rounds";
 import { useCreateRoundMutation } from "@/mutations/rounds";
-import { formatDate, getStatusInfo, formatTime } from "@/utils/round";
+import { getStatusInfo } from "@/utils/getStatusInfo";
 import { useRoundTimer } from "@/hooks/useRoundTimer";
 
 const RoundCard: React.FC<{
