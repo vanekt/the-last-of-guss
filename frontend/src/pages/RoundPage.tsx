@@ -1,25 +1,22 @@
-import { type FC, type MouseEvent, memo, useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { Trophy, Target, Clock } from "lucide-react";
-import { AnimatePresence } from "framer-motion";
 import clsx from "clsx/lite";
 import { useAtomValue } from "jotai";
-import type {
-  RoundStats,
-  RoundWinner,
-  RoundWithStatus,
-  RoundStatusValue,
-} from "@shared/types";
+import type { RoundStats, RoundWithStatus } from "@shared/types";
 import { isNikita, isSuperTap } from "@shared/helpers";
 import { SUPER_TAP_SCORE } from "@shared/constants";
-import { formatTime } from "@shared/frontend/helpers/rounds";
 import ErrorState from "@/components/ErrorState";
-import { type Floatable, FloatableText } from "@/components/FloatableText";
+import GooseTapButton from "@/components/GooseTapButton";
 import LoadingState from "@/components/LoadingState";
-import Nikita from "@/components/Nikita";
+import IfNikita from "@/components/IfNikita";
+import NikitaWarning from "@/components/NikitaWarning";
 import PageContainer from "@/components/PageContainer";
 import RoundPageHeader from "@/components/RoundPageHeader";
+import RoundStatus from "@/components/RoundStatus";
+import RoundSummary from "@/components/RoundSummary";
+import RoundTimer from "@/components/RoundTimer";
+import UserStats from "@/components/UserStats";
 import {
   useRoundQuery,
   useRoundStatsQuery,
@@ -28,220 +25,8 @@ import {
 import { userRoleAtom } from "@/store/authAtoms";
 import { useInterval } from "@/hooks/useInterval";
 import { useHandleTap } from "@/hooks/useHandleTap";
-import { getStatusInfo } from "@/utils/getStatusInfo";
 
-interface GooseTapButtonProps {
-  accent: boolean;
-  floatableLabel: string;
-  disabled: boolean;
-  onTap: () => void;
-}
-
-const GooseTapButton: FC<GooseTapButtonProps> = memo(
-  ({ accent, floatableLabel, disabled, onTap }) => {
-    const [isScaling, setIsScaling] = useState(false);
-    const [isSpinning, setIsSpinning] = useState(false);
-    const [floatables, setFloatables] = useState<Floatable[]>([]);
-
-    const handleClick = (e: MouseEvent<HTMLElement>) => {
-      if (disabled) {
-        return;
-      }
-
-      setIsScaling(true);
-      setTimeout(() => setIsScaling(false), 100);
-
-      if (accent) {
-        setIsSpinning(true);
-        setTimeout(() => setIsSpinning(false), 700);
-      }
-
-      onTap();
-
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      setFloatables((prev) => [
-        ...prev,
-        {
-          key: Date.now() + Math.random(),
-          x,
-          y,
-          label: floatableLabel,
-          accent,
-        },
-      ]);
-    };
-
-    const handleFloatComplete = (id: number) => {
-      setFloatables((prev) => prev.filter((b) => b.key !== id));
-    };
-
-    return (
-      <div className="relative inline-block select-none">
-        <div
-          className={clsx(
-            "inline-flex transition-transform duration-100",
-            isScaling && "scale-125",
-            isSpinning && "spin-goose",
-            disabled && "opacity-50",
-            disabled ? "cursor-not-allowed" : "cursor-pointer"
-          )}
-          onClick={handleClick}
-        >
-          <div className={clsx("text-9xl")}>🪿</div>
-        </div>
-
-        <AnimatePresence>
-          {floatables.map((floatable) => (
-            <FloatableText
-              key={floatable.key}
-              label={floatable.label}
-              accent={floatable.accent}
-              x={floatable.x}
-              y={floatable.y}
-              onComplete={() => handleFloatComplete(floatable.key)}
-            />
-          ))}
-        </AnimatePresence>
-      </div>
-    );
-  }
-);
-
-interface RoundStatusProps {
-  status: RoundStatusValue;
-}
-
-const RoundStatus: FC<RoundStatusProps> = memo(({ status }) => (
-  <h2 className={clsx("text-2xl", "font-bold", getStatusInfo(status).color)}>
-    {getStatusInfo(status).titleAlt}
-  </h2>
-));
-
-interface RoundTimerProps {
-  value?: number;
-}
-
-const RoundTimer: FC<RoundTimerProps> = memo(({ value }) => (
-  <div
-    className={clsx(
-      "flex",
-      "items-center",
-      "justify-center",
-      "space-x-2",
-      "text-purple-200"
-    )}
-  >
-    <Clock className={clsx("w-5", "h-5")} />
-    <span className={clsx("text-xl", "font-mono")}>{formatTime(value)}</span>
-  </div>
-));
-
-interface UserStatsProps {
-  taps: number;
-  score: number;
-}
-
-const UserStats: FC<UserStatsProps> = memo(({ taps, score }) => (
-  <div className={clsx("grid", "grid-cols-1", "sm:grid-cols-2", "gap-4")}>
-    <div className={clsx("bg-white/5", "rounded-lg", "p-4")}>
-      <div
-        className={clsx(
-          "flex",
-          "items-center",
-          "justify-center",
-          "space-x-2",
-          "text-blue-400"
-        )}
-      >
-        <Target className={clsx("w-5", "h-5")} />
-        <span className={clsx("font-medium")}>Мои тапы</span>
-      </div>
-      <div className={clsx("text-2xl", "font-bold", "text-white")}>{taps}</div>
-    </div>
-    <div className={clsx("bg-white/5", "rounded-lg", "p-4")}>
-      <div
-        className={clsx(
-          "flex",
-          "items-center",
-          "justify-center",
-          "space-x-2",
-          "text-purple-400"
-        )}
-      >
-        <Trophy className={clsx("w-5", "h-5")} />
-        <span className={clsx("font-medium")}>Мои очки</span>
-      </div>
-      <div className={clsx("text-2xl", "font-bold", "text-white")}>{score}</div>
-    </div>
-  </div>
-));
-
-interface RoundSummaryProps {
-  totalTaps: number;
-  totalScore: number;
-  winner?: RoundWinner | null;
-}
-
-const RoundSummary: FC<RoundSummaryProps> = ({
-  totalTaps,
-  totalScore,
-  winner,
-}) => (
-  <div className={clsx("border-t", "border-white/10", "space-y-4", "pt-4")}>
-    <h3 className={clsx("text-lg", "font-semibold", "text-white")}>
-      Статистика раунда
-    </h3>
-    <div
-      className={clsx(
-        "grid",
-        "grid-cols-1",
-        "sm:grid-cols-3",
-        "gap-4",
-        "text-sm"
-      )}
-    >
-      <div className={clsx("bg-white/5", "rounded-lg", "p-3")}>
-        <div className={clsx("text-gray-400")}>Всего тапов</div>
-        <div className={clsx("text-xl", "font-bold", "text-white")}>
-          {totalTaps}
-        </div>
-      </div>
-      <div className={clsx("bg-white/5", "rounded-lg", "p-3")}>
-        <div className={clsx("text-gray-400")}>Всего очков</div>
-        <div className={clsx("text-xl", "font-bold", "text-white")}>
-          {totalScore}
-        </div>
-      </div>
-      <div className={clsx("bg-white/5", "rounded-lg", "p-3")}>
-        <div className={clsx("text-gray-400")}>Победитель</div>
-        <div className={clsx("text-lg", "font-bold", "text-yellow-400")}>
-          {winner ? `${winner.username} (${winner.score})` : "Нет"}
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const NikitaWarning: FC = () => (
-  <div
-    className={clsx(
-      "p-4",
-      "bg-red-500/20",
-      "border",
-      "border-red-500/30",
-      "rounded-lg"
-    )}
-  >
-    <p className={clsx("text-red-400", "text-sm")}>
-      Никита, твои тапы не засчитываются!
-    </p>
-  </div>
-);
-
-const RoundPage: FC = () => {
+const RoundPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const role = useAtomValue(userRoleAtom);
   const queryClient = useQueryClient();
@@ -359,9 +144,9 @@ const RoundPage: FC = () => {
             )}
 
             {round.status.value === "active" && (
-              <Nikita>
+              <IfNikita>
                 <NikitaWarning />
-              </Nikita>
+              </IfNikita>
             )}
           </div>
         )}

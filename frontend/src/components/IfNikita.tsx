@@ -1,14 +1,15 @@
 import type { FC, ReactNode } from "react";
 import { useAtomValue } from "jotai";
+import { isNikita } from "@shared/helpers";
 import { userRoleAtom } from "@/store/authAtoms";
 
-interface AdminProps {
+interface Props {
   children: ReactNode;
 }
 
-const Admin: FC<AdminProps> = ({ children }) => {
+const IfNikita: FC<Props> = ({ children }) => {
   const role = useAtomValue(userRoleAtom);
-  return role === "admin" ? children : null;
+  return isNikita(role) ? children : null;
 };
 
-export default Admin;
+export default IfNikita;
