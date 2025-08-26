@@ -10,7 +10,7 @@ const fastify = Fastify({
 });
 
 fastify.register(cors, {
-  origin: process.env.CORS_ORIGIN,
+  origin: (process.env.CORS_ORIGIN ?? "").split(","),
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
 });
