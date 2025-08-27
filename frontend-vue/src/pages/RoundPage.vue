@@ -4,6 +4,7 @@ import LoadingState from "@/components/LoadingState.vue";
 import PageContainer from "@/components/PageContainer.vue";
 import RoundPageHeader from "@/components/RoundPageHeader.vue";
 import RoundStatus from "@/components/RoundStatus.vue";
+import RoundSummary from "@/components/RoundSummary.vue";
 import RoundTimer from "@/components/RoundTimer.vue";
 import UserStats from "@/components/UserStats.vue";
 import { useRoundTimer } from "@/composables/useRoundTimer";
@@ -70,8 +71,6 @@ console.log(
           class="space-y-4 rounded-2xl border border-white/20 bg-white/10 p-8 text-center backdrop-blur-lg"
         >
           {{ round }}
-          {{ stats }}
-          {{ winner }}
 
           <div class="space-y-2 align-middle">
             <RoundStatus :status="roundStatus" />
@@ -79,6 +78,13 @@ console.log(
           </div>
 
           <UserStats :score="stats.score" :taps="stats.taps" />
+
+          <RoundSummary
+            v-if="roundStatus === 'finished'"
+            :total-taps="round?.totalTaps || 0"
+            :total-score="round?.totalScore || 0"
+            :winner="winner"
+          />
         </div>
       </template>
     </div>
