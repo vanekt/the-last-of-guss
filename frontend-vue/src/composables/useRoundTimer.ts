@@ -4,7 +4,7 @@ import type { Ref } from "vue";
 interface UseRoundTimerOptions {
   initTimeLeft: Ref<number>;
   disabled: Ref<boolean>;
-  onTimeout: () => void;
+  onTimeout?: () => void;
 }
 
 export function useRoundTimer({
@@ -29,7 +29,7 @@ export function useRoundTimer({
         const newValue = timeLeft.value - 1000;
 
         if (newValue < 0) {
-          onTimeout();
+          onTimeout?.();
           timeLeft.value = 0;
           return;
         }

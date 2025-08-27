@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import PageContainer from "@/components/PageContainer.vue";
 import RoundPageHeader from "@/components/RoundPageHeader.vue";
+import RoundTimer from "@/components/RoundTimer.vue";
+import { useRoundTimer } from "@/composables/useRoundTimer";
 import {
   useRoundQuery,
   useRoundStatsQuery,
@@ -31,6 +33,17 @@ const { data: winner } = useRoundWinnerQuery(
   roundStatus,
 );
 
+const initTimeLeft = computed(() => round.value?.status.timer || 0);
+const isTimerDisabled = computed(
+  () => !isRoundLoaded || roundStatus.value === "finished",
+);
+
+const timeLeft = useRoundTimer({
+  initTimeLeft: initTimeLeft,
+  disabled: isTimerDisabled,
+  onTimeout: () => {},
+});
+
 console.log(
   toValue(round),
   toValue(error),
@@ -48,6 +61,8 @@ console.log(
       {{ round }}
       {{ stats }}
       {{ winner }}
+
+      <RoundTimer :value="timeLeft" v-if="roundStatus !== 'finished'" />
     </div>
   </PageContainer>
 </template>
