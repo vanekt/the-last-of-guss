@@ -1,9 +1,12 @@
-import { useQuery, queryOptions } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { authAPI } from "@/core/api";
-import { getVerifyQueryOptions } from "@shared/frontend/queries/auth";
 
-export const getVerifyQuery = (enabled: boolean) =>
-  queryOptions(getVerifyQueryOptions(authAPI.verify, enabled));
+export const getVerifyQuery = (enabled: boolean) => ({
+  queryKey: ["user"],
+  queryFn: authAPI.verify,
+  enabled,
+  retry: false,
+});
 
 export const useVerifyQuery = (enabled: boolean) => {
   return useQuery(getVerifyQuery(enabled));

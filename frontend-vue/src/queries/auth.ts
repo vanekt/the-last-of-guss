@@ -1,7 +1,11 @@
-import { useQuery, queryOptions } from "@tanstack/vue-query";
-import { getVerifyQueryOptions } from "@shared/frontend/queries/auth";
+import { useQuery } from "@tanstack/vue-query";
 import { authAPI } from "@/core/api";
 
 export const useVerifyQuery = (enabled: boolean) => {
-  return useQuery(queryOptions(getVerifyQueryOptions(authAPI.verify, enabled)));
+  return useQuery({
+    queryKey: ["user"],
+    queryFn: authAPI.verify,
+    enabled,
+    retry: false,
+  });
 };
