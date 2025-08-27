@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { computed, toValue } from "vue";
+import { useRoute } from "vue-router";
+import { isNikita } from "@shared/helpers";
 import ErrorState from "@/components/ErrorState.vue";
 import LoadingState from "@/components/LoadingState.vue";
+import NikitaWarning from "@/components/NikitaWarning.vue";
 import PageContainer from "@/components/PageContainer.vue";
 import RoundPageHeader from "@/components/RoundPageHeader.vue";
 import RoundStatus from "@/components/RoundStatus.vue";
@@ -13,10 +17,10 @@ import {
   useRoundStatsQuery,
   useRoundWinnerQuery,
 } from "@/queries/rounds";
-import { computed, toValue } from "vue";
-import { useRoute } from "vue-router";
+import { useAuthStore } from "@/store/authStore";
 
 const route = useRoute();
+const authStore = useAuthStore();
 const roundId = String(route.params.id);
 
 const {
@@ -84,6 +88,10 @@ console.log(
             :total-taps="round?.totalTaps || 0"
             :total-score="round?.totalScore || 0"
             :winner="winner"
+          />
+
+          <NikitaWarning
+            v-if="roundStatus === 'active' && isNikita(authStore.userRole!)"
           />
         </div>
       </template>
