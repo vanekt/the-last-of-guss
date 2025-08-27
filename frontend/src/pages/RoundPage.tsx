@@ -37,7 +37,7 @@ const RoundPage: React.FC = () => {
     error,
     isLoading,
     isSuccess: isRoundLoaded,
-  } = useRoundQuery(id ?? "");
+  } = useRoundQuery(roundId);
 
   const roundStatus = isRoundLoaded ? round.status.value : "pending";
 
