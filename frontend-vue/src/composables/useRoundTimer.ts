@@ -1,9 +1,9 @@
 import { ref, watch, onWatcherCleanup } from "vue";
-import type { ComputedRef, Ref } from "vue";
+import type { Ref } from "vue";
 
 interface UseRoundTimerOptions {
-  initTimeLeft: ComputedRef<number>;
-  disabled: ComputedRef<boolean>;
+  initTimeLeft: Ref<number>;
+  disabled: Ref<boolean>;
   onTimeout: () => void;
 }
 
