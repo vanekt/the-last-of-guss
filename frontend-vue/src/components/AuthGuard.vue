@@ -8,13 +8,9 @@ import { useVerifyQuery } from "@/queries/auth";
 const authStore = useAuthStore();
 const { data, isLoading } = useVerifyQuery(!!authStore.token);
 
-watch(
-  data,
-  () => {
-    authStore.setUser(data.value?.user || null);
-  },
-  { immediate: true },
-);
+watch(data, () => {
+  authStore.setUser(data.value?.user || null);
+});
 </script>
 
 <template>
