@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { formatTime } from "@shared/frontend/helpers/rounds";
 import { Clock } from "lucide-vue-next";
+import { formatTime } from "@shared/frontend/helpers/rounds";
 
 interface Props {
   value: number;

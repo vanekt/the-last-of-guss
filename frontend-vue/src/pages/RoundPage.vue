@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import ErrorState from "@/components/ErrorState.vue";
+import LoadingState from "@/components/LoadingState.vue";
 import PageContainer from "@/components/PageContainer.vue";
 import RoundPageHeader from "@/components/RoundPageHeader.vue";
+import RoundStatus from "@/components/RoundStatus.vue";
 import RoundTimer from "@/components/RoundTimer.vue";
 import { useRoundTimer } from "@/composables/useRoundTimer";
 import {
@@ -56,13 +59,25 @@ console.log(
   <PageContainer>
     <RoundPageHeader />
 
-    <div class="text-white">TODO: Implement Round Page</div>
-    <div class="text-white">
-      {{ round }}
-      {{ stats }}
-      {{ winner }}
+    <div class="mx-auto max-w-2xl">
+      <LoadingState v-if="isLoading" />
 
-      <RoundTimer :value="timeLeft" v-if="roundStatus !== 'finished'" />
+      <ErrorState v-if="error" />
+
+      <template v-if="isRoundLoaded">
+        <div
+          class="space-y-4 rounded-2xl border border-white/20 bg-white/10 p-8 text-center backdrop-blur-lg"
+        >
+          {{ round }}
+          {{ stats }}
+          {{ winner }}
+
+          <div class="space-y-2 align-middle">
+            <RoundStatus :status="roundStatus" />
+            <RoundTimer v-if="roundStatus !== 'finished'" :value="timeLeft" />
+          </div>
+        </div>
+      </template>
     </div>
   </PageContainer>
 </template>

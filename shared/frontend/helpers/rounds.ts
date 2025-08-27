@@ -9,11 +9,7 @@ export function formatDate(date: string | Date) {
   });
 }
 
-export function formatTime(value?: number) {
-  if (!value) {
-    return "";
-  }
-
+export function formatTime(value: number) {
   const MS_PER_SECOND = 1000;
   const MS_PER_MINUTE = 60 * MS_PER_SECOND;
   const MS_PER_HOUR = 60 * MS_PER_MINUTE;

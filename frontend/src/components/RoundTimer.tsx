@@ -4,7 +4,7 @@ import clsx from "clsx/lite";
 import { formatTime } from "@shared/frontend/helpers/rounds";
 
 interface Props {
-  value?: number;
+  value: number;
 }
 
 const RoundTimer: React.FC<Props> = memo(({ value }) => (
