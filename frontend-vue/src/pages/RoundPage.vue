@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toValue } from "vue";
+import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { isNikita } from "@shared/helpers";
 import ErrorState from "@/components/ErrorState.vue";
@@ -50,15 +50,7 @@ const isTimerDisabled = computed(
 const timeLeft = useRoundTimer({
   initTimeLeft: initTimeLeft,
   disabled: isTimerDisabled,
-  onTimeout: () => {},
 });
-
-console.log(
-  toValue(round),
-  toValue(error),
-  toValue(isLoading),
-  toValue(isRoundLoaded),
-);
 </script>
 
 <template>
@@ -74,7 +66,7 @@ console.log(
         <div
           class="space-y-4 rounded-2xl border border-white/20 bg-white/10 p-8 text-center backdrop-blur-lg"
         >
-          {{ round }}
+          <p class="text-white">TODO: Добавить гуся</p>
 
           <div class="space-y-2 align-middle">
             <RoundStatus :status="roundStatus" />
