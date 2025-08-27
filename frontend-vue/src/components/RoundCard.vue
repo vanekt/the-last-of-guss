@@ -8,12 +8,16 @@ import type { RoundWithStatus } from "@shared/types";
 
 interface Props {
   round: RoundWithStatus;
-  onTimeout: () => void;
+}
+
+interface Emits {
+  (e: "timeout"): void;
 }
 
 const props = defineProps<Props>();
+const emit = defineEmits<Emits>();
 
-const { round, onTimeout } = toRefs(props);
+const { round } = toRefs(props);
 const status = computed(() => round.value.status.value);
 const statusInfo = computed(() => getStatusInfo(round.value.status.value));
 const startTime = computed(() => formatDate(round.value.startTime));
@@ -24,8 +28,11 @@ const isTimerDisabled = computed(() => status.value === "finished");
 const timeLeft = useRoundTimer({
   initTimeLeft,
   disabled: isTimerDisabled,
-  onTimeout: onTimeout.value,
+  onTimeout: () => {
+    emit("timeout");
+  },
 });
+
 const shouldDisplayTimer = computed(
   () => timeLeft.value > 0 && status.value !== "finished",
 );

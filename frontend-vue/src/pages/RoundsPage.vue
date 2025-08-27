@@ -63,8 +63,8 @@ const hasRounds = computed(
             v-for="round in rounds"
             :key="round.id"
             :round="round"
-            :on-timeout="refetch"
             @click="router.push(`/rounds/${round.id}`)"
+            @timeout="refetch"
           >
             {{ round.id }}
           </RoundCard>
