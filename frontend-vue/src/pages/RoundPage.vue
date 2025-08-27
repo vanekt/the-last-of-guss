@@ -5,6 +5,7 @@ import PageContainer from "@/components/PageContainer.vue";
 import RoundPageHeader from "@/components/RoundPageHeader.vue";
 import RoundStatus from "@/components/RoundStatus.vue";
 import RoundTimer from "@/components/RoundTimer.vue";
+import UserStats from "@/components/UserStats.vue";
 import { useRoundTimer } from "@/composables/useRoundTimer";
 import {
   useRoundQuery,
@@ -76,6 +77,8 @@ console.log(
             <RoundStatus :status="roundStatus" />
             <RoundTimer v-if="roundStatus !== 'finished'" :value="timeLeft" />
           </div>
+
+          <UserStats :score="stats.score" :taps="stats.taps" />
         </div>
       </template>
     </div>
