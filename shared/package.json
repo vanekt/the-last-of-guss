@@ -2,6 +2,7 @@
   "name": "shared",
   "private": true,
   "dependencies": {
+    "@tanstack/query-core": "5.85.5",
     "axios": "^1.10.0"
   }
 }

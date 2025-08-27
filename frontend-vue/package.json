@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@steveyuowo/vue-hot-toast": "^1.4.3",
-    "@tanstack/vue-query": "5.83.0",
+    "@tanstack/vue-query": "5.85.5",
     "lucide-vue-next": "^0.541.0",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",

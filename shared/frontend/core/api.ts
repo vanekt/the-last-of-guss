@@ -10,6 +10,19 @@ import type {
   VerifyResponse,
 } from "@shared/types";
 
+export type LoginFn = (requestBody: LoginRequest) => Promise<LoginResponse>;
+export type VerifyFn = () => Promise<VerifyResponse>;
+export type GetRoundsFn = () => Promise<RoundsResponse>;
+export type GetRoundFn = (id: string) => Promise<RoundWithStatus>;
+export type CreateRoundFn = () => Promise<RoundWithStatus>;
+export type GetRoundStatsFn = (id: string) => Promise<RoundStats>;
+export type GetRoundWinnerFn = (roundId: string) => Promise<RoundWinner>;
+export type TapBatchFn = (
+  roundId: string,
+  tapCount: number
+) => Promise<TapResponse>;
+
+// TODO разделить authAPI и roundsAPI
 export const createAPI = (
   baseURL: string,
   getToken: () => string | null,
@@ -41,58 +54,67 @@ export const createAPI = (
     }
   );
 
+  const login: LoginFn = async (
+    requestBody: LoginRequest
+  ): Promise<LoginResponse> => {
+    const { data } = await api.post<LoginResponse>("/auth/login", requestBody);
+    return data;
+  };
+
+  const verify: VerifyFn = async (): Promise<VerifyResponse> => {
+    const { data } = await api.post<VerifyResponse>("/auth/verify");
+    return data;
+  };
+
+  const getRounds: GetRoundsFn = async () => {
+    const { data } = await api.get<RoundsResponse>("/rounds");
+    return data;
+  };
+
+  const getRound: GetRoundFn = async (id) => {
+    const { data } = await api.get<RoundWithStatus>(`/rounds/${id}`);
+    return data;
+  };
+
+  const createRound: CreateRoundFn = async () => {
+    const { data } = await api.post<RoundWithStatus>("/rounds");
+    return data;
+  };
+
+  const getStats: GetRoundStatsFn = async (id: string): Promise<RoundStats> => {
+    const { data } = await api.get<RoundStats>(`/rounds/${id}/stats`);
+    return data;
+  };
+
+  const getWinner: GetRoundWinnerFn = async (
+    id: string
+  ): Promise<RoundWinner> => {
+    const { data } = await api.get<RoundWinner>(`/rounds/${id}/winner`);
+    return data;
+  };
+
+  const tapBatch: TapBatchFn = async (
+    id: string,
+    tapCount: number
+  ): Promise<TapResponse> => {
+    const { data } = await api.post(`/rounds/${id}/tap/batch`, {
+      tapCount,
+    });
+    return data;
+  };
+
   return {
     authAPI: {
-      login: async (requestBody: LoginRequest): Promise<LoginResponse> => {
-        const { data } = await api.post<LoginResponse>(
-          "/auth/login",
-          requestBody
-        );
-        return data;
-      },
-
-      verify: async (): Promise<VerifyResponse> => {
-        const { data } = await api.post<VerifyResponse>("/auth/verify");
-        return data;
-      },
+      login,
+      verify,
     },
     roundsAPI: {
-      getRounds: async (): Promise<RoundsResponse> => {
-        const { data } = await api.get<RoundsResponse>("/rounds");
-        return data;
-      },
-
-      getRound: async (id: string): Promise<RoundWithStatus> => {
-        const { data } = await api.get<RoundWithStatus>(`/rounds/${id}`);
-        return data;
-      },
-
-      createRound: async (): Promise<RoundWithStatus> => {
-        const { data } = await api.post<RoundWithStatus>("/rounds");
-        return data;
-      },
-
-      getStats: async (roundId: string) => {
-        const { data } = await api.get<RoundStats>(`/rounds/${roundId}/stats`);
-        return data;
-      },
-
-      getWinner: async (roundId: string) => {
-        const { data } = await api.get<RoundWinner>(
-          `/rounds/${roundId}/winner`
-        );
-        return data;
-      },
-
-      tapBatch: async (
-        roundId: string,
-        tapCount: number
-      ): Promise<TapResponse> => {
-        const { data } = await api.post(`/rounds/${roundId}/tap/batch`, {
-          tapCount,
-        });
-        return data;
-      },
+      getRounds,
+      getRound,
+      createRound,
+      getStats,
+      getWinner,
+      tapBatch,
     },
   };
 };

@@ -1,29 +1,18 @@
-import { useQuery } from "@tanstack/vue-query";
-import type { RoundWithStatus, RoundStats, RoundWinner } from "@shared/types";
+import { useQuery, queryOptions } from "@tanstack/vue-query";
+import {
+  getRoundsQueryOptions,
+  getRoundQueryOptions,
+  getRoundStatsQueryOptions,
+  getRoundWinnerQueryOptions,
+} from "@shared/frontend/queries/rounds";
 import { roundsAPI } from "@/core/api";
 
 export const useRoundsQuery = () => {
-  return useQuery({
-    queryKey: ["rounds"],
-    queryFn: roundsAPI.getRounds,
-    select: (data) => data.items,
-    refetchInterval: 10000,
-  });
+  return useQuery(queryOptions(getRoundsQueryOptions(roundsAPI.getRounds)));
 };
 
 export const useRoundQuery = (id: string) => {
-  return useQuery<RoundWithStatus>({
-    queryKey: ["round", id],
-    queryFn: () => roundsAPI.getRound(id),
-    enabled: !!id,
-    refetchInterval: ({ state }) => {
-      const { data, error } = state;
-      if (error || data?.status.value === "finished") {
-        return false;
-      }
-      return data?.status.timer || 1000;
-    },
-  });
+  return useQuery(queryOptions(getRoundQueryOptions(roundsAPI.getRound, id)));
 };
 
 export const useRoundStatsQuery = (
@@ -31,13 +20,16 @@ export const useRoundStatsQuery = (
   isRoundLoaded: boolean,
   roundStatus: string,
 ) => {
-  return useQuery<RoundStats>({
-    queryKey: ["stats", id, roundStatus],
-    queryFn: () => roundsAPI.getStats(id),
-    enabled:
-      isRoundLoaded && ["active", "finished"].includes(String(roundStatus)),
-    initialData: { taps: 0, score: 0 },
-  });
+  return useQuery(
+    queryOptions(
+      getRoundStatsQueryOptions(
+        roundsAPI.getStats,
+        id,
+        isRoundLoaded,
+        roundStatus,
+      ),
+    ),
+  );
 };
 
 export const useRoundWinnerQuery = (
@@ -45,9 +37,14 @@ export const useRoundWinnerQuery = (
   isRoundLoaded: boolean,
   roundStatus: string,
 ) => {
-  return useQuery<RoundWinner | null>({
-    queryKey: ["winner", id],
-    queryFn: () => roundsAPI.getWinner(id),
-    enabled: isRoundLoaded && roundStatus === "finished",
-  });
+  return useQuery(
+    queryOptions(
+      getRoundWinnerQueryOptions(
+        roundsAPI.getWinner,
+        id,
+        isRoundLoaded,
+        roundStatus,
+      ),
+    ),
+  );
 };
