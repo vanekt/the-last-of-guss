@@ -62,9 +62,14 @@ watch(stats, (newStats) => {
   score.value = newStats.score;
 });
 
+const shouldIgnoreTap = isNikita(authStore.userRole!);
 const { addTap } = useTapBatching({ roundId });
 
 const handleTap = () => {
+  if (shouldIgnoreTap) {
+    return;
+  }
+
   addTap();
 
   taps.value++;
@@ -75,7 +80,6 @@ const handleTap = () => {
   }
 };
 
-const shouldIgnoreTap = isNikita(authStore.userRole!);
 const floatableLabel = computed(() => {
   if (shouldIgnoreTap) {
     return "+0";
