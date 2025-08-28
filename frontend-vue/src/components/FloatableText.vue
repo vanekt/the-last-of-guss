@@ -2,10 +2,14 @@
 import { onMounted, ref } from "vue";
 
 interface Props {
-  label: string;
   accent: boolean;
+  label: string;
   x: number;
   y: number;
+}
+
+export interface Floatable extends Props {
+  key: number;
 }
 
 interface Emits {
