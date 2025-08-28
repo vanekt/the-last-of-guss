@@ -10,14 +10,14 @@ export function useHandleTap({
   roundId: string;
   callback: () => void;
 }) {
-  const { addTaps } = useTapBatching({ roundId });
+  const { addTap } = useTapBatching({ roundId });
 
   return useCallback(() => {
     if (disabled) {
       return;
     }
 
-    addTaps();
+    addTap();
     callback();
-  }, [disabled, addTaps, callback]);
+  }, [disabled, addTap, callback]);
 }
