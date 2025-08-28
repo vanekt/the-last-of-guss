@@ -14,6 +14,7 @@ import RoundSummary from "@/components/RoundSummary.vue";
 import RoundTimer from "@/components/RoundTimer.vue";
 import UserStats from "@/components/UserStats.vue";
 import { useRoundTimer } from "@/composables/useRoundTimer";
+import { useTapBatching } from "@/composables/useTapBatching";
 import {
   useRoundQuery,
   useRoundStatsQuery,
@@ -61,9 +62,10 @@ watch(stats, (newStats) => {
   score.value = newStats.score;
 });
 
+const { addTap } = useTapBatching({ roundId });
+
 const handleTap = () => {
-  console.log("TAPTAP");
-  // TODO сохранить тапы на бэк
+  addTap();
 
   taps.value++;
   if (isSuperTap(taps.value)) {
