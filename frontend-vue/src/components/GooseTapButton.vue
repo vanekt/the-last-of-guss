@@ -28,6 +28,9 @@ function updateRect() {
   }
 }
 
+let scaleTimeout: ReturnType<typeof setTimeout> | null = null;
+let spinTimeout: ReturnType<typeof setTimeout> | null = null;
+
 onMounted(() => {
   updateRect();
   window.addEventListener("resize", updateRect);
@@ -35,6 +38,12 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener("resize", updateRect);
+  if (scaleTimeout) {
+    clearTimeout(scaleTimeout);
+  }
+  if (spinTimeout) {
+    clearTimeout(spinTimeout);
+  }
 });
 
 function handleClick(e: MouseEvent) {
@@ -45,11 +54,17 @@ function handleClick(e: MouseEvent) {
   emit("click");
 
   isScaling.value = true;
-  setTimeout(() => (isScaling.value = false), 100);
+  if (scaleTimeout) {
+    clearTimeout(scaleTimeout);
+  }
+  scaleTimeout = setTimeout(() => (isScaling.value = false), 100);
 
   if (props.accent) {
     isSpinning.value = true;
-    setTimeout(() => (isSpinning.value = false), 700);
+    if (spinTimeout) {
+      clearTimeout(spinTimeout);
+    }
+    spinTimeout = setTimeout(() => (isSpinning.value = false), 500);
   }
 
   if (rect.value) {

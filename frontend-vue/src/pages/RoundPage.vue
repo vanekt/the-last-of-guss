@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
-import { isNikita } from "@shared/helpers";
+import { SUPER_TAP_SCORE } from "@shared/constants";
+import { isNikita, isSuperTap } from "@shared/helpers";
 import ErrorState from "@/components/ErrorState.vue";
+import GooseTapButton from "@/components/GooseTapButton.vue";
 import LoadingState from "@/components/LoadingState.vue";
 import NikitaWarning from "@/components/NikitaWarning.vue";
 import PageContainer from "@/components/PageContainer.vue";
@@ -51,6 +53,34 @@ const timeLeft = useRoundTimer({
   initTimeLeft: initTimeLeft,
   disabled: isTimerDisabled,
 });
+
+const taps = ref(stats.value.taps);
+const score = ref(stats.value.score);
+watch(stats, (newStats) => {
+  taps.value = newStats.taps;
+  score.value = newStats.score;
+});
+
+const handleTap = () => {
+  console.log("TAPTAP");
+  // TODO сохранить тапы на бэк
+
+  taps.value++;
+  if (isSuperTap(taps.value)) {
+    score.value += SUPER_TAP_SCORE;
+  } else {
+    score.value++;
+  }
+};
+
+const shouldIgnoreTap = isNikita(authStore.userRole!);
+const floatableLabel = computed(() => {
+  if (shouldIgnoreTap) {
+    return "+0";
+  }
+
+  return isSuperTap(taps.value + 1) ? `+${SUPER_TAP_SCORE}` : "+1";
+});
 </script>
 
 <template>
@@ -66,14 +96,19 @@ const timeLeft = useRoundTimer({
         <div
           class="space-y-4 rounded-2xl border border-white/20 bg-white/10 p-8 text-center backdrop-blur-lg"
         >
-          <p class="text-white">TODO: Добавить гуся</p>
+          <GooseTapButton
+            :disabled="roundStatus !== 'active'"
+            :accent="isSuperTap(taps + 1)"
+            :floatableLabel="floatableLabel"
+            @click="handleTap"
+          />
 
           <div class="space-y-2 align-middle">
             <RoundStatus :status="roundStatus" />
             <RoundTimer v-if="roundStatus !== 'finished'" :value="timeLeft" />
           </div>
 
-          <UserStats :score="stats.score" :taps="stats.taps" />
+          <UserStats :score="score" :taps="taps" />
 
           <RoundSummary
             v-if="roundStatus === 'finished'"
@@ -82,9 +117,7 @@ const timeLeft = useRoundTimer({
             :winner="winner"
           />
 
-          <NikitaWarning
-            v-if="roundStatus === 'active' && isNikita(authStore.userRole!)"
-          />
+          <NikitaWarning v-if="roundStatus === 'active' && shouldIgnoreTap" />
         </div>
       </template>
     </div>
