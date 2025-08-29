@@ -59,6 +59,8 @@ const hasRounds = computed(
 
       <template v-if="isSuccess">
         <template v-if="hasRounds">
+          <p class="font-bold text-gray-300">Выберите раунд для участия:</p>
+
           <RoundCard
             v-for="round in rounds"
             :key="round.id"
