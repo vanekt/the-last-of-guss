@@ -9,7 +9,9 @@ const authStore = useAuthStore();
 const { data, isLoading } = useVerifyQuery(!!authStore.token);
 
 watch(data, () => {
-  authStore.setUser(data.value?.user || null);
+  if (data.value?.user) {
+    authStore.setUser(data.value.user);
+  }
 });
 </script>
 

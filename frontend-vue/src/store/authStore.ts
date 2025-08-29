@@ -1,4 +1,4 @@
-import { computed, ref } from "vue";
+import { computed, ref, watchEffect } from "vue";
 import { defineStore } from "pinia";
 import type { UserPayload } from "@shared/types";
 
@@ -19,9 +19,15 @@ export const useAuthStore = defineStore(
     const userRole = computed(() => user.value?.role);
     const userName = computed(() => user.value?.username);
 
-    function setUser(u: UserPayload | null) {
+    function setUser(u: UserPayload) {
       user.value = u;
     }
+
+    watchEffect(() => {
+      if (!token.value) {
+        user.value = null;
+      }
+    });
 
     return { token, setToken, resetToken, user, setUser, userName, userRole };
   },

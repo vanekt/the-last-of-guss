@@ -112,7 +112,7 @@ const floatableLabel = computed(() => {
           <GooseTapButton
             :disabled="roundStatus !== 'active'"
             :accent="isSuperTap(taps + 1)"
-            :floatableLabel="floatableLabel"
+            :floatable-label="floatableLabel"
             @click="handleTap"
           />
 

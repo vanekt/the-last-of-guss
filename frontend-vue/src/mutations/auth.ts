@@ -34,7 +34,6 @@ export const useLogoutMutation = (onSuccess?: () => void) => {
     },
     onSuccess: () => {
       authStore.resetToken();
-      authStore.setUser(null);
       queryClient.clear();
       onSuccess?.();
     },
