@@ -57,7 +57,7 @@ const handleSubmit = async () => {
 
               <input
                 id="username"
-                v-model="username"
+                v-model.trim="username"
                 type="text"
                 class="w-full rounded-lg border border-white/20 bg-white/10 py-3 pr-4 pl-10 text-white placeholder-gray-400 transition-all focus:border-transparent focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 placeholder="Введите имя пользователя"
@@ -81,7 +81,7 @@ const handleSubmit = async () => {
 
               <input
                 id="password"
-                v-model="password"
+                v-model.trim="password"
                 type="password"
                 class="w-full rounded-lg border border-white/20 bg-white/10 py-3 pr-4 pl-10 text-white placeholder-gray-400 transition-all focus:border-transparent focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 placeholder="Введите пароль"

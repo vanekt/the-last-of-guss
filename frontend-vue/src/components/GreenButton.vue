@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { useAttrs } from "vue";
-
 interface Props {
   title: string;
 }
 
 const props = defineProps<Props>();
-const attrs = useAttrs();
 </script>
 
 <template>
@@ -19,7 +16,6 @@ const attrs = useAttrs();
       'focus:ring-2 focus:ring-green-500 focus:outline-none',
       'disabled:cursor-not-allowed disabled:opacity-50',
     ]"
-    v-bind="attrs"
   >
     <slot name="icon" />
     <span>{{ props.title }}</span>
