@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import type { RoundWinner } from "@shared/types";
 import { defineProps } from "vue";
+import { Ellipsis } from "lucide-vue-next";
+import type { RoundWinner } from "@shared/types";
 
 interface Props {
+  isReady: boolean;
   totalTaps: number;
   totalScore: number;
   winner?: RoundWinner | null;
@@ -29,9 +31,13 @@ defineProps<Props>();
       </div>
       <div class="rounded-lg bg-white/5 p-3">
         <div class="text-gray-400">Победитель</div>
-        <div class="text-lg font-bold text-yellow-400">
+        <div v-if="isReady" class="text-lg font-bold text-yellow-400">
           {{ winner ? `${winner.username} (${winner.score})` : "Нет" }}
         </div>
+        <Ellipsis
+          v-else
+          class="inline h-7 w-7 animate-ping text-white opacity-50"
+        />
       </div>
     </div>
   </div>

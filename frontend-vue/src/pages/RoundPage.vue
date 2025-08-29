@@ -37,9 +37,13 @@ const roundStatus = computed(
   () => (isRoundLoaded && round.value?.status.value) || "pending",
 );
 
-const { data: stats } = useRoundStatsQuery(roundId, isRoundLoaded, roundStatus);
+const { data: stats, isFetched: isStatsLoaded } = useRoundStatsQuery(
+  roundId,
+  isRoundLoaded,
+  roundStatus,
+);
 
-const { data: winner } = useRoundWinnerQuery(
+const { data: winner, isFetched: isWinnerLoaded } = useRoundWinnerQuery(
   roundId,
   isRoundLoaded,
   roundStatus,
@@ -114,10 +118,11 @@ const floatableLabel = computed(() => {
             <RoundTimer v-if="roundStatus !== 'finished'" :value="timeLeft" />
           </div>
 
-          <UserStats :score="score" :taps="taps" />
+          <UserStats :is-ready="isStatsLoaded" :score="score" :taps="taps" />
 
           <RoundSummary
             v-if="roundStatus === 'finished'"
+            :is-ready="isWinnerLoaded"
             :total-taps="round?.totalTaps || 0"
             :total-score="round?.totalScore || 0"
             :winner="winner"

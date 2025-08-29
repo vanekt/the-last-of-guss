@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
-import { Trophy, Target } from "lucide-vue-next";
+import { Trophy, Target, Ellipsis } from "lucide-vue-next";
 
 interface Props {
+  isReady: boolean;
   taps: number;
   score: number;
 }
@@ -17,14 +18,25 @@ defineProps<Props>();
         <Target class="h-5 w-5" />
         <span class="font-medium">Мои тапы</span>
       </div>
-      <div class="text-2xl font-bold text-white">{{ taps }}</div>
+
+      <div v-if="isReady" class="text-2xl font-bold text-white">{{ taps }}</div>
+      <Ellipsis
+        v-else
+        class="inline h-8 w-8 animate-ping text-white opacity-50"
+      />
     </div>
     <div class="rounded-lg bg-white/5 p-4">
       <div class="flex items-center justify-center space-x-2 text-purple-400">
         <Trophy class="h-5 w-5" />
         <span class="font-medium">Мои очки</span>
       </div>
-      <div class="text-2xl font-bold text-white">{{ score }}</div>
+      <div v-if="isReady" class="text-2xl font-bold text-white">
+        {{ score }}
+      </div>
+      <Ellipsis
+        v-else
+        class="inline h-8 w-8 animate-ping text-white opacity-50"
+      />
     </div>
   </div>
 </template>
