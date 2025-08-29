@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, watch } from "vue";
 import { useRoute } from "vue-router";
 import { SUPER_TAP_SCORE } from "@shared/constants";
 import { isNikita, isSuperTap } from "@shared/helpers";
@@ -21,6 +21,8 @@ import {
   useRoundWinnerQuery,
 } from "@/queries/rounds";
 import { useAuthStore } from "@/store/authStore";
+import { useRoundScore } from "@/composables/useRoundScore";
+import { useRoundTaps } from "@/composables/useRoundTaps";
 
 const route = useRoute();
 const authStore = useAuthStore();
@@ -59,8 +61,8 @@ const timeLeft = useRoundTimer({
   disabled: isTimerDisabled,
 });
 
-const taps = ref(stats.value.taps);
-const score = ref(stats.value.score);
+const taps = useRoundTaps(roundId);
+const score = useRoundScore(roundId);
 watch(stats, (newStats) => {
   taps.value = newStats.taps;
   score.value = newStats.score;
@@ -77,6 +79,7 @@ const handleTap = () => {
   addTap();
 
   taps.value++;
+
   if (isSuperTap(taps.value)) {
     score.value += SUPER_TAP_SCORE;
   } else {
