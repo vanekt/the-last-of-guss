@@ -4,6 +4,7 @@ import { Lock, User } from "lucide-vue-next";
 import { toast } from "@steveyuowo/vue-hot-toast";
 import PurpleButton from "@/components/PurpleButton.vue";
 import { useLoginMutation } from "@/mutations/auth";
+import { vFocus } from "@/directives/vFocus";
 
 const username = ref("");
 const password = ref("");
@@ -58,11 +59,11 @@ const handleSubmit = async () => {
               <input
                 id="username"
                 v-model.trim="username"
+                v-focus
                 type="text"
                 class="w-full rounded-lg border border-white/20 bg-white/10 py-3 pr-4 pl-10 text-white placeholder-gray-400 transition-all focus:border-transparent focus:ring-2 focus:ring-purple-500 focus:outline-none"
                 placeholder="Введите имя пользователя"
                 :disabled="loginMutation.isPending.value"
-                autofocus
                 autocomplete="username"
               />
             </div>
