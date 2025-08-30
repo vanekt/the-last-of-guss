@@ -102,15 +102,16 @@ function handleFloatableFinish(id: number) {
     >
       <div class="text-9xl">🪿</div>
     </div>
-    <template v-for="floatable in floatables" :key="floatable.key">
-      <FloatableText
-        :label="floatable.label"
-        :accent="floatable.accent"
-        :x="floatable.x"
-        :y="floatable.y"
-        @finish="() => handleFloatableFinish(floatable.key)"
-      />
-    </template>
+
+    <FloatableText
+      v-for="floatable in floatables"
+      :key="floatable.key"
+      :label="floatable.label"
+      :accent="floatable.accent"
+      :x="floatable.x"
+      :y="floatable.y"
+      @finish="() => handleFloatableFinish(floatable.key)"
+    />
   </div>
 </template>
 
