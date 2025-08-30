@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter } from "vue-router";
+import { storeToRefs } from "pinia";
 import { Plus } from "lucide-vue-next";
 import { toast } from "@steveyuowo/vue-hot-toast";
+import { useAuthStore } from "@/store/authStore";
 import ErrorState from "@/components/ErrorState.vue";
 import GreenButton from "@/components/GreenButton.vue";
-import IfAdmin from "@/components/IfAdmin.vue";
 import LoadingState from "@/components/LoadingState.vue";
 import NoRoundsBlock from "@/components/NoRoundsBlock.vue";
 import PageContainer from "@/components/PageContainer.vue";
@@ -15,7 +16,7 @@ import { useRoundsQuery } from "@/queries/rounds";
 import { useCreateRoundMutation } from "@/mutations/rounds";
 
 const router = useRouter();
-
+const { isAdmin } = storeToRefs(useAuthStore());
 const { data: rounds, error, isLoading, isSuccess, refetch } = useRoundsQuery();
 
 const createMutation = useCreateRoundMutation(
@@ -42,19 +43,19 @@ const hasRounds = computed(
     <RoundsPageHeader />
 
     <div class="space-y-6">
-      <IfAdmin>
-        <GreenButton
-          :title="createButtonTitle"
-          :disabled="createMutation.isPending.value"
-          @click="createMutation.mutate"
-        >
-          <template #icon>
-            <Plus class="h-5 w-5" />
-          </template>
-        </GreenButton>
-      </IfAdmin>
+      <GreenButton
+        v-if="isAdmin"
+        :title="createButtonTitle"
+        :disabled="createMutation.isPending.value"
+        @click="createMutation.mutate"
+      >
+        <template #icon>
+          <Plus class="h-5 w-5" />
+        </template>
+      </GreenButton>
 
       <LoadingState v-if="isLoading" />
+
       <ErrorState v-if="error" />
 
       <template v-if="isSuccess">

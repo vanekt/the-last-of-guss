@@ -18,6 +18,7 @@ export const useAuthStore = defineStore(
     const user = ref<UserPayload | null>(null);
     const userRole = computed(() => user.value?.role);
     const userName = computed(() => user.value?.username);
+    const isAdmin = computed(() => userRole.value === "admin");
 
     function setUser(u: UserPayload) {
       user.value = u;
@@ -29,7 +30,16 @@ export const useAuthStore = defineStore(
       }
     });
 
-    return { token, setToken, resetToken, user, setUser, userName, userRole };
+    return {
+      token,
+      setToken,
+      resetToken,
+      user,
+      setUser,
+      userName,
+      userRole,
+      isAdmin,
+    };
   },
   {
     persist: {
