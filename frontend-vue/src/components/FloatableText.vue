@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
-
 interface Props {
   accent: boolean;
   label: string;
@@ -18,17 +16,11 @@ interface Emits {
 
 defineProps<Props>();
 const emit = defineEmits<Emits>();
-
-const isVisible = ref(true);
-onMounted(() => {
-  isVisible.value = false;
-});
 </script>
 
 <template>
-  <Transition name="floatable" @after-leave="emit('finish')">
+  <Transition appear name="floatable" @after-enter="emit('finish')">
     <div
-      v-if="isVisible"
       class="pointer-events-none absolute text-2xl font-bold"
       :class="accent ? 'text-green-500' : 'text-white'"
       :style="{
@@ -44,18 +36,18 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.floatable-leave-active {
+.floatable-enter-active {
   transition:
     transform 2s ease-out,
     opacity 2s ease-out;
 }
 
-.floatable-leave-from {
+.floatable-enter-from {
   opacity: 1;
   transform: translate(-50%, -50%) scale(var(--from-scale));
 }
 
-.floatable-leave-to {
+.floatable-enter-to {
   opacity: 0;
   transform: translate(-50%, -200px) scale(var(--to-scale));
 }
