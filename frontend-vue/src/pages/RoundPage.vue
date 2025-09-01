@@ -56,35 +56,30 @@ const isTimerDisabled = computed(
   () => !isRoundLoaded || roundStatus.value === "finished",
 );
 
-const timeLeft = useRoundTimer({
+const { timeLeft } = useRoundTimer({
   initTimeLeft: initTimeLeft,
   disabled: isTimerDisabled,
 });
 
-const taps = useRoundTaps(roundId);
-const score = useRoundScore(roundId);
+const { taps, setTaps, incrementTaps } = useRoundTaps(roundId);
+const { score, setScore, incrementScore } = useRoundScore(roundId);
 watch(stats, (newStats) => {
-  taps.value = newStats.taps;
-  score.value = newStats.score;
+  setTaps(newStats.taps);
+  setScore(newStats.score);
 });
 
 const shouldIgnoreTap = isNikita(authStore.userRole!);
-const { addTap } = useTapBatching({ roundId });
+const { addTap: addTapToBatch } = useTapBatching({ roundId });
 
 const handleTap = () => {
   if (shouldIgnoreTap) {
     return;
   }
 
-  addTap();
+  addTapToBatch();
 
-  taps.value++;
-
-  if (isSuperTap(taps.value)) {
-    score.value += SUPER_TAP_SCORE;
-  } else {
-    score.value++;
-  }
+  incrementTaps();
+  incrementScore(isSuperTap(taps.value) ? SUPER_TAP_SCORE : 1);
 };
 
 const floatableLabel = computed(() => {

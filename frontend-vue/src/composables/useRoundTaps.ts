@@ -1,4 +1,4 @@
-import { toRef } from "vue";
+import { readonly, toRef } from "vue";
 import { useRoundsStore } from "@/store/roundsStore";
 
 export function useRoundTaps(roundId: string) {
@@ -6,5 +6,13 @@ export function useRoundTaps(roundId: string) {
   const round = store.getRoundById(roundId);
   const taps = toRef(round, "taps");
 
-  return taps;
+  function setTaps(value: number) {
+    taps.value = value;
+  }
+
+  function incrementTaps() {
+    taps.value++;
+  }
+
+  return { taps: readonly(taps), setTaps, incrementTaps };
 }

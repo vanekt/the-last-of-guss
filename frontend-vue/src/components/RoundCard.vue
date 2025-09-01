@@ -25,7 +25,7 @@ const endTime = computed(() => formatDate(round.value.endTime));
 
 const initTimeLeft = computed(() => round.value.status.timer);
 const isTimerDisabled = computed(() => status.value === "finished");
-const timeLeft = useRoundTimer({
+const { timeLeft } = useRoundTimer({
   initTimeLeft,
   disabled: isTimerDisabled,
   onTimeout: () => {

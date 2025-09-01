@@ -11,7 +11,7 @@ export function useRoundTimer({
   initTimeLeft,
   disabled,
   onTimeout,
-}: UseRoundTimerOptions): Ref<number> {
+}: UseRoundTimerOptions) {
   const timeLeft = ref(initTimeLeft.value);
 
   watch([initTimeLeft], ([newTime]) => {
@@ -44,5 +44,5 @@ export function useRoundTimer({
     { immediate: true },
   );
 
-  return timeLeft;
+  return { timeLeft };
 }
