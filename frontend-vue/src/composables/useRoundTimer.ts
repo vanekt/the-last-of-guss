@@ -1,9 +1,9 @@
-import { ref, watch, onWatcherCleanup } from "vue";
-import type { Ref } from "vue";
+import { ref, toValue, watchEffect, type MaybeRefOrGetter } from "vue";
+import { useInterval } from "@vueuse/core";
 
 interface UseRoundTimerOptions {
-  initTimeLeft: Ref<number>;
-  disabled: Ref<boolean>;
+  initTimeLeft: MaybeRefOrGetter<number>;
+  disabled: MaybeRefOrGetter<boolean>;
   onTimeout?: () => void;
 }
 
@@ -12,37 +12,31 @@ export function useRoundTimer({
   disabled,
   onTimeout,
 }: UseRoundTimerOptions) {
-  const timeLeft = ref(initTimeLeft.value);
+  const timeLeft = ref(toValue(initTimeLeft));
 
-  watch([initTimeLeft], ([newTime]) => {
-    timeLeft.value = newTime;
+  watchEffect(() => {
+    timeLeft.value = toValue(initTimeLeft);
   });
 
-  watch(
-    [disabled],
-    ([isDisabled]) => {
-      if (isDisabled) {
+  const { pause, resume } = useInterval(1000, {
+    controls: true,
+    immediate: false,
+    callback: () => {
+      const newValue = timeLeft.value - 1000;
+
+      if (newValue < 0) {
+        onTimeout?.();
+        timeLeft.value = 0;
         return;
       }
 
-      const interval = setInterval(() => {
-        const newValue = timeLeft.value - 1000;
-
-        if (newValue < 0) {
-          onTimeout?.();
-          timeLeft.value = 0;
-          return;
-        }
-
-        timeLeft.value = newValue;
-      }, 1000);
-
-      onWatcherCleanup(() => {
-        clearInterval(interval);
-      });
+      timeLeft.value = newValue;
     },
-    { immediate: true },
-  );
+  });
+
+  watchEffect(() => {
+    toValue(disabled) ? pause() : resume();
+  });
 
   return { timeLeft };
 }

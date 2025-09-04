@@ -1,4 +1,5 @@
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onUnmounted } from "vue";
+import { useInterval } from "@vueuse/core";
 import { useTapBatchMutation } from "@/mutations/rounds";
 
 interface UseTapBatchingOptions {
@@ -31,19 +32,11 @@ export const useTapBatching = ({
     }
   };
 
-  let intervalId: ReturnType<typeof setInterval> | null = null;
-
-  onMounted(() => {
-    intervalId = setInterval(flush, batchTimeout);
+  useInterval(batchTimeout, {
+    callback: flush,
   });
 
-  onUnmounted(() => {
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
-
-    flush();
-  });
+  onUnmounted(flush);
 
   return {
     addTap,
