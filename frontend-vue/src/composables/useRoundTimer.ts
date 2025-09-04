@@ -1,5 +1,5 @@
 import { ref, toValue, watchEffect, type MaybeRefOrGetter } from "vue";
-import { useInterval } from "@vueuse/core";
+import { useIntervalFn } from "@vueuse/core";
 
 interface UseRoundTimerOptions {
   initTimeLeft: MaybeRefOrGetter<number>;
@@ -18,24 +18,24 @@ export function useRoundTimer({
     timeLeft.value = toValue(initTimeLeft);
   });
 
-  const { pause, resume } = useInterval(1000, {
-    controls: true,
-    immediate: false,
-    callback: () => {
-      const newValue = timeLeft.value - 1000;
+  const { pause, resume } = useIntervalFn(() => {
+    const newValue = timeLeft.value - 1000;
 
-      if (newValue < 0) {
-        onTimeout?.();
-        timeLeft.value = 0;
-        return;
-      }
+    if (newValue < 0) {
+      onTimeout?.();
+      timeLeft.value = 0;
+      return;
+    }
 
-      timeLeft.value = newValue;
-    },
-  });
+    timeLeft.value = newValue;
+  }, 1000);
 
   watchEffect(() => {
-    toValue(disabled) ? pause() : resume();
+    if (toValue(disabled)) {
+      pause();
+    } else {
+      resume();
+    }
   });
 
   return { timeLeft };

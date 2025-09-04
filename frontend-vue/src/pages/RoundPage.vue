@@ -57,14 +57,9 @@ watchEffect(() => {
   }
 });
 
-const initTimeLeft = computed(() => round.value?.status.timer || 0);
-const isTimerDisabled = computed(
-  () => !isRoundLoaded || roundStatus.value === "finished",
-);
-
 const { timeLeft } = useRoundTimer({
-  initTimeLeft: initTimeLeft,
-  disabled: isTimerDisabled,
+  initTimeLeft: () => round.value?.status.timer || 0,
+  disabled: () => !isRoundLoaded || roundStatus.value === "finished",
 });
 
 const { taps, setTaps, incrementTaps } = useRoundTaps(roundId);
@@ -75,7 +70,10 @@ watch(stats, (newStats) => {
 });
 
 const shouldIgnoreTap = isNikita(authStore.userRole!);
-const { addTap: addTapToBatch } = useTapBatching({ roundId });
+const { addTap: addTapToBatch } = useTapBatching({
+  roundId,
+  disabled: () => roundStatus.value !== "active",
+});
 
 const handleTap = () => {
   if (shouldIgnoreTap) {

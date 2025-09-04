@@ -1,17 +1,25 @@
-import { ref, onUnmounted } from "vue";
-import { useInterval } from "@vueuse/core";
+import {
+  ref,
+  toValue,
+  watchEffect,
+  onUnmounted,
+  type MaybeRefOrGetter,
+} from "vue";
+import { useIntervalFn } from "@vueuse/core";
 import { useTapBatchMutation } from "@/mutations/rounds";
 
 interface UseTapBatchingOptions {
   roundId: string;
   batchTimeout?: number;
   maxBatchSize?: number;
+  disabled: MaybeRefOrGetter<boolean>;
 }
 
 export const useTapBatching = ({
   roundId,
   batchTimeout = 300,
   maxBatchSize = 10,
+  disabled,
 }: UseTapBatchingOptions) => {
   const pendingTaps = ref<number>(0);
   const { mutate } = useTapBatchMutation(roundId);
@@ -32,8 +40,14 @@ export const useTapBatching = ({
     }
   };
 
-  useInterval(batchTimeout, {
-    callback: flush,
+  const { pause, resume } = useIntervalFn(flush, batchTimeout);
+
+  watchEffect(() => {
+    if (toValue(disabled)) {
+      pause();
+    } else {
+      resume();
+    }
   });
 
   onUnmounted(flush);
