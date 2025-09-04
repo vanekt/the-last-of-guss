@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, onUnmounted } from "vue";
-import { useElementBounding } from "@vueuse/core";
-import FloatableText, { type Floatable } from "./FloatableText.vue";
+import { ref } from "vue";
+import { useElementBounding, useTimeout } from "@vueuse/core";
+import FloatableText, { type Floatable } from "@/components/FloatableText.vue";
 
 interface Props {
   accent: boolean;
@@ -16,48 +16,7 @@ interface Emits {
 const props = defineProps<Props>();
 const emit = defineEmits<Emits>();
 
-const isScaling = ref(false);
-const isSpinning = ref(false);
 const floatables = ref<Floatable[]>([]);
-
-const el = ref<HTMLElement | null>(null);
-const { left, top } = useElementBounding(el);
-
-let scaleTimeout: ReturnType<typeof setTimeout> | null = null;
-let spinTimeout: ReturnType<typeof setTimeout> | null = null;
-
-onUnmounted(() => {
-  if (scaleTimeout) {
-    clearTimeout(scaleTimeout);
-  }
-  if (spinTimeout) {
-    clearTimeout(spinTimeout);
-  }
-});
-
-function handleClick(e: MouseEvent) {
-  if (props.disabled) {
-    return;
-  }
-
-  emit("click");
-
-  isScaling.value = true;
-  if (scaleTimeout) {
-    clearTimeout(scaleTimeout);
-  }
-  scaleTimeout = setTimeout(() => (isScaling.value = false), 100);
-
-  if (props.accent) {
-    isSpinning.value = true;
-    if (spinTimeout) {
-      clearTimeout(spinTimeout);
-    }
-    spinTimeout = setTimeout(() => (isSpinning.value = false), 500);
-  }
-
-  createFloatable(e.clientX - left.value, e.clientY - top.value);
-}
 
 function createFloatable(x: number, y: number) {
   floatables.value.push({
@@ -72,14 +31,40 @@ function createFloatable(x: number, y: number) {
 function handleFloatableFinish(id: number) {
   floatables.value = floatables.value.filter((b) => b.key !== id);
 }
+
+const buttonEl = ref<HTMLElement | null>(null);
+const { left, top } = useElementBounding(buttonEl);
+
+const { isPending: isScaling, start: startScaling } = useTimeout(100, {
+  controls: true,
+  immediate: false,
+});
+
+const { isPending: isSpinning, start: startSpinning } = useTimeout(500, {
+  controls: true,
+  immediate: false,
+});
+
+function handleClick(e: MouseEvent) {
+  emit("click");
+
+  startScaling();
+
+  if (props.accent) {
+    startSpinning();
+  }
+
+  createFloatable(e.clientX - left.value, e.clientY - top.value);
+}
 </script>
 
 <template>
   <div class="relative inline-block select-none">
-    <div
-      ref="el"
+    <button
+      ref="buttonEl"
+      :disabled="props.disabled"
       :class="[
-        'inline-flex transition-transform duration-100',
+        'text-9xl transition-transform duration-100',
         isScaling && 'scale-125',
         isSpinning && 'spin-goose',
         props.disabled && 'opacity-50',
@@ -87,8 +72,8 @@ function handleFloatableFinish(id: number) {
       ]"
       @click="handleClick"
     >
-      <div class="text-9xl">🪿</div>
-    </div>
+      🪿
+    </button>
 
     <FloatableText
       v-for="floatable in floatables"
@@ -105,14 +90,11 @@ function handleFloatableFinish(id: number) {
 <style scoped>
 @keyframes spin {
   0% {
-    transform: rotate(0deg);
-  }
-  100% {
     transform: rotate(360deg);
   }
 }
 
 .spin-goose {
-  animation: spin 0.5s ease-in reverse;
+  animation: spin 0.5s ease-out;
 }
 </style>

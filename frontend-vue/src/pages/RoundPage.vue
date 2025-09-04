@@ -118,7 +118,7 @@ const floatableLabel = computed(() => {
           />
 
           <div class="space-y-2 align-middle">
-            <RoundStatus v-show="!!roundStatus" :status="roundStatus" />
+            <RoundStatus :status="roundStatus!" />
             <RoundTimer v-if="roundStatus !== 'finished'" :value="timeLeft" />
           </div>
 
