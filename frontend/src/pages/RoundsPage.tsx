@@ -65,14 +65,19 @@ const RoundsPage: React.FC = () => {
                 </IfAdmin>
               </div>
             ) : (
-              rounds.map((round) => (
-                <RoundCard
-                  key={round.id}
-                  round={round}
-                  onClick={() => navigate(`/rounds/${round.id}`)}
-                  onTimeout={refetch}
-                />
-              ))
+              <>
+                <p className="font-bold text-gray-300">
+                  Выберите раунд для участия:
+                </p>
+                {rounds.map((round) => (
+                  <RoundCard
+                    key={round.id}
+                    round={round}
+                    onClick={() => navigate(`/rounds/${round.id}`)}
+                    onTimeout={refetch}
+                  />
+                ))}
+              </>
             )}
           </div>
         )}

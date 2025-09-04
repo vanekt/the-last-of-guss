@@ -6,19 +6,17 @@ const RoundsPageHeader: React.FC = () => (
     className={clsx(
       "flex",
       "flex-col",
-      "space-y-12",
+      "gap-12",
       "justify-between",
       "items-end",
-      "sm:flex-row-reverse"
+      "sm:flex-row-reverse",
+      "sm:items-start"
     )}
   >
     <UserMenu />
 
-    <div className={clsx("space-y-2", "self-start")}>
-      <h1 className={clsx("text-4xl", "font-bold", "text-white")}>
-        The Last of Guss
-      </h1>
-      <p className={clsx("text-gray-300")}>Выберите раунд для участия</p>
+    <div className="space-y-2 self-start">
+      <h1 className="text-4xl font-bold text-white">The Last of Guss</h1>
     </div>
   </div>
 );
