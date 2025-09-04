@@ -1,4 +1,4 @@
-import { toValue, type Ref } from "vue";
+import { toValue, type MaybeRefOrGetter } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import type { RoundWithStatus, RoundStats, RoundWinner } from "@shared/types";
 import { roundsAPI } from "@/core/api";
@@ -29,27 +29,24 @@ export const useRoundQuery = (id: string) => {
 
 export const useRoundStatsQuery = (
   id: string,
-  isRoundLoaded: Ref<boolean>,
-  roundStatus: Ref<string>,
+  roundStatus: MaybeRefOrGetter<string | undefined>,
 ) => {
   return useQuery<RoundStats>({
     queryKey: ["stats", id, roundStatus],
     queryFn: () => roundsAPI.getStats(id),
     enabled: () =>
-      isRoundLoaded.value &&
-      ["active", "finished"].includes(toValue(roundStatus)),
+      ["active", "finished"].includes(String(toValue(roundStatus))),
     initialData: { taps: 0, score: 0 },
   });
 };
 
 export const useRoundWinnerQuery = (
   id: string,
-  isRoundLoaded: Ref<boolean>,
-  roundStatus: Ref<string>,
+  roundStatus: MaybeRefOrGetter<string | undefined>,
 ) => {
   return useQuery<RoundWinner | null>({
     queryKey: ["winner", id],
     queryFn: () => roundsAPI.getWinner(id),
-    enabled: () => isRoundLoaded && toValue(roundStatus) === "finished",
+    enabled: () => toValue(roundStatus) === "finished",
   });
 };

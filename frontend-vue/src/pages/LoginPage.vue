@@ -5,6 +5,9 @@ import { toast } from "@steveyuowo/vue-hot-toast";
 import PurpleButton from "@/components/PurpleButton.vue";
 import { useLoginMutation } from "@/mutations/auth";
 import { vFocus } from "@/directives/vFocus";
+import { usePageTitle } from "@/composables/usePageTitle";
+
+usePageTitle("Вход в игру");
 
 const username = ref("");
 const password = ref("");

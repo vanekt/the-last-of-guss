@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, watch } from "vue";
+import { computed, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { SUPER_TAP_SCORE } from "@shared/constants";
 import { isNikita, isSuperTap } from "@shared/helpers";
@@ -23,6 +23,8 @@ import {
 import { useAuthStore } from "@/store/authStore";
 import { useRoundScore } from "@/composables/useRoundScore";
 import { useRoundTaps } from "@/composables/useRoundTaps";
+import { usePageTitle } from "@/composables/usePageTitle";
+import { getStatusInfo } from "@/utils/getStatusInfo";
 
 const route = useRoute();
 const authStore = useAuthStore();
@@ -35,21 +37,25 @@ const {
   isSuccess: isRoundLoaded,
 } = useRoundQuery(roundId);
 
-const roundStatus = computed(
-  () => (isRoundLoaded && round.value?.status.value) || "pending",
-);
+const roundStatus = computed(() => round.value?.status.value);
 
 const {
   data: stats,
   isEnabled: isStatsEnabled,
   isFetched: isStatsFetched,
-} = useRoundStatsQuery(roundId, isRoundLoaded, roundStatus);
+} = useRoundStatsQuery(roundId, roundStatus);
 
 const { data: winner, isFetched: isWinnerLoaded } = useRoundWinnerQuery(
   roundId,
-  isRoundLoaded,
   roundStatus,
 );
+
+const { setTitle } = usePageTitle("Раунд");
+watchEffect(() => {
+  if (roundStatus.value) {
+    setTitle(getStatusInfo(roundStatus.value).titleAlt!);
+  }
+});
 
 const initTimeLeft = computed(() => round.value?.status.timer || 0);
 const isTimerDisabled = computed(
@@ -112,7 +118,7 @@ const floatableLabel = computed(() => {
           />
 
           <div class="space-y-2 align-middle">
-            <RoundStatus :status="roundStatus" />
+            <RoundStatus v-show="!!roundStatus" :status="roundStatus" />
             <RoundTimer v-if="roundStatus !== 'finished'" :value="timeLeft" />
           </div>
 
