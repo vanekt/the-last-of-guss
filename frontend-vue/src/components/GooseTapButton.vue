@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onUnmounted } from "vue";
+import { useElementBounding } from "@vueuse/core";
 import FloatableText, { type Floatable } from "./FloatableText.vue";
 
 interface Props {
@@ -19,25 +20,13 @@ const isScaling = ref(false);
 const isSpinning = ref(false);
 const floatables = ref<Floatable[]>([]);
 
-const tapButtonRef = ref<HTMLElement | null>(null);
-const rect = ref<DOMRect | null>(null);
-
-function updateRect() {
-  if (tapButtonRef.value) {
-    rect.value = tapButtonRef.value.getBoundingClientRect();
-  }
-}
+const el = ref<HTMLElement | null>(null);
+const { left, top } = useElementBounding(el);
 
 let scaleTimeout: ReturnType<typeof setTimeout> | null = null;
 let spinTimeout: ReturnType<typeof setTimeout> | null = null;
 
-onMounted(() => {
-  updateRect();
-  window.addEventListener("resize", updateRect);
-});
-
 onUnmounted(() => {
-  window.removeEventListener("resize", updateRect);
   if (scaleTimeout) {
     clearTimeout(scaleTimeout);
   }
@@ -67,9 +56,7 @@ function handleClick(e: MouseEvent) {
     spinTimeout = setTimeout(() => (isSpinning.value = false), 500);
   }
 
-  if (rect.value) {
-    createFloatable(e.clientX - rect.value.left, e.clientY - rect.value.top);
-  }
+  createFloatable(e.clientX - left.value, e.clientY - top.value);
 }
 
 function createFloatable(x: number, y: number) {
@@ -90,7 +77,7 @@ function handleFloatableFinish(id: number) {
 <template>
   <div class="relative inline-block select-none">
     <div
-      ref="tapButtonRef"
+      ref="el"
       :class="[
         'inline-flex transition-transform duration-100',
         isScaling && 'scale-125',
