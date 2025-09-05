@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 import type {
   LoginRequest,
   LoginResponse,
@@ -43,56 +43,39 @@ export const createAPI = (
 
   return {
     authAPI: {
-      login: async (requestBody: LoginRequest): Promise<LoginResponse> => {
-        const { data } = await api.post<LoginResponse>(
-          "/auth/login",
-          requestBody
-        );
-        return data;
-      },
+      login: (data: LoginRequest): Promise<LoginResponse> =>
+        api.post<LoginResponse>("/auth/login", data).then((r) => r.data),
 
-      verify: async (): Promise<VerifyResponse> => {
-        const { data } = await api.post<VerifyResponse>("/auth/verify");
-        return data;
-      },
+      verify: (): Promise<VerifyResponse> =>
+        api.post<VerifyResponse>("/auth/verify").then((r) => r.data),
     },
     roundsAPI: {
-      getRounds: async (): Promise<RoundsResponse> => {
-        const { data } = await api.get<RoundsResponse>("/rounds");
-        return data;
-      },
+      getRounds: (): Promise<RoundsResponse> =>
+        api.get<RoundsResponse>("/rounds").then((r) => r.data),
 
-      getRound: async (id: string): Promise<RoundWithStatus> => {
-        const { data } = await api.get<RoundWithStatus>(`/rounds/${id}`);
-        return data;
-      },
+      getRound: (
+        id: string,
+        config?: AxiosRequestConfig
+      ): Promise<RoundWithStatus> =>
+        api.get<RoundWithStatus>(`/rounds/${id}`, config).then((r) => r.data),
 
-      createRound: async (): Promise<RoundWithStatus> => {
-        const { data } = await api.post<RoundWithStatus>("/rounds");
-        return data;
-      },
+      createRound: (): Promise<RoundWithStatus> =>
+        api.post<RoundWithStatus>("/rounds").then((r) => r.data),
 
-      getStats: async (roundId: string) => {
-        const { data } = await api.get<RoundStats>(`/rounds/${roundId}/stats`);
-        return data;
-      },
+      getStats: (id: string, config?: AxiosRequestConfig) =>
+        api.get<RoundStats>(`/rounds/${id}/stats`, config).then((r) => r.data),
 
-      getWinner: async (roundId: string) => {
-        const { data } = await api.get<RoundWinner>(
-          `/rounds/${roundId}/winner`
-        );
-        return data;
-      },
+      getWinner: (id: string, config?: AxiosRequestConfig) =>
+        api
+          .get<RoundWinner>(`/rounds/${id}/winner`, config)
+          .then((r) => r.data),
 
-      tapBatch: async (
-        roundId: string,
-        tapCount: number
-      ): Promise<TapResponse> => {
-        const { data } = await api.post(`/rounds/${roundId}/tap/batch`, {
-          tapCount,
-        });
-        return data;
-      },
+      tapBatch: (roundId: string, tapCount: number): Promise<TapResponse> =>
+        api
+          .post(`/rounds/${roundId}/tap/batch`, {
+            tapCount,
+          })
+          .then((r) => r.data),
     },
   };
 };

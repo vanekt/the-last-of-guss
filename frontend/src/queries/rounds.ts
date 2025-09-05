@@ -14,7 +14,7 @@ export const useRoundsQuery = () => {
 export const useRoundQuery = (id: string) => {
   return useQuery<RoundWithStatus>({
     queryKey: ["round", id],
-    queryFn: () => roundsAPI.getRound(id),
+    queryFn: ({ signal }) => roundsAPI.getRound(id, { signal }),
     enabled: !!id,
     refetchInterval: ({ state }) => {
       const { data, error } = state;
@@ -33,7 +33,7 @@ export const useRoundStatsQuery = (
 ) => {
   return useQuery<RoundStats>({
     queryKey: ["stats", id, roundStatus],
-    queryFn: () => roundsAPI.getStats(id),
+    queryFn: ({ signal }) => roundsAPI.getStats(id, { signal }),
     enabled:
       isRoundLoaded && ["active", "finished"].includes(String(roundStatus)),
     initialData: { taps: 0, score: 0 },
@@ -47,7 +47,7 @@ export const useRoundWinnerQuery = (
 ) => {
   return useQuery<RoundWinner | null>({
     queryKey: ["winner", id],
-    queryFn: () => roundsAPI.getWinner(id),
+    queryFn: ({ signal }) => roundsAPI.getWinner(id, { signal }),
     enabled: isRoundLoaded && roundStatus === "finished",
   });
 };
