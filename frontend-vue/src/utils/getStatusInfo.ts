@@ -1,6 +1,6 @@
 import type { Component } from "vue";
 import { Play, Clock, CheckCircle } from "lucide-vue-next";
-import { getStatusInfo as getStatusInfoOrig } from "@shared/helpers/getStatusInfo";
+import { getStatusInfo as getStatusInfoOrig } from "@shared/frontend/helpers/getStatusInfo";
 import type {
   RoundStatusValue,
   RoundStatusInfo as RoundStatusInfoOrig,

@@ -1,5 +1,5 @@
 import { Play, Clock, CheckCircle } from "lucide-react";
-import { getStatusInfo as getStatusInfoOrig } from "@shared/helpers/getStatusInfo";
+import { getStatusInfo as getStatusInfoOrig } from "@shared/frontend/helpers/getStatusInfo";
 import type {
   RoundStatusValue,
   RoundStatusInfo as RoundStatusInfoOrig,

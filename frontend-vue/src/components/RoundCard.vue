@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { computed, toRefs } from "vue";
 import { Clock } from "lucide-vue-next";
-import { formatDate, formatTime } from "@shared/frontend/helpers/rounds";
-import { getStatusInfo } from "@/utils/getStatusInfo";
+import { formatTime } from "@shared/frontend/helpers/rounds";
+import { useFormatDate } from "@/composables/useFormatDate";
 import { useRoundTimer } from "@/composables/useRoundTimer";
+import { useStatusInfo } from "@/composables/useStatusInfo";
 import type { RoundWithStatus } from "@shared/types";
 
 interface Props {
@@ -19,9 +20,9 @@ const emit = defineEmits<Emits>();
 
 const { round } = toRefs(props);
 const status = computed(() => round.value.status.value);
-const statusInfo = computed(() => getStatusInfo(round.value.status.value));
-const startTime = computed(() => formatDate(round.value.startTime));
-const endTime = computed(() => formatDate(round.value.endTime));
+const statusInfo = useStatusInfo(status);
+const startTime = useFormatDate(() => round.value.startTime);
+const endTime = useFormatDate(() => round.value.endTime);
 
 const initTimeLeft = computed(() => round.value.status.timer);
 const isTimerDisabled = computed(() => status.value === "finished");
