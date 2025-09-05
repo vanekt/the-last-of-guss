@@ -1,0 +1,9 @@
+@keyframes spin {
+  0% {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 0.5s ease-out;
+}

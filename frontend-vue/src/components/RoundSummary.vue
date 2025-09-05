@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
 import { Ellipsis } from "lucide-vue-next";
 import type { RoundWinner } from "@shared/types";
 

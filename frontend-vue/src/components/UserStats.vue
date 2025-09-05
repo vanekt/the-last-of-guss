@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
 import { Trophy, Target, Ellipsis } from "lucide-vue-next";
 
 interface Props {

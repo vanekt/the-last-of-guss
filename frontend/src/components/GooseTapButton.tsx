@@ -2,6 +2,7 @@ import { type FC, type MouseEvent, memo, useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import clsx from "clsx/lite";
 import { type Floatable, FloatableText } from "@/components/FloatableText";
+import styles from "./GooseTapButton.module.css";
 
 interface Props {
   accent: boolean;
@@ -26,7 +27,7 @@ const GooseTapButton: FC<Props> = memo(
 
       if (accent) {
         setIsSpinning(true);
-        setTimeout(() => setIsSpinning(false), 700);
+        setTimeout(() => setIsSpinning(false), 500);
       }
 
       onTap();
@@ -57,7 +58,7 @@ const GooseTapButton: FC<Props> = memo(
           className={clsx(
             "inline-flex transition-transform duration-100",
             isScaling && "scale-125",
-            isSpinning && "spin-goose",
+            isSpinning && styles.spin,
             disabled && "opacity-50",
             disabled ? "cursor-not-allowed" : "cursor-pointer"
           )}

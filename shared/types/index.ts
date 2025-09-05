@@ -20,6 +20,14 @@ export interface Round {
 }
 
 export type RoundStatusValue = "pending" | "active" | "finished";
+
+export interface RoundStatusInfo {
+  title: string;
+  titleAlt: string;
+  color: string;
+  bgColor: string;
+  bgColorAlt: string;
+}
 export interface RoundStatus {
   value: RoundStatusValue;
   timer: number;
