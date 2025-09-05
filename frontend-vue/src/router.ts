@@ -1,13 +1,17 @@
-import { createRouter, createWebHistory } from "vue-router";
+import {
+  createRouter,
+  createWebHistory,
+  type RouteRecordRaw,
+} from "vue-router";
 
-import LogoutPage from "./pages/LogoutPage.vue";
-import RoundsPage from "./pages/RoundsPage.vue";
-import RoundPage from "./pages/RoundPage.vue";
+import LogoutView from "@/views/LogoutView.vue";
+import RoundsView from "@/views/RoundsView.vue";
+import RoundView from "@/views/RoundView.vue";
 
-const routes = [
-  { path: "/logout", component: LogoutPage },
-  { path: "/rounds", component: RoundsPage },
-  { path: "/rounds/:id", component: RoundPage },
+const routes: Readonly<RouteRecordRaw[]> = [
+  { path: "/logout", component: LogoutView },
+  { path: "/rounds", component: RoundsView },
+  { path: "/rounds/:id", component: RoundView, props: true },
   { path: "/:pathMatch(.*)*", redirect: "/rounds" },
 ];
 

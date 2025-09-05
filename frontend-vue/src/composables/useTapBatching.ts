@@ -9,7 +9,7 @@ import { useIntervalFn } from "@vueuse/core";
 import { useTapBatchMutation } from "@/mutations/rounds";
 
 interface UseTapBatchingOptions {
-  roundId: string;
+  roundId: MaybeRefOrGetter<string>;
   batchTimeout?: number;
   maxBatchSize?: number;
   disabled: MaybeRefOrGetter<boolean>;
@@ -22,7 +22,7 @@ export const useTapBatching = ({
   disabled,
 }: UseTapBatchingOptions) => {
   const pendingTaps = ref<number>(0);
-  const { mutate } = useTapBatchMutation(roundId);
+  const { mutate } = useTapBatchMutation(toValue(roundId));
 
   const flush = () => {
     if (pendingTaps.value < 1) {

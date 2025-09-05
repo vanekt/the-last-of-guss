@@ -62,15 +62,14 @@ const hasRounds = computed(
         <template v-if="hasRounds">
           <p class="font-bold text-gray-300">Выберите раунд для участия:</p>
 
-          <RoundCard
+          <RouterLink
             v-for="round in rounds"
             :key="round.id"
-            :round="round"
-            @click="router.push(`/rounds/${round.id}`)"
-            @timeout="refetch"
+            :to="`/rounds/${round.id}`"
+            class="block"
           >
-            {{ round.id }}
-          </RoundCard>
+            <RoundCard :round="round" @timeout="refetch" />
+          </RouterLink>
         </template>
         <NoRoundsBlock v-else />
       </template>

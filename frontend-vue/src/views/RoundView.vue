@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { computed, watch, watchEffect } from "vue";
-import { useRoute } from "vue-router";
+import { computed, toRefs, watch, watchEffect } from "vue";
 import { SUPER_TAP_SCORE } from "@shared/constants";
 import { isNikita, isSuperTap } from "@shared/helpers";
 import ErrorState from "@/components/ErrorState.vue";
@@ -26,9 +25,10 @@ import { useRoundTaps } from "@/composables/useRoundTaps";
 import { usePageTitle } from "@/composables/usePageTitle";
 import { getStatusInfo } from "@/utils/getStatusInfo";
 
-const route = useRoute();
+const props = defineProps<{ id: string }>();
+const { id: roundId } = toRefs(props);
+
 const authStore = useAuthStore();
-const roundId = String(route.params.id);
 
 const {
   data: round,

@@ -12,10 +12,10 @@ export const useRoundsQuery = () => {
   });
 };
 
-export const useRoundQuery = (id: string) => {
+export const useRoundQuery = (id: MaybeRefOrGetter<string>) => {
   return useQuery<RoundWithStatus>({
     queryKey: ["round", id],
-    queryFn: ({ signal }) => roundsAPI.getRound(id, { signal }),
+    queryFn: ({ signal }) => roundsAPI.getRound(toValue(id), { signal }),
     enabled: () => !!toValue(id),
     refetchInterval: ({ state }) => {
       const { data, error } = state;
@@ -28,12 +28,12 @@ export const useRoundQuery = (id: string) => {
 };
 
 export const useRoundStatsQuery = (
-  id: string,
+  id: MaybeRefOrGetter<string>,
   roundStatus: MaybeRefOrGetter<string | undefined>,
 ) => {
   return useQuery<RoundStats>({
     queryKey: ["stats", id, roundStatus],
-    queryFn: ({ signal }) => roundsAPI.getStats(id, { signal }),
+    queryFn: ({ signal }) => roundsAPI.getStats(toValue(id), { signal }),
     enabled: () =>
       ["active", "finished"].includes(String(toValue(roundStatus))),
     initialData: { taps: 0, score: 0 },
@@ -41,12 +41,12 @@ export const useRoundStatsQuery = (
 };
 
 export const useRoundWinnerQuery = (
-  id: string,
+  id: MaybeRefOrGetter<string>,
   roundStatus: MaybeRefOrGetter<string | undefined>,
 ) => {
   return useQuery<RoundWinner | null>({
     queryKey: ["winner", id],
-    queryFn: ({ signal }) => roundsAPI.getWinner(id, { signal }),
+    queryFn: ({ signal }) => roundsAPI.getWinner(toValue(id), { signal }),
     enabled: () => toValue(roundStatus) === "finished",
   });
 };

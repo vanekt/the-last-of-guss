@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { watch } from "vue";
 import LoadingState from "@/components/LoadingState.vue";
-import LoginPage from "@/pages/LoginPage.vue";
+import LoginView from "@/views/LoginView.vue";
 import { useAuthStore } from "@/store/authStore";
 import { useVerifyQuery } from "@/queries/auth";
 
@@ -19,6 +19,6 @@ watch(data, () => {
   <LoadingState v-if="isLoading" />
   <template v-else>
     <slot v-if="!!authStore.user" />
-    <LoginPage v-else />
+    <LoginView v-else />
   </template>
 </template>
