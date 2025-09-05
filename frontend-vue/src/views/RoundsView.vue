@@ -14,6 +14,7 @@ import RoundCard from "@/components/RoundCard.vue";
 import RoundsPageHeader from "@/components/RoundsPageHeader.vue";
 import { useRoundsQuery } from "@/queries/rounds";
 import { useCreateRoundMutation } from "@/mutations/rounds";
+import { RouteNames } from "@/constants";
 
 const router = useRouter();
 const { isAdmin } = storeToRefs(useAuthStore());
@@ -22,7 +23,7 @@ const { data: rounds, error, isLoading, isSuccess, refetch } = useRoundsQuery();
 const createMutation = useCreateRoundMutation(
   (data) => {
     toast.success("Раунд создан!");
-    router.push(`/rounds/${data.id}`);
+    router.push({ name: RouteNames.Round, params: { id: data.id } });
   },
   () => {
     toast.error("Ошибка создания раунда");
@@ -65,7 +66,7 @@ const hasRounds = computed(
           <RouterLink
             v-for="round in rounds"
             :key="round.id"
-            :to="`/rounds/${round.id}`"
+            :to="{ name: RouteNames.Round, params: { id: round.id } }"
             class="block"
           >
             <RoundCard :round="round" @timeout="refetch" />

@@ -2,6 +2,7 @@
 import { useRouter } from "vue-router";
 import { User, LogOut } from "lucide-vue-next";
 import { useAuthStore } from "@/store/authStore";
+import { RouteNames } from "@/constants";
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -19,7 +20,7 @@ const authStore = useAuthStore();
     <button
       class="cursor-pointer p-2 text-gray-400 transition-colors hover:text-white"
       title="Выйти"
-      @click="router.replace('/logout')"
+      @click="router.replace({ name: RouteNames.Logout })"
     >
       <LogOut class="h-5 w-5" />
     </button>
