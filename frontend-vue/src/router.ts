@@ -4,21 +4,30 @@ import {
   type RouteRecordRaw,
 } from "vue-router";
 
-import LogoutView from "@/views/LogoutView.vue";
-import RoundsView from "@/views/RoundsView.vue";
-import RoundView from "@/views/RoundView.vue";
 import { RouteNames } from "./constants";
 
 const routes: Readonly<RouteRecordRaw[]> = [
-  { path: "/logout", name: RouteNames.Logout, component: LogoutView },
-  { path: "/rounds", name: RouteNames.Rounds, component: RoundsView },
   {
-    path: "/rounds/:id",
+    path: "/",
+    name: RouteNames.Rounds,
+    component: () => import("@/views/RoundsView.vue"),
+  },
+  {
+    path: "/round/:id",
     name: RouteNames.Round,
-    component: RoundView,
+    component: () => import("@/views/RoundView.vue"),
     props: true,
   },
-  { path: "/:pathMatch(.*)*", redirect: "/rounds" },
+  {
+    path: "/logout",
+    name: RouteNames.Logout,
+    component: () => import("@/views/LogoutView.vue"),
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    name: RouteNames.NotFound,
+    redirect: { name: RouteNames.Rounds },
+  },
 ];
 
 export const router = createRouter({
