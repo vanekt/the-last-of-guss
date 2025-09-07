@@ -1,5 +1,6 @@
 import { toValue, type MaybeRefOrGetter } from "vue";
 import { useQuery } from "@tanstack/vue-query";
+import { useArrayIncludes } from "@vueuse/core";
 import type { RoundWithStatus, RoundStats, RoundWinner } from "@shared/types";
 import { roundsAPI } from "@/core/api";
 
@@ -34,8 +35,7 @@ export const useRoundStatsQuery = (
   return useQuery<RoundStats>({
     queryKey: ["stats", id, roundStatus],
     queryFn: ({ signal }) => roundsAPI.getStats(toValue(id), { signal }),
-    enabled: () =>
-      ["active", "finished"].includes(String(toValue(roundStatus))),
+    enabled: useArrayIncludes(["active", "finished"], roundStatus),
     initialData: { taps: 0, score: 0 },
   });
 };
