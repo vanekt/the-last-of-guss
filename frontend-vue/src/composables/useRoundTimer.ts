@@ -1,42 +1,35 @@
-import { ref, toValue, watchEffect, type MaybeRefOrGetter } from "vue";
-import { useIntervalFn } from "@vueuse/core";
+import { computed, toValue, watch, type MaybeRefOrGetter } from "vue";
+import { useCountdown } from "@vueuse/core";
 
 interface UseRoundTimerOptions {
   initTimeLeft: MaybeRefOrGetter<number>;
   disabled: MaybeRefOrGetter<boolean>;
-  onTimeout?: () => void;
+  onComplete?: () => void;
 }
 
 export function useRoundTimer({
   initTimeLeft,
   disabled,
-  onTimeout,
+  onComplete,
 }: UseRoundTimerOptions) {
-  const timeLeft = ref(toValue(initTimeLeft));
+  const { remaining, start, stop } = useCountdown(
+    () => toValue(initTimeLeft) / 1000,
+    { onComplete },
+  );
 
-  watchEffect(() => {
-    timeLeft.value = toValue(initTimeLeft);
-  });
+  watch(
+    [() => toValue(disabled), () => toValue(initTimeLeft)],
+    ([isDisabled, initTime]) => {
+      if (isDisabled) {
+        stop();
+      } else if (initTime > 0) {
+        start();
+      }
+    },
+    { immediate: true },
+  );
 
-  const { pause, resume } = useIntervalFn(() => {
-    const newValue = timeLeft.value - 1000;
-
-    if (newValue < 0) {
-      onTimeout?.();
-      timeLeft.value = 0;
-      return;
-    }
-
-    timeLeft.value = newValue;
-  }, 1000);
-
-  watchEffect(() => {
-    if (toValue(disabled)) {
-      pause();
-    } else {
-      resume();
-    }
-  });
-
-  return { timeLeft };
+  return {
+    timeLeft: computed(() => remaining.value * 1000),
+  };
 }

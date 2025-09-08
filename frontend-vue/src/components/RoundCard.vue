@@ -29,7 +29,7 @@ const isTimerDisabled = computed(() => status.value === "finished");
 const { timeLeft } = useRoundTimer({
   initTimeLeft,
   disabled: isTimerDisabled,
-  onTimeout: () => {
+  onComplete: () => {
     emit("timeout");
   },
 });
