@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { storeToRefs } from "pinia";
 import { Plus } from "lucide-vue-next";
 import { toast } from "@steveyuowo/vue-hot-toast";
 import { useAuthStore } from "@/store/authStore";
@@ -17,7 +16,7 @@ import { useCreateRoundMutation } from "@/mutations/rounds";
 import { RouteNames } from "@/constants";
 
 const router = useRouter();
-const { isAdmin } = storeToRefs(useAuthStore());
+const authStore = useAuthStore();
 const { data: rounds, error, isLoading, isSuccess, refetch } = useRoundsQuery();
 
 const createMutation = useCreateRoundMutation(
@@ -45,7 +44,7 @@ const hasRounds = computed(
 
     <div class="space-y-6">
       <GreenButton
-        v-if="isAdmin"
+        v-if="authStore.isAdmin"
         v-bind="{
           title: createButtonTitle,
           disabled: createMutation.isPending.value,

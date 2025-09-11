@@ -1,10 +1,4 @@
-import {
-  ref,
-  toValue,
-  watchEffect,
-  onUnmounted,
-  type MaybeRefOrGetter,
-} from "vue";
+import { ref, toValue, watch, onUnmounted, type MaybeRefOrGetter } from "vue";
 import { useIntervalFn } from "@vueuse/core";
 import { useTapBatchMutation } from "@/mutations/rounds";
 
@@ -42,13 +36,16 @@ export const useTapBatching = ({
 
   const { pause, resume } = useIntervalFn(flush, batchTimeout);
 
-  watchEffect(() => {
-    if (toValue(disabled)) {
-      pause();
-    } else {
-      resume();
-    }
-  });
+  watch(
+    () => toValue(disabled),
+    (isDisabled) => {
+      if (toValue(isDisabled)) {
+        pause();
+      } else {
+        resume();
+      }
+    },
+  );
 
   onUnmounted(flush);
 

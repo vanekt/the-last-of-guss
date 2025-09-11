@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, toRefs, watch, watchEffect } from "vue";
+import { computed, toRefs, watch } from "vue";
 import { SUPER_TAP_SCORE } from "@shared/constants";
 import { isNikita, isSuperTap } from "@shared/helpers";
 import ErrorState from "@/components/ErrorState.vue";
@@ -51,9 +51,9 @@ const { data: winner, isFetched: isWinnerLoaded } = useRoundWinnerQuery(
 );
 
 const { setTitle } = usePageTitle("Раунд");
-watchEffect(() => {
-  if (roundStatus.value) {
-    setTitle(getStatusInfo(roundStatus.value).titleAlt!);
+watch(roundStatus, (roundStatusValue) => {
+  if (roundStatusValue) {
+    setTitle(getStatusInfo(roundStatusValue).titleAlt!);
   }
 });
 

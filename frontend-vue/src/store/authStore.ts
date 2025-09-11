@@ -1,4 +1,4 @@
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watch } from "vue";
 import { defineStore } from "pinia";
 import type { UserPayload } from "@shared/types";
 
@@ -24,8 +24,8 @@ export const useAuthStore = defineStore(
       user.value = u;
     }
 
-    watchEffect(() => {
-      if (!token.value) {
+    watch(token, (tokenValue) => {
+      if (!tokenValue) {
         user.value = null;
       }
     });
