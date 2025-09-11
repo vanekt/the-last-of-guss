@@ -1,9 +1,9 @@
-import { readonly, toRef, toValue, type MaybeRefOrGetter } from "vue";
+import { readonly, toRef, type Ref } from "vue";
 import { useRoundsStore } from "@/store/roundsStore";
 
-export function useRoundTaps(roundId: MaybeRefOrGetter<string>) {
+export function useRoundTaps(roundId: Ref<string>) {
   const store = useRoundsStore();
-  const round = store.getRoundById(toValue(roundId));
+  const round = store.getRoundById(roundId.value);
   const taps = toRef(round, "taps");
 
   function setTaps(value: number) {

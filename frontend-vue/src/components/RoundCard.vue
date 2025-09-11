@@ -24,11 +24,9 @@ const statusInfo = useStatusInfo(status);
 const startTime = useFormatDate(() => round.value.startTime);
 const endTime = useFormatDate(() => round.value.endTime);
 
-const initTimeLeft = computed(() => round.value.status.timer);
-const isTimerDisabled = computed(() => status.value === "finished");
 const { timeLeft } = useRoundTimer({
-  initTimeLeft,
-  disabled: isTimerDisabled,
+  initTimeLeft: () => round.value.status.timer,
+  disabled: () => status.value === "finished",
   onComplete: () => {
     emit("timeout");
   },

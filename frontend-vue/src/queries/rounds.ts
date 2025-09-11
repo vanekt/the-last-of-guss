@@ -1,4 +1,4 @@
-import { toValue, type MaybeRefOrGetter } from "vue";
+import type { Ref } from "vue";
 import { useQuery } from "@tanstack/vue-query";
 import { useArrayIncludes } from "@vueuse/core";
 import type { RoundWithStatus, RoundStats, RoundWinner } from "@shared/types";
@@ -13,11 +13,11 @@ export const useRoundsQuery = () => {
   });
 };
 
-export const useRoundQuery = (id: MaybeRefOrGetter<string>) => {
+export const useRoundQuery = (id: Ref<string>) => {
   return useQuery<RoundWithStatus>({
     queryKey: ["round", id],
-    queryFn: ({ signal }) => roundsAPI.getRound(toValue(id), { signal }),
-    enabled: () => !!toValue(id),
+    queryFn: ({ signal }) => roundsAPI.getRound(id.value, { signal }),
+    enabled: () => !!id.value,
     refetchInterval: ({ state }) => {
       const { data, error } = state;
       if (error || data?.status.value === "finished") {
@@ -29,24 +29,24 @@ export const useRoundQuery = (id: MaybeRefOrGetter<string>) => {
 };
 
 export const useRoundStatsQuery = (
-  id: MaybeRefOrGetter<string>,
-  roundStatus: MaybeRefOrGetter<string | undefined>,
+  id: Ref<string>,
+  roundStatus: Ref<string | undefined>,
 ) => {
   return useQuery<RoundStats>({
     queryKey: ["stats", id, roundStatus],
-    queryFn: ({ signal }) => roundsAPI.getStats(toValue(id), { signal }),
+    queryFn: ({ signal }) => roundsAPI.getStats(id.value, { signal }),
     enabled: useArrayIncludes(["active", "finished"], roundStatus),
     initialData: { taps: 0, score: 0 },
   });
 };
 
 export const useRoundWinnerQuery = (
-  id: MaybeRefOrGetter<string>,
-  roundStatus: MaybeRefOrGetter<string | undefined>,
+  id: Ref<string>,
+  roundStatus: Ref<string | undefined>,
 ) => {
   return useQuery<RoundWinner | null>({
     queryKey: ["winner", id],
-    queryFn: ({ signal }) => roundsAPI.getWinner(toValue(id), { signal }),
-    enabled: () => toValue(roundStatus) === "finished",
+    queryFn: ({ signal }) => roundsAPI.getWinner(id.value, { signal }),
+    enabled: () => roundStatus.value === "finished",
   });
 };

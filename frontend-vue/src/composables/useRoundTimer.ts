@@ -1,9 +1,9 @@
-import { computed, toValue, watch, type MaybeRefOrGetter } from "vue";
+import { computed, watch, type ComputedGetter } from "vue";
 import { useCountdown } from "@vueuse/core";
 
 interface UseRoundTimerOptions {
-  initTimeLeft: MaybeRefOrGetter<number>;
-  disabled: MaybeRefOrGetter<boolean>;
+  initTimeLeft: ComputedGetter<number>;
+  disabled: ComputedGetter<boolean>;
   onComplete?: () => void;
 }
 
@@ -12,13 +12,12 @@ export function useRoundTimer({
   disabled,
   onComplete,
 }: UseRoundTimerOptions) {
-  const { remaining, start, stop } = useCountdown(
-    () => toValue(initTimeLeft) / 1000,
-    { onComplete },
-  );
+  const { remaining, start, stop } = useCountdown(() => initTimeLeft() / 1000, {
+    onComplete,
+  });
 
   watch(
-    [() => toValue(disabled), () => toValue(initTimeLeft)],
+    [disabled, initTimeLeft],
     ([isDisabled, initTime]) => {
       if (isDisabled) {
         stop();

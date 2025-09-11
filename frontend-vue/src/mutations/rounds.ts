@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/vue-query";
 import { roundsAPI } from "@/core/api";
 import type { RoundWithStatus, TapResponse } from "@shared/types";
+import type { Ref } from "vue";
 
 export const useCreateRoundMutation = (
   onSuccess?: (data: RoundWithStatus) => void,
@@ -19,10 +20,10 @@ export const useCreateRoundMutation = (
   });
 };
 
-export const useTapBatchMutation = (roundId: string) => {
+export const useTapBatchMutation = (roundId: Ref<string>) => {
   return useMutation({
     mutationFn: async (tapCount: number): Promise<TapResponse> => {
-      return roundsAPI.tapBatch(roundId, tapCount);
+      return roundsAPI.tapBatch(roundId.value, tapCount);
     },
   });
 };
