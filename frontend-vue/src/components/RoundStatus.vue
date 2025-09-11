@@ -6,11 +6,11 @@ interface Props {
   status: RoundStatusValue;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>
-  <h2 :class="['text-2xl font-bold', getStatusInfo(props.status).color]">
+  <h2 :class="['text-2xl font-bold', getStatusInfo(status).color]">
     {{ getStatusInfo(status).titleAlt }}
   </h2>
 </template>

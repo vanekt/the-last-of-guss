@@ -109,29 +109,38 @@ const floatableLabel = computed(() => {
           class="space-y-4 rounded-2xl border border-white/20 bg-white/10 p-8 text-center backdrop-blur-lg"
         >
           <GooseTapButton
-            :disabled="roundStatus !== 'active'"
-            :accent="isSuperTap(taps + 1)"
-            :floatable-label="floatableLabel"
+            v-bind="{
+              accent: isSuperTap(taps + 1),
+              disabled: roundStatus !== 'active',
+              floatableLabel,
+            }"
             @click="handleTap"
           />
 
           <div class="space-y-2 align-middle">
-            <RoundStatus :status="roundStatus!" />
-            <RoundTimer v-if="roundStatus !== 'finished'" :value="timeLeft" />
+            <RoundStatus v-bind="{ status: roundStatus! }" />
+            <RoundTimer
+              v-if="roundStatus !== 'finished'"
+              v-bind="{ value: timeLeft }"
+            />
           </div>
 
           <UserStats
-            :is-ready="!isStatsEnabled || isStatsFetched"
-            :score="score"
-            :taps="taps"
+            v-bind="{
+              isReady: !isStatsEnabled || isStatsFetched,
+              score,
+              taps,
+            }"
           />
 
           <RoundSummary
             v-if="roundStatus === 'finished'"
-            :is-ready="isWinnerLoaded"
-            :total-taps="round?.totalTaps || 0"
-            :total-score="round?.totalScore || 0"
-            :winner="winner"
+            v-bind="{
+              isReady: isWinnerLoaded,
+              totalTaps: round?.totalTaps || 0,
+              totalScore: round?.totalScore || 0,
+              winner,
+            }"
           />
 
           <NikitaWarning v-if="roundStatus === 'active' && shouldIgnoreTap" />

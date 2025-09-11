@@ -78,10 +78,12 @@ function handleClick(e: MouseEvent) {
     <FloatableText
       v-for="floatable in floatables"
       :key="floatable.key"
-      :label="floatable.label"
-      :accent="floatable.accent"
-      :x="floatable.x"
-      :y="floatable.y"
+      v-bind="{
+        label: floatable.label,
+        accent: floatable.accent,
+        x: floatable.x,
+        y: floatable.y,
+      }"
       @finish="() => handleFloatableFinish(floatable.key)"
     />
   </div>

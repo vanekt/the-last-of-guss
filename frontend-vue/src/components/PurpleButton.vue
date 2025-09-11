@@ -3,7 +3,7 @@ interface Props {
   title: string;
 }
 
-const props = defineProps<Props>();
+defineProps<Props>();
 </script>
 
 <template>
@@ -17,6 +17,6 @@ const props = defineProps<Props>();
       'disabled:cursor-not-allowed disabled:opacity-50',
     ]"
   >
-    <span>{{ props.title }}</span>
+    <span>{{ title }}</span>
   </button>
 </template>

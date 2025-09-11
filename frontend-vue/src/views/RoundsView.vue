@@ -46,8 +46,10 @@ const hasRounds = computed(
     <div class="space-y-6">
       <GreenButton
         v-if="isAdmin"
-        :title="createButtonTitle"
-        :disabled="createMutation.isPending.value"
+        v-bind="{
+          title: createButtonTitle,
+          disabled: createMutation.isPending.value,
+        }"
         @click="createMutation.mutate"
       >
         <template #icon>
@@ -66,10 +68,12 @@ const hasRounds = computed(
           <RouterLink
             v-for="round in rounds"
             :key="round.id"
-            :to="{ name: RouteNames.Round, params: { id: round.id } }"
+            v-bind="{
+              to: { name: RouteNames.Round, params: { id: round.id } },
+            }"
             class="block"
           >
-            <RoundCard :round="round" @timeout="refetch" />
+            <RoundCard v-bind="{ round }" @timeout="refetch" />
           </RouterLink>
         </template>
         <NoRoundsBlock v-else />
