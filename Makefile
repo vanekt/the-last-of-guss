@@ -1,4 +1,4 @@
-DC=docker compose
+DC=docker compose -f docker-compose.dev.yml
 
 .PHONY: up down logs ps recreate
 
