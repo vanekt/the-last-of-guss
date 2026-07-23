@@ -1,141 +1,149 @@
 # The Last of Guss
 
-Браузерная игра, где игроки соревнуются, кто быстрее и больше натапает по виртуальному гусю, подхватившему мутацию G-42.
+[Русская версия](README-RU.md)
 
-## Демо
+A browser game where players compete to tap a virtual goose infected with the G-42 mutation as fast and as many times as possible.
+
+## Demo
 
 - React: [https://the-last-of-guss-frontend.onrender.com/](https://the-last-of-guss-frontend.onrender.com/)
 - Vue: [https://the-last-of-guss-frontend-vue.onrender.com/](https://the-last-of-guss-frontend-vue.onrender.com/)
 
-Бэкенд демо-версии размещён на бесплатном хостинге, поэтому после долгого простоя первый запрос может выполняться с задержкой.
+The demo backend runs on a free hosting tier, so the first request after a long idle period may be slow.
 
-#### Пользователи игры:
+#### Game users:
 
-- admin:admin - может создавать раунд
-- nikita:nikita - пользователь, тапы которого не засчитываются
-- Любой другой пользователь (кроме вариаций nikita типа Никита, Nikita, NiKiTA и т. д.) - может тапать
+- admin:admin - can create a round
+- nikita:nikita - a user whose taps don't count
+- Any other user (except variations of "nikita" like Никита, Nikita, NiKiTA, etc.) - can tap
 
-## Локальный запуск
+## Local setup
 
-### 1. Установка зависимостей
+### 1. Install dependencies
 
 ```bash
 pnpm install
 ```
 
-### 2. Настройка переменных окружения
+### 2. Configure environment variables
 
-В каждой из папок `backend` и `frontend` есть файл `env.example` с примерами переменных окружения.
+Both the `backend` and `frontend` folders contain a `.env.example` file with sample environment variables.
 
-- Скопируйте файл `env.example` в `.env` и при необходимости отредактируйте значения:
+- Copy `.env.example` to `.env` and edit the values if needed:
 
 ```bash
-cp backend/env.example backend/.env
-cp frontend/env.example frontend/.env
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env
 ```
 
-### 3. Миграция базы данных
+### 3. Start the local database (Postgres + pgAdmin)
+
+```bash
+make up
+```
+
+### 4. Run database migrations
 
 ```bash
 pnpm mg
 ```
 
-### 4. Запуск
+### 5. Run
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
-Окно с игрой должно открыться в браузере автоматически
+The game should open in your browser automatically.
 
-## Задача
+## Task
 
-Разработка браузерной игры "The Last of Guss", где игроки соревнуются, кто быстрее и больше натапает по виртуальному гусю, подхватившему мутацию G-42.
+Build a browser game called "The Last of Guss", where players compete to tap a virtual goose infected with the G-42 mutation as fast and as many times as possible.
 
-У раунда есть дата старта и дата завершения. Длительность раунда и cooldown должны быть конфигурируемы, достаточно чтобы они применялись при старте бекенда. Cooldown - время между датой создания раунда и датой начала. Нужно для того, чтобы игроки успели зайти на страницу раунда.
-Например,
+A round has a start date and an end date. Round duration and cooldown must be configurable, and it's enough that they're applied when the backend starts. Cooldown is the time between round creation and its start — it gives players time to get to the round page.
+For example,
 
 ```bash
 # .env
-ROUND_DURATION=60 # минута на раунд
-COOLDOWN_DURATION=30 # полминуты обратного отсчета
+ROUND_DURATION=60 # one minute per round
+COOLDOWN_DURATION=30 # half a minute countdown
 ```
 
-Правила раунда:
+Round rules:
 
-- 1 тап = 1 очко, каждый одиннадцатый тап дает 10 очков
-- тапать можно только в рамках активного рануда
-- активный раунд тот, который уже начался, но еще не закончился
+- 1 tap = 1 point, every eleventh tap gives 10 points
+- tapping is only allowed within an active round
+- an active round is one that has already started but hasn't ended yet
 
-Пользователи игры:
+Game users:
 
-- выживший – может тапать
-- если выжившего зовут Никита, то его тапы не считаются(в статистике показывать нули), хотя и запрос на тап работает как у обычного выжившего
-- admin, может создавать раунд
+- survivor – can tap
+- if the survivor's name is Nikita, their taps don't count (stats show zero), though the tap request still behaves like a regular survivor's
+- admin, can create a round
 
-Роли можно назначать во время создания пользователя исходя из его имени. Например, если username - admin, то роль admin, если username Никита, то роль nikita.
+Roles can be assigned when a user is created, based on their username. For example, if the username is "admin", the role is admin; if the username is Nikita, the role is nikita.
 
-### Бекенд
+### Backend
 
-Бекенд на postgres, nodejs и typescript(с включенным strict). ORM на выбор: sequelize, drizzle, prisma, typeorm. API framework на выбор Fastify, Nest.
+Backend on postgres, nodejs and typescript (with strict enabled). ORM of your choice: sequelize, drizzle, prisma, typeorm. API framework of your choice: Fastify, Nest.
 
-**Когда происходит тап по гусю нужно обеспечить консистентность данных, корректность расчета очков(учесть возможные race conditions) и состояния раунда**.
-Например:
+**When a tap on the goose happens, you need to ensure data consistency, correct score calculation (accounting for possible race conditions), and correct round state**.
+For example:
 
-- проверяется роль пользователя(Никита или нет)
-- проверяется, что раунд активен(текущее время в диапазоне от даты старта до даты завершения раунда)
-- увеличивается счетчик тапов и очков игрока в данном раунде
-- увеличивается общий счетчик очков в раунде
+- check the user's role (Nikita or not)
+- check that the round is active (current time is between the round's start and end dates)
+- increment the player's tap and score counters for this round
+- increment the round's total score counter
 
-REST API - приемлемый вариант.
+REST API is an acceptable choice.
 
-Обязательно нужно **учесть** возможность запускать несколько серверов с бекендом(например, 1 база и 3 nodejs app).
-Предполагаемый способ развёртывания: 1 база, 1 реверс прокси, 3 бекенда в докер контейнерах. Реализовывать это не нужно, только учесть в разработке, что нет привязки пользователя к определенному инстансу бекенда. compose и Dockerfile можно не писать. Для запуска достаточно реализовать просто `node dist/index.js`
+You **must** account for the possibility of running multiple backend servers (e.g., 1 database and 3 nodejs apps).
+Assumed deployment: 1 database, 1 reverse proxy, 3 backends in Docker containers. You don't need to actually implement this, just account for it in development — there should be no binding of a user to a specific backend instance. You don't need to write compose or a Dockerfile. To run it, `node dist/index.js` is enough.
 
-Ожидаемая нагрузка: это тестовое задание и можно рассчитывать на кол-во выживших в раунде около 10, однако, желательно использовать масштабируемые решения.
+Expected load: this is a take-home assignment, so you can assume around 10 survivors per round, but scalable solutions are preferred.
 
-Возможный, но не обязательный вариант роутов для REST API.
+A possible, but not required, set of REST API routes.
 
-- логин(с помощью куки либо токена либо токена в куке)
-- получение списка раундов, можно без пагинации
-- создание раунда
-- получение информации по раунду, включает инфу о победителе(если раунд завершен) и о своих очках
-- тап по гусю, возвращает информацию о кол-ве собственных очков
+- login (via cookie, token, or a token in a cookie)
+- get the list of rounds, pagination not required
+- create a round
+- get round info, including winner info (if the round has ended) and your own score
+- tap the goose, returns your own score
 
-### Фронтенд
+### Frontend
 
-Фронтенд на react, typescript, react-router, vite. UI библиотека и стейт менеджер на выбор.
+Frontend on react, typescript, react-router, vite. UI library and state manager of your choice.
 
-3 страницы:
+3 pages:
 
-- логин, где вводится имя и пароль, если такого в базе нет, то он создается, если есть и пароль не совпадает, то показывает ошибку под кнопкой
-- список текущих активных и запланированных раундов, айди раунда - ссылка на раунд, кнопка создания раунда, если пользователь админ, по нажатию сразу переводит на страницу раунда
-- страница раунда с его состоянием(завершен, активен, еще не начат) с гусем, по которому можно тапать если раунд активен
-
----
-
-Ожидаем чистый код с соблюдением SOLID, корректность API, отзывчивый фронтенд.
+- login, where you enter a username and password; if it doesn't exist in the database, it's created; if it exists and the password doesn't match, show an error below the button
+- a list of currently active and scheduled rounds, the round ID is a link to the round, a "create round" button if the user is an admin, clicking it takes you straight to the round page
+- a round page showing its state (finished, active, not started yet) with the goose, which can be tapped if the round is active
 
 ---
 
-### Мокапы:
+We expect clean code following SOLID, correct API, and a responsive frontend.
+
+---
+
+### Mockups:
 
 ```
 ┌───────────────────────────────────────┐
-│               ВОЙТИ                   │
+│               LOG IN                  │
 ├───────────────────────────────────────┤
 │                                       │
-│  Имя пользователя:                    │
+│  Username:                            │
 │  ┌─────────────────────────────────┐  │
 │  │                                 │  │
 │  └─────────────────────────────────┘  │
-│  Пароль:                              │
+│  Password:                            │
 │  ┌─────────────────────────────────┐  │
 │  │                                 │  │
 │  └─────────────────────────────────┘  │
 │                                       │
 │  ┌─────────────────────────────────┐  │
-│  │          Войти                  │  │
+│  │          Log in                 │  │
 │  └─────────────────────────────────┘  │
 │                                       │
 └───────────────────────────────────────┘
@@ -143,19 +151,19 @@ REST API - приемлемый вариант.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│                        Список РАУНДОВ                   Имя игрока  │
+│                        ROUNDS list                      Player name │
 ├─────────────────────────────────────────────────────────────────────┤
 │  ┌─────────────────┐                                                │
-│  │ Создать раунд   │                                                │  <–– видна, если админ
+│  │ Create round    │                                                │  <–– visible if admin
 │  └─────────────────┘                                                │
 │  ┌───────────────────────────────────────────────────────────────┐  │
-│  │  ● Round ID: 8c3eed83-8a8a-41a0-8f91-9ad501e8f8a1             │  │  <–– ссылка на раунд
+│  │  ● Round ID: 8c3eed83-8a8a-41a0-8f91-9ad501e8f8a1             │  │  <–– link to the round
 │  │                                                               │  │
 │  │  Start: 18.05.2025, 06:28:17                                  │  │
 │  │  End:   18.05.2025, 06:29:17                                  │  │
 │  │                                                               │  │
 │  │  ──────────────────────────────────────────────────────────── │  │
-│  │  Статус: Активен                                              │  │
+│  │  Status: Active                                               │  │
 │  └───────────────────────────────────────────────────────────────┘  │
 │                                                                     │
 │  ┌───────────────────────────────────────────────────────────────┐  │
@@ -165,7 +173,7 @@ REST API - приемлемый вариант.
 │  │  End:   18.05.2025, 08:29:17                                  │  │
 │  │                                                               │  │
 │  │  ──────────────────────────────────────────────────────────── │  │
-│  │  Статус: Cooldown                                             │  │
+│  │  Status: Cooldown                                             │  │
 │  └───────────────────────────────────────────────────────────────┘  │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
@@ -173,7 +181,7 @@ REST API - приемлемый вариант.
 
 ```
 ┌───────────────────────────────────────┐
-│               Раунды       Имя игрока │
+│               Rounds      Player name │
 ├───────────────────────────────────────┤
 │                                       │
 │            ░░░░░░░░░░░░░░░            │
@@ -187,16 +195,16 @@ REST API - приемлемый вариант.
 │      ░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░     │
 │        ░░░░░░░░░░░░░░░░░░░░░░░░░░     │
 │                                       │
-│            Раунд активен!             │  <–– состояние рануда меняется, когда приходит время
-│        До конца осталось: 00:23       │  <–– счетчик времени, обновляется раз в секунду
-│            Мои очки - 123             │  <–– обновляется с каждым собственным тапом
+│            Round is active!           │  <–– round state changes when the time comes
+│           Time left: 00:23            │  <–– timer, updates every second
+│            My score - 123             │  <–– updates with each own tap
 │                                       │
 └───────────────────────────────────────┘
 ```
 
 ```
 ┌───────────────────────────────────────┐
-│               Cooldown     Имя игрока │
+│               Cooldown    Player name │
 ├───────────────────────────────────────┤
 │                                       │
 │            ░░░░░░░░░░░░░░░            │
@@ -210,8 +218,8 @@ REST API - приемлемый вариант.
 │      ░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░     │
 │        ░░░░░░░░░░░░░░░░░░░░░░░░░░     │
 │                                       │
-│              Cooldown                 │  <–– состояние раунда меняется, когда приходит время
-│        до начала раунда 00:15         │  <–– счетчик времени, обновляется раз в секунду
+│              Cooldown                 │  <–– round state changes when the time comes
+│        round starts in 00:15          │  <–– timer, updates every second
 │                                       │
 └───────────────────────────────────────┘
 
@@ -219,7 +227,7 @@ REST API - приемлемый вариант.
 
 ```
 ┌───────────────────────────────────────┐
-│           Раунд завершен   Имя игрока │
+│           Round finished  Player name │
 ├───────────────────────────────────────┤
 │                                       │
 │            ░░░░░░░░░░░░░░░            │
@@ -234,13 +242,13 @@ REST API - приемлемый вариант.
 │        ░░░░░░░░░░░░░░░░░░░░░░░░░░     │
 │                                       │
 │  ---------------------------------    │
-│  Всего               999999           │ <–– статистика раунда
-│  Победитель - Иван   100500           │
-│  Мои очки            321              │
+│  Total               999999           │ <–– round stats
+│  Winner - Ivan       100500           │
+│  My score            321              │
 │                                       │
 └───────────────────────────────────────┘
 ```
 
-## ⚠️ Уведомление о лицензии:
+## ⚠️ License notice:
 
-Этот проект был создан в рамках выполнения тестового задания. Исходный код **не лицензирован** для повторного использования или распространения. Все права защищены и принадлежат автору.
+This project was created as part of a take-home assignment. The source code is **not licensed** for reuse or distribution. All rights reserved and belong to the author.
