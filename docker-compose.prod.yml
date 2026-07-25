@@ -38,6 +38,8 @@ services:
     restart: unless-stopped
     depends_on:
       - backend
+    environment:
+      BACKEND_URL: ${BACKEND_URL:?BACKEND_URL is required, e.g. https://api.last-of-guss.example.com}
     ports:
       - "${FRONTEND_PORT:-8080}:80"
 

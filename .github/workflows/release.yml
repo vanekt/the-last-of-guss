@@ -63,8 +63,6 @@ jobs:
           file: frontend/Dockerfile
           push: true
           platforms: linux/amd64,linux/arm64
-          build-args: |
-            VITE_BACKEND_URL=${{ vars.VITE_BACKEND_URL }}
           tags: |
             ${{ env.FRONTEND_IMAGE }}:${{ github.ref_name }}
             ${{ env.FRONTEND_IMAGE }}:latest

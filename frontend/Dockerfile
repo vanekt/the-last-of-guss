@@ -16,14 +16,14 @@ COPY frontend frontend
 COPY shared shared
 COPY .git .git
 
-ARG VITE_BACKEND_URL
-ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
-
 RUN pnpm --filter frontend prod
 
 FROM nginx:alpine AS runtime
 
 COPY frontend/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /app/frontend/dist /usr/share/nginx/html
+COPY frontend/docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 80
+ENTRYPOINT ["/docker-entrypoint.sh"]

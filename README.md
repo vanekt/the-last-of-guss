@@ -27,14 +27,15 @@ pnpm install
 
 ### 2. Configure environment variables
 
-Both the `backend` and `frontend` folders contain a `.env.example` file with sample environment variables.
+The `backend` folder contains a `.env.example` file with sample environment variables.
 
 - Copy `.env.example` to `.env` and edit the values if needed:
 
 ```bash
 cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
 ```
+
+The React frontend reads its backend URL from `frontend/public/env.js` at runtime.
 
 ### 3. Start the local database (Postgres + pgAdmin)
 

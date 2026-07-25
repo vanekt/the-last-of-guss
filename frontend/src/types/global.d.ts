@@ -4,5 +4,8 @@ declare global {
   interface Window {
     __TANSTACK_QUERY_CLIENT__: QueryClient;
     BUILD_INFO: Record<string, unknown>;
+    __ENV__: {
+      BACKEND_URL: string;
+    };
   }
 }

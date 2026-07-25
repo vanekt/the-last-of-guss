@@ -38,7 +38,7 @@ Full prod stack from GHCR images, locally: `docker compose -f docker-compose.pro
 
 - Root `.env` — creds for `docker-compose.dev.yml`.
 - `backend/.env` — `DATABASE_URL`, `JWT_SECRET`, `PORT`, `CORS_ORIGIN`, `ROUND_DURATION`/`COOLDOWN_DURATION` (seconds). Backend exits on startup if any of these are missing. **Contains real prod credentials** (Render/Supabase) — read before editing, don't overwrite carelessly.
-- `frontend/.env`, `frontend-vue/.env` — only `VITE_BACKEND_URL`.
+- `frontend/public/env.js`, `frontend-vue/public/env.js` — backend URL for both frontends, read at runtime as `window.__ENV__.BACKEND_URL`, not `.env`/`import.meta.env`. Committed default is `http://localhost:3001`. Only `frontend` is dockerized: its `docker-entrypoint.sh` overwrites `env.js` from the `BACKEND_URL` container env var at startup; `frontend-vue` just uses the committed default (no container, no runtime override).
 - `.env.prod.example` — template for `docker-compose.prod.yml`.
 
 ## Architecture
@@ -91,7 +91,7 @@ Independent Vite apps, same UX (see `README.md`), both on top of `shared/fronten
 `backend/Dockerfile`/`frontend/Dockerfile` — multi-stage, build context is the **repo root** (not the package folder) — needed for `shared/` (not a workspace dependency, just a path alias). Notes:
 - `pnpm install --frozen-lockfile --filter <pkg>` — with frozen-lockfile it resolves from `pnpm-lock.yaml`, no need to copy other packages' package.json.
 - `frontend/Dockerfile` installs `git`: `vite.config.ts` bakes in the commit hash (`getBuildInfo.ts`) — that's why `.git` isn't in `.dockerignore`.
-- `VITE_BACKEND_URL` — a build-arg, not a runtime env var (Vite inlines it at build time).
+- `frontend/Dockerfile` runtime stage has a `docker-entrypoint.sh` that generates `/usr/share/nginx/html/env.js` from the `BACKEND_URL` container env var **at container startup**, not at build time — see `frontend/public/env.js`/`window.__ENV__` above. One image works across environments without rebuilding.
 - `backend/Dockerfile` — `USER node`, runtime image is just `dist/index.cjs`.
 
 `.github/workflows/release.yml` — builds+pushes to GHCR on git tag `v*` (multi-arch: `linux/amd64,linux/arm64` via `setup-qemu-action`), not on every push/merge.

@@ -8,5 +8,8 @@ declare global {
       commitHash: string;
       commitDate: string;
     };
+    __ENV__: {
+      BACKEND_URL: string;
+    };
   }
 }

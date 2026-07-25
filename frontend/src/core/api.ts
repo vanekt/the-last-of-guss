@@ -3,7 +3,7 @@ import { store } from "@/core/jotaiStore";
 import { tokenAtom, resetTokenAtom } from "@/store/authAtoms";
 
 export const { authAPI, roundsAPI } = createAPI(
-  import.meta.env.VITE_BACKEND_URL,
+  window.__ENV__.BACKEND_URL,
   () => {
     return store.get(tokenAtom);
   },

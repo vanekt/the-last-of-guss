@@ -27,14 +27,15 @@ pnpm install
 
 ### 2. Настройка переменных окружения
 
-В каждой из папок `backend` и `frontend` есть файл `.env.example` с примерами переменных окружения.
+В папке `backend` есть файл `.env.example` с примерами переменных окружения.
 
 - Скопируйте файл `.env.example` в `.env` и при необходимости отредактируйте значения:
 
 ```bash
 cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
 ```
+
+React-фронтенд берёт URL бэкенда из `frontend/public/env.js` во время выполнения.
 
 ### 3. Запуск локальной базы (Postgres + pgAdmin)
 
