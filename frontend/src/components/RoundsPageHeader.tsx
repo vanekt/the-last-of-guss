@@ -10,7 +10,7 @@ const RoundsPageHeader: React.FC = () => (
       "justify-between",
       "items-end",
       "sm:flex-row-reverse",
-      "sm:items-start"
+      "sm:items-start",
     )}
   >
     <UserMenu />

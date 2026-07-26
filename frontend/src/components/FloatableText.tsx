@@ -14,13 +14,7 @@ export interface FloatableTextProps extends Floatable {
   onComplete: () => void;
 }
 
-const FloatableText: FC<FloatableTextProps> = ({
-  x,
-  y,
-  label,
-  accent,
-  onComplete,
-}) => (
+const FloatableText: FC<FloatableTextProps> = ({ x, y, label, accent, onComplete }) => (
   <motion.div
     initial={{ opacity: 1, y: 0, scale: accent ? 2 : 1 }}
     animate={{ opacity: 0, y: -150, scale: accent ? 3 : 1.5 }}
@@ -28,7 +22,7 @@ const FloatableText: FC<FloatableTextProps> = ({
     transition={{ duration: 2, ease: "easeOut" }}
     className={clsx(
       "absolute pointer-events-none font-bold text-2xl",
-      accent ? "text-green-500" : "text-white"
+      accent ? "text-green-500" : "text-white",
     )}
     style={{ left: x, top: y, transform: "translate(-50%, -50%)" }}
     onAnimationComplete={onComplete}

@@ -14,15 +14,7 @@ const UserMenu: FC = () => {
       <div className={clsx("flex", "items-center", "space-x-2", "text-white")}>
         <User className={clsx("w-5", "h-5")} />
         <span className={clsx("font-medium")}>{user.username}</span>
-        <span
-          className={clsx(
-            "text-xs",
-            "bg-purple-600",
-            "px-2",
-            "py-1",
-            "rounded-full"
-          )}
-        >
+        <span className={clsx("text-xs", "bg-purple-600", "px-2", "py-1", "rounded-full")}>
           {user.role}
         </span>
       </div>
@@ -33,7 +25,7 @@ const UserMenu: FC = () => {
           "text-gray-400",
           "hover:text-white",
           "transition-colors",
-          "cursor-pointer"
+          "cursor-pointer",
         )}
         title="Выйти"
       >

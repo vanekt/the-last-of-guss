@@ -4,7 +4,7 @@ import type { RoundWithStatus, TapResponse } from "@shared/types";
 
 export const useCreateRoundMutation = (
   onSuccess?: (data: RoundWithStatus) => void,
-  onError?: (error: Error) => void
+  onError?: (error: Error) => void,
 ) => {
   const queryClient = useQueryClient();
 

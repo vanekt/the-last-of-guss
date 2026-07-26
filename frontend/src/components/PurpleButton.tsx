@@ -28,7 +28,7 @@ const PurpleButton: FC<PurpleButtonProps> = ({ title, icon, ...rest }) => (
       "transition-all",
       "transform",
       "hover:scale-105",
-      "hover:cursor-pointer"
+      "hover:cursor-pointer",
     )}
     {...rest}
   >

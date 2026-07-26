@@ -13,10 +13,10 @@ const LoadingState: FC = () => (
       "left-0",
       "h-screen",
       "w-screen",
-      "pointer-events-none"
+      "pointer-events-none",
     )}
   >
-    <LoaderCircle className="animate-spin text-white w-12 h-12 opacity-50" />
+    <LoaderCircle className="h-12 w-12 animate-spin text-white opacity-50" />
   </div>
 );
 

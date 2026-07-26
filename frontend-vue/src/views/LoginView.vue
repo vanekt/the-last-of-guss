@@ -21,9 +21,7 @@ const loginMutation = useLoginMutation(
   },
 );
 
-const buttonTitle = computed(() =>
-  loginMutation.isPending.value ? "Вход..." : "Войти",
-);
+const buttonTitle = computed(() => (loginMutation.isPending.value ? "Вход..." : "Войти"));
 
 const handleSubmit = async () => {
   if (!username.value.trim() || !password.value.trim()) {
@@ -48,10 +46,7 @@ const handleSubmit = async () => {
 
         <form class="space-y-6" @submit.prevent="handleSubmit">
           <div>
-            <label
-              for="username"
-              class="mb-2 block text-sm font-medium text-gray-200"
-            >
+            <label for="username" class="mb-2 block text-sm font-medium text-gray-200">
               Имя пользователя
             </label>
             <div class="relative">
@@ -72,10 +67,7 @@ const handleSubmit = async () => {
             </div>
           </div>
           <div>
-            <label
-              for="password"
-              class="mb-2 block text-sm font-medium text-gray-200"
-            >
+            <label for="password" class="mb-2 block text-sm font-medium text-gray-200">
               Пароль
             </label>
             <div class="relative">

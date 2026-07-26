@@ -1,20 +1,12 @@
 import { eq, desc, and } from "drizzle-orm";
 import { db } from "@/db";
 import { rounds, userRoundStats, users } from "@/db/schema";
-import {
-  Round,
-  RoundStats,
-  RoundStatus,
-  RoundWinner,
-  TapResponse,
-} from "@shared/types";
+import { Round, RoundStats, RoundStatus, RoundWinner, TapResponse } from "@shared/types";
 import { isSuperTap } from "@shared/helpers";
 import { SUPER_TAP_SCORE } from "@shared/constants";
 
 if (!process.env.ROUND_DURATION || !process.env.COOLDOWN_DURATION) {
-  console.error(
-    "Please set ROUND_DURATION and COOLDOWN_DURATION in .env file."
-  );
+  console.error("Please set ROUND_DURATION and COOLDOWN_DURATION in .env file.");
   process.exit(1);
 }
 
@@ -44,11 +36,7 @@ export class RoundService {
   }
 
   static async getRoundById(id: string): Promise<Round | null> {
-    const [data] = await db
-      .select()
-      .from(rounds)
-      .where(eq(rounds.id, id))
-      .limit(1);
+    const [data] = await db.select().from(rounds).where(eq(rounds.id, id)).limit(1);
 
     return data;
   }
@@ -93,19 +81,11 @@ export class RoundService {
     return status === "finished";
   }
 
-  static async getRoundStats(
-    roundId: string,
-    userId: string
-  ): Promise<RoundStats> {
+  static async getRoundStats(roundId: string, userId: string): Promise<RoundStats> {
     const [userStats] = await db
       .select({ taps: userRoundStats.taps, score: userRoundStats.score })
       .from(userRoundStats)
-      .where(
-        and(
-          eq(userRoundStats.userId, userId),
-          eq(userRoundStats.roundId, roundId)
-        )
-      );
+      .where(and(eq(userRoundStats.userId, userId), eq(userRoundStats.roundId, roundId)));
 
     return userStats;
   }
@@ -120,10 +100,7 @@ export class RoundService {
       .from(users)
       .leftJoin(
         userRoundStats,
-        and(
-          eq(users.id, userRoundStats.userId),
-          eq(userRoundStats.roundId, round.id)
-        )
+        and(eq(users.id, userRoundStats.userId), eq(userRoundStats.roundId, round.id)),
       )
       .where(eq(users.id, round.winnerId));
 
@@ -140,7 +117,7 @@ export class RoundService {
   static async processBatchTaps(
     userId: string,
     roundId: string,
-    tapCount: number
+    tapCount: number,
   ): Promise<TapResponse> {
     const isActive = await RoundService.isRoundActive(roundId);
     if (!isActive) {
@@ -165,12 +142,7 @@ export class RoundService {
         [userStats] = await tx
           .select({ taps: userRoundStats.taps, score: userRoundStats.score })
           .from(userRoundStats)
-          .where(
-            and(
-              eq(userRoundStats.userId, userId),
-              eq(userRoundStats.roundId, roundId)
-            )
-          )
+          .where(and(eq(userRoundStats.userId, userId), eq(userRoundStats.roundId, roundId)))
           .for("update");
       }
 
@@ -199,12 +171,7 @@ export class RoundService {
       await tx
         .update(userRoundStats)
         .set({ taps: newUserTaps, score: newUserScore })
-        .where(
-          and(
-            eq(userRoundStats.userId, userId),
-            eq(userRoundStats.roundId, roundId)
-          )
-        );
+        .where(and(eq(userRoundStats.userId, userId), eq(userRoundStats.roundId, roundId)));
 
       await tx
         .update(rounds)
@@ -251,10 +218,7 @@ export class RoundService {
       }
     }
 
-    await db
-      .update(rounds)
-      .set({ isActive: false })
-      .where(eq(rounds.id, roundId));
+    await db.update(rounds).set({ isActive: false }).where(eq(rounds.id, roundId));
 
     return null;
   }

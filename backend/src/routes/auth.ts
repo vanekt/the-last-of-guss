@@ -2,12 +2,7 @@ import { FastifyInstance } from "fastify";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { users } from "@/db/schema";
-import {
-  hashPassword,
-  comparePassword,
-  generateToken,
-  getUserRole,
-} from "@/utils/auth";
+import { hashPassword, comparePassword, generateToken, getUserRole } from "@/utils/auth";
 import { LoginRequest, LoginResponse, VerifyResponse } from "@shared/types";
 
 export async function authRoutes(fastify: FastifyInstance) {
@@ -33,10 +28,7 @@ export async function authRoutes(fastify: FastifyInstance) {
       const { username, password } = request.body;
 
       try {
-        const [user] = await db
-          .select()
-          .from(users)
-          .where(eq(users.username, username));
+        const [user] = await db.select().from(users).where(eq(users.username, username));
 
         if (user) {
           const isValid = await comparePassword(password, user.password);
@@ -79,7 +71,7 @@ export async function authRoutes(fastify: FastifyInstance) {
         console.error("Login error:", error);
         return reply.status(500).send();
       }
-    }
+    },
   );
 
   fastify.post<{

@@ -72,96 +72,78 @@ export async function roundRoutes(fastify: FastifyInstance) {
   fastify.get<{
     Params: { id: string };
     Reply: RoundStatsResponse;
-  }>(
-    "/rounds/:id/stats",
-    { preHandler: fastify.auth },
-    async (request, reply) => {
-      const { id } = request.params;
-      const user = request.user;
+  }>("/rounds/:id/stats", { preHandler: fastify.auth }, async (request, reply) => {
+    const { id } = request.params;
+    const user = request.user;
 
-      try {
-        const stats = await RoundService.getRoundStats(id, user.id);
+    try {
+      const stats = await RoundService.getRoundStats(id, user.id);
 
-        if (!stats) {
-          return { score: 0, taps: 0 };
-        }
-
-        return reply.send(stats);
-      } catch {
-        return reply.status(500).send();
+      if (!stats) {
+        return { score: 0, taps: 0 };
       }
+
+      return reply.send(stats);
+    } catch {
+      return reply.status(500).send();
     }
-  );
+  });
 
   fastify.get<{
     Params: { id: string };
     Reply: RoundWinnerResponse;
-  }>(
-    "/rounds/:id/winner",
-    { preHandler: fastify.auth },
-    async (request, reply) => {
-      const { id } = request.params;
+  }>("/rounds/:id/winner", { preHandler: fastify.auth }, async (request, reply) => {
+    const { id } = request.params;
 
-      try {
-        const round = await RoundService.getRoundById(id);
-        if (!round) {
-          return reply.status(404).send();
-        }
-
-        const isFinished = await RoundService.isRoundFinished(round);
-        if (isFinished && !round.winnerId) {
-          const winnerId = await RoundService.finishRound(round.id);
-          round.winnerId = winnerId;
-        }
-
-        const winner = await RoundService.getRoundWinner(round);
-
-        return reply.send(winner);
-      } catch {
-        return reply.status(500).send();
+    try {
+      const round = await RoundService.getRoundById(id);
+      if (!round) {
+        return reply.status(404).send();
       }
+
+      const isFinished = await RoundService.isRoundFinished(round);
+      if (isFinished && !round.winnerId) {
+        const winnerId = await RoundService.finishRound(round.id);
+        round.winnerId = winnerId;
+      }
+
+      const winner = await RoundService.getRoundWinner(round);
+
+      return reply.send(winner);
+    } catch {
+      return reply.status(500).send();
     }
-  );
+  });
 
   fastify.post<{
     Params: { id: string };
     Body: TapBatchRequest;
-  }>(
-    "/rounds/:id/tap/batch",
-    { preHandler: fastify.auth },
-    async (request, reply) => {
-      const { id } = request.params;
-      const user = request.user;
+  }>("/rounds/:id/tap/batch", { preHandler: fastify.auth }, async (request, reply) => {
+    const { id } = request.params;
+    const user = request.user;
 
-      if (!user) {
-        return reply.status(401).send({ error: "Invalid token" });
-      }
-
-      const { tapCount } = request.body;
-      if (!tapCount || tapCount <= 0) {
-        return reply.status(400).send({ error: "Invalid tap count" });
-      }
-
-      if (isNikita(user.role)) {
-        return reply.send({
-          success: false,
-          taps: 0,
-          score: 0,
-        });
-      }
-
-      try {
-        const result = await RoundService.processBatchTaps(
-          user.id,
-          id,
-          tapCount
-        );
-        return reply.send(result);
-      } catch {
-        return reply
-          .status(500)
-          .send({ error: "Failed to process batch taps" });
-      }
+    if (!user) {
+      return reply.status(401).send({ error: "Invalid token" });
     }
-  );
+
+    const { tapCount } = request.body;
+    if (!tapCount || tapCount <= 0) {
+      return reply.status(400).send({ error: "Invalid tap count" });
+    }
+
+    if (isNikita(user.role)) {
+      return reply.send({
+        success: false,
+        taps: 0,
+        score: 0,
+      });
+    }
+
+    try {
+      const result = await RoundService.processBatchTaps(user.id, id, tapCount);
+      return reply.send(result);
+    } catch {
+      return reply.status(500).send({ error: "Failed to process batch taps" });
+    }
+  });
 }

@@ -33,10 +33,7 @@ defineProps<Props>();
         <div v-if="isReady" class="text-lg font-bold text-yellow-400">
           {{ winner ? `${winner.username} (${winner.score})` : "Нет" }}
         </div>
-        <Ellipsis
-          v-else
-          class="inline h-7 w-7 animate-ping text-white opacity-50"
-        />
+        <Ellipsis v-else class="inline h-7 w-7 animate-ping text-white opacity-50" />
       </div>
     </div>
   </div>

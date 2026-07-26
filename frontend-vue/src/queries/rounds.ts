@@ -28,10 +28,7 @@ export const useRoundQuery = (id: Ref<string>) => {
   });
 };
 
-export const useRoundStatsQuery = (
-  id: Ref<string>,
-  roundStatus: Ref<string | undefined>,
-) => {
+export const useRoundStatsQuery = (id: Ref<string>, roundStatus: Ref<string | undefined>) => {
   return useQuery<RoundStats>({
     queryKey: ["stats", id, roundStatus],
     queryFn: ({ signal }) => roundsAPI.getStats(id.value, { signal }),
@@ -40,10 +37,7 @@ export const useRoundStatsQuery = (
   });
 };
 
-export const useRoundWinnerQuery = (
-  id: Ref<string>,
-  roundStatus: Ref<string | undefined>,
-) => {
+export const useRoundWinnerQuery = (id: Ref<string>, roundStatus: Ref<string | undefined>) => {
   return useQuery<RoundWinner | null>({
     queryKey: ["winner", id],
     queryFn: ({ signal }) => roundsAPI.getWinner(id.value, { signal }),

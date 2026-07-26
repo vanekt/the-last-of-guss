@@ -17,7 +17,7 @@ const RoundPageHeader: React.FC = () => {
           "text-gray-400",
           "hover:text-white",
           "transition-colors",
-          "cursor-pointer"
+          "cursor-pointer",
         )}
       >
         <ArrowLeft className={clsx("w-5", "h-5")} />

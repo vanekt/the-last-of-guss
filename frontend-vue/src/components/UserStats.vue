@@ -19,10 +19,7 @@ defineProps<Props>();
       </div>
 
       <div v-if="isReady" class="text-2xl font-bold text-white">{{ taps }}</div>
-      <Ellipsis
-        v-else
-        class="inline h-8 w-8 animate-ping text-white opacity-50"
-      />
+      <Ellipsis v-else class="inline h-8 w-8 animate-ping text-white opacity-50" />
     </div>
     <div class="rounded-lg bg-white/5 p-4">
       <div class="flex items-center justify-center space-x-2 text-purple-400">
@@ -32,10 +29,7 @@ defineProps<Props>();
       <div v-if="isReady" class="text-2xl font-bold text-white">
         {{ score }}
       </div>
-      <Ellipsis
-        v-else
-        class="inline h-8 w-8 animate-ping text-white opacity-50"
-      />
+      <Ellipsis v-else class="inline h-8 w-8 animate-ping text-white opacity-50" />
     </div>
   </div>
 </template>

@@ -48,6 +48,7 @@ Full prod stack from GHCR images, locally: `docker compose -f docker-compose.pro
 ### `shared/` — common code
 
 Framework-agnostic package used by backend (`@shared/*`) and both frontends:
+
 - `shared/types` — single source of truth for API contracts. Change the API shape here, don't duplicate per package.
 - `shared/constants` — `SUPER_TAP_SCORE = 10`.
 - `shared/helpers` — `isSuperTap(n)` (`n % 11 === 0`), `isNikita(role)`.
@@ -91,6 +92,7 @@ Independent Vite apps, same UX (see `README.md`), both on top of `shared/fronten
 - Local Dockerfile testing — plain `docker build`, no separate compose file.
 
 `backend/Dockerfile`/`frontend/Dockerfile` — multi-stage, build context is the **repo root** (not the package folder) — needed for `shared/` (not a workspace dependency, just a path alias). Notes:
+
 - `pnpm install --frozen-lockfile --filter <pkg>` — with frozen-lockfile it resolves from `pnpm-lock.yaml`, no need to copy other packages' package.json.
 - `frontend/Dockerfile` installs `git`: `vite.config.ts` bakes in the commit hash (`getBuildInfo.ts`) — that's why `.git` isn't in `.dockerignore`.
 - `frontend/Dockerfile` runtime stage has a `docker-entrypoint.sh` that generates `/usr/share/nginx/html/env.js` from the `BACKEND_URL` container env var **at container startup**, not at build time — see `frontend/public/env.js`/`window.__ENV__` above. One image works across environments without rebuilding.

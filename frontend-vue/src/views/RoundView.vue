@@ -14,11 +14,7 @@ import RoundTimer from "@/components/RoundTimer.vue";
 import UserStats from "@/components/UserStats.vue";
 import { useRoundTimer } from "@/composables/useRoundTimer";
 import { useTapBatching } from "@/composables/useTapBatching";
-import {
-  useRoundQuery,
-  useRoundStatsQuery,
-  useRoundWinnerQuery,
-} from "@/queries/rounds";
+import { useRoundQuery, useRoundStatsQuery, useRoundWinnerQuery } from "@/queries/rounds";
 import { useAuthStore } from "@/store/authStore";
 import { useRoundScore } from "@/composables/useRoundScore";
 import { useRoundTaps } from "@/composables/useRoundTaps";
@@ -30,12 +26,7 @@ const { id: roundId } = toRefs(props);
 
 const authStore = useAuthStore();
 
-const {
-  data: round,
-  error,
-  isLoading,
-  isSuccess: isRoundLoaded,
-} = useRoundQuery(roundId);
+const { data: round, error, isLoading, isSuccess: isRoundLoaded } = useRoundQuery(roundId);
 
 const roundStatus = computed(() => round.value?.status.value);
 
@@ -45,10 +36,7 @@ const {
   isFetched: isStatsFetched,
 } = useRoundStatsQuery(roundId, roundStatus);
 
-const { data: winner, isFetched: isWinnerLoaded } = useRoundWinnerQuery(
-  roundId,
-  roundStatus,
-);
+const { data: winner, isFetched: isWinnerLoaded } = useRoundWinnerQuery(roundId, roundStatus);
 
 const { setTitle } = usePageTitle("Раунд");
 watch(roundStatus, (roundStatusValue) => {
@@ -119,10 +107,7 @@ const floatableLabel = computed(() => {
 
           <div class="space-y-2 align-middle">
             <RoundStatus v-bind="{ status: roundStatus! }" />
-            <RoundTimer
-              v-if="roundStatus !== 'finished'"
-              v-bind="{ value: timeLeft }"
-            />
+            <RoundTimer v-if="roundStatus !== 'finished'" v-bind="{ value: timeLeft }" />
           </div>
 
           <UserStats

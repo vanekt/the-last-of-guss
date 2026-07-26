@@ -17,11 +17,7 @@ import RoundStatus from "@/components/RoundStatus";
 import RoundSummary from "@/components/RoundSummary";
 import RoundTimer from "@/components/RoundTimer";
 import UserStats from "@/components/UserStats";
-import {
-  useRoundQuery,
-  useRoundStatsQuery,
-  useRoundWinnerQuery,
-} from "@/queries/rounds";
+import { useRoundQuery, useRoundStatsQuery, useRoundWinnerQuery } from "@/queries/rounds";
 import { userRoleAtom } from "@/store/authAtoms";
 import { useInterval } from "@/hooks/useInterval";
 import { useHandleTap } from "@/hooks/useHandleTap";
@@ -32,26 +28,13 @@ const RoundPage: React.FC = () => {
   const queryClient = useQueryClient();
   const roundId = id ?? "";
 
-  const {
-    data: round,
-    error,
-    isLoading,
-    isSuccess: isRoundLoaded,
-  } = useRoundQuery(roundId);
+  const { data: round, error, isLoading, isSuccess: isRoundLoaded } = useRoundQuery(roundId);
 
   const roundStatus = isRoundLoaded ? round.status.value : "pending";
 
-  const { data: stats } = useRoundStatsQuery(
-    roundId,
-    isRoundLoaded,
-    roundStatus
-  );
+  const { data: stats } = useRoundStatsQuery(roundId, isRoundLoaded, roundStatus);
 
-  const { data: winner } = useRoundWinnerQuery(
-    roundId,
-    isRoundLoaded,
-    roundStatus
-  );
+  const { data: winner } = useRoundWinnerQuery(roundId, isRoundLoaded, roundStatus);
 
   const timerCallback = useCallback(() => {
     if (roundStatus === "finished") {
@@ -79,16 +62,13 @@ const RoundPage: React.FC = () => {
       return;
     }
 
-    queryClient.setQueryData(
-      ["stats", roundId, roundStatus],
-      (old: RoundStats) => {
-        const newTaps = old.taps + 1;
-        return {
-          taps: newTaps,
-          score: old.score + (isSuperTap(newTaps) ? SUPER_TAP_SCORE : 1),
-        };
-      }
-    );
+    queryClient.setQueryData(["stats", roundId, roundStatus], (old: RoundStats) => {
+      const newTaps = old.taps + 1;
+      return {
+        taps: newTaps,
+        score: old.score + (isSuperTap(newTaps) ? SUPER_TAP_SCORE : 1),
+      };
+    });
   }, [shouldIgnoreTap, roundId, roundStatus, queryClient]);
 
   const handleTap = useHandleTap({
@@ -122,7 +102,7 @@ const RoundPage: React.FC = () => {
               "border",
               "border-white/20",
               "text-center",
-              "space-y-4"
+              "space-y-4",
             )}
           >
             <GooseTapButton

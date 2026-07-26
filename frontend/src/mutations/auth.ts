@@ -7,7 +7,7 @@ import { tokenAtom, userAtom } from "@/store/authAtoms";
 
 export const useLoginMutation = (
   onSuccess?: (data: LoginResponse) => void,
-  onError?: (error: Error) => void
+  onError?: (error: Error) => void,
 ) => {
   const setToken = useSetAtom(tokenAtom);
   const setUser = useSetAtom(userAtom);

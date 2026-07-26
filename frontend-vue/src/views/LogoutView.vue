@@ -5,9 +5,7 @@ import { useLogoutMutation } from "@/mutations/auth";
 import { RouteNames } from "@/constants";
 
 const router = useRouter();
-const logoutMutation = useLogoutMutation(() =>
-  router.replace({ name: RouteNames.Rounds }),
-);
+const logoutMutation = useLogoutMutation(() => router.replace({ name: RouteNames.Rounds }));
 
 onMounted(() => {
   logoutMutation.mutate();

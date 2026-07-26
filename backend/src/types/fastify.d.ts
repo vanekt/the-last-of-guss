@@ -5,7 +5,7 @@ import { UserPayload } from ".";
 export type AuthMiddleware = (
   request: FastifyRequest,
   reply: FastifyReply,
-  done: () => void
+  done: () => void,
 ) => void;
 
 declare module "fastify" {

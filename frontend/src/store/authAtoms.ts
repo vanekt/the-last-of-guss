@@ -5,14 +5,9 @@ import { queryClient } from "@/core/queryClient";
 import type { UserPayload } from "@shared/types";
 import { getVerifyQuery } from "@/queries/auth";
 
-export const tokenAtom = atomWithStorage<string | null>(
-  "token",
-  null,
-  undefined,
-  {
-    getOnInit: true,
-  }
-);
+export const tokenAtom = atomWithStorage<string | null>("token", null, undefined, {
+  getOnInit: true,
+});
 
 export const resetTokenAtom = atom(null, (_, set) => {
   set(tokenAtom, RESET);
@@ -20,7 +15,7 @@ export const resetTokenAtom = atom(null, (_, set) => {
 
 export const verifyAtom = atomWithQuery(
   (get) => getVerifyQuery(!!get(tokenAtom)),
-  () => queryClient
+  () => queryClient,
 );
 
 export const isVerifyLoadingAtom = atom((get) => get(verifyAtom).isLoading);
@@ -36,7 +31,7 @@ export const userAtom = atom(
   },
   (_, __, newUser: UserPayload | null) => {
     queryClient.setQueryData(["user"], { user: newUser });
-  }
+  },
 );
 
 export const userRoleAtom = atom((get) => get(userAtom)?.role || "");

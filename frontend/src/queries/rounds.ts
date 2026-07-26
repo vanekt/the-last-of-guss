@@ -26,25 +26,16 @@ export const useRoundQuery = (id: string) => {
   });
 };
 
-export const useRoundStatsQuery = (
-  id: string,
-  isRoundLoaded: boolean,
-  roundStatus: string
-) => {
+export const useRoundStatsQuery = (id: string, isRoundLoaded: boolean, roundStatus: string) => {
   return useQuery<RoundStats>({
     queryKey: ["stats", id, roundStatus],
     queryFn: ({ signal }) => roundsAPI.getStats(id, { signal }),
-    enabled:
-      isRoundLoaded && ["active", "finished"].includes(String(roundStatus)),
+    enabled: isRoundLoaded && ["active", "finished"].includes(String(roundStatus)),
     initialData: { taps: 0, score: 0 },
   });
 };
 
-export const useRoundWinnerQuery = (
-  id: string,
-  isRoundLoaded: boolean,
-  roundStatus: string
-) => {
+export const useRoundWinnerQuery = (id: string, isRoundLoaded: boolean, roundStatus: string) => {
   return useQuery<RoundWinner | null>({
     queryKey: ["winner", id],
     queryFn: ({ signal }) => roundsAPI.getWinner(id, { signal }),

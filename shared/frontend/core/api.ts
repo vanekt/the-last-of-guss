@@ -13,7 +13,7 @@ import type {
 export const createAPI = (
   baseURL: string,
   getToken: () => string | null,
-  resetToken: () => void
+  resetToken: () => void,
 ) => {
   const api = axios.create({
     baseURL,
@@ -38,7 +38,7 @@ export const createAPI = (
       }
 
       return Promise.reject(error);
-    }
+    },
   );
 
   return {
@@ -53,10 +53,7 @@ export const createAPI = (
       getRounds: (): Promise<RoundsResponse> =>
         api.get<RoundsResponse>("/rounds").then((r) => r.data),
 
-      getRound: (
-        id: string,
-        config?: AxiosRequestConfig
-      ): Promise<RoundWithStatus> =>
+      getRound: (id: string, config?: AxiosRequestConfig): Promise<RoundWithStatus> =>
         api.get<RoundWithStatus>(`/rounds/${id}`, config).then((r) => r.data),
 
       createRound: (): Promise<RoundWithStatus> =>
@@ -66,9 +63,7 @@ export const createAPI = (
         api.get<RoundStats>(`/rounds/${id}/stats`, config).then((r) => r.data),
 
       getWinner: (id: string, config?: AxiosRequestConfig) =>
-        api
-          .get<RoundWinner>(`/rounds/${id}/winner`, config)
-          .then((r) => r.data),
+        api.get<RoundWinner>(`/rounds/${id}/winner`, config).then((r) => r.data),
 
       tapBatch: (roundId: string, tapCount: number): Promise<TapResponse> =>
         api

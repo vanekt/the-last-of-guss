@@ -7,11 +7,7 @@ interface UseRoundTimerOptions {
   onComplete?: () => void;
 }
 
-export function useRoundTimer({
-  initTimeLeft,
-  disabled,
-  onComplete,
-}: UseRoundTimerOptions) {
+export function useRoundTimer({ initTimeLeft, disabled, onComplete }: UseRoundTimerOptions) {
   const { remaining, start, stop } = useCountdown(() => initTimeLeft() / 1000, {
     onComplete,
   });

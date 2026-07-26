@@ -9,5 +9,5 @@ export const { authAPI, roundsAPI } = createAPI(
   },
   () => {
     store.set(resetTokenAtom);
-  }
+  },
 );

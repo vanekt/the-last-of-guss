@@ -36,7 +36,7 @@ const RoundCard: React.FC<Props> = ({ round, onClick, onTimeout }) => {
         "cursor-pointer",
         "transition-all",
         "transform",
-        "hover:shadow-2xl"
+        "hover:shadow-2xl",
       )}
     >
       <div className={clsx("flex", "items-start", "justify-between")}>
@@ -50,7 +50,7 @@ const RoundCard: React.FC<Props> = ({ round, onClick, onTimeout }) => {
                 statusInfo.bgColorAlt,
                 "shrink-0",
                 "hidden",
-                "sm:inline"
+                "sm:inline",
               )}
             ></div>
             <h3
@@ -63,7 +63,7 @@ const RoundCard: React.FC<Props> = ({ round, onClick, onTimeout }) => {
                 "gap-0",
                 "sm:flex-row",
                 "sm:gap-2",
-                "max-w-full"
+                "max-w-full",
               )}
             >
               <span>Round ID:</span>
@@ -72,12 +72,10 @@ const RoundCard: React.FC<Props> = ({ round, onClick, onTimeout }) => {
           </div>
           <div className={clsx("space-y-1", "text-gray-300", "text-sm")}>
             <div>
-              <span className={clsx("text-gray-400")}>Start:</span>{" "}
-              {formatDate(round.startTime)}
+              <span className={clsx("text-gray-400")}>Start:</span> {formatDate(round.startTime)}
             </div>
             <div>
-              <span className={clsx("text-gray-400")}>End:</span>{" "}
-              {formatDate(round.endTime)}
+              <span className={clsx("text-gray-400")}>End:</span> {formatDate(round.endTime)}
             </div>
           </div>
           <div className={clsx("border-t", "border-white/10", "my-4")}></div>
@@ -90,13 +88,11 @@ const RoundCard: React.FC<Props> = ({ round, onClick, onTimeout }) => {
                 "px-3",
                 "py-1",
                 "rounded-full",
-                statusInfo.bgColor
+                statusInfo.bgColor,
               )}
             >
               <StatusIcon className={clsx("w-4", "h-4", statusInfo.color)} />
-              <span
-                className={clsx("text-sm", "font-medium", statusInfo.color)}
-              >
+              <span className={clsx("text-sm", "font-medium", statusInfo.color)}>
                 Статус: {statusInfo.title}
               </span>
             </div>
@@ -104,9 +100,7 @@ const RoundCard: React.FC<Props> = ({ round, onClick, onTimeout }) => {
             {timeLeft && status !== "finished" ? (
               <div className={clsx("text-purple-400", "flex", "space-x-2")}>
                 <Clock className={clsx("w-5", "h-5")} />
-                <span className={clsx("font-mono", "text-sm")}>
-                  {formatTime(timeLeft)}
-                </span>
+                <span className={clsx("font-mono", "text-sm")}>{formatTime(timeLeft)}</span>
               </div>
             ) : null}
           </div>

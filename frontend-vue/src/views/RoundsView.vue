@@ -33,9 +33,7 @@ const createButtonTitle = computed(() =>
   createMutation.isPending.value ? "Создание..." : "Создать раунд",
 );
 
-const hasRounds = computed(
-  () => Array.isArray(rounds.value) && rounds.value.length > 0,
-);
+const hasRounds = computed(() => Array.isArray(rounds.value) && rounds.value.length > 0);
 </script>
 
 <template>

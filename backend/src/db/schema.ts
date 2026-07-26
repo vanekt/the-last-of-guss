@@ -44,11 +44,8 @@ export const userRoundStats = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
-    uniqueIndex("user_round_stats_user_id_round_id_unique").on(
-      table.userId,
-      table.roundId
-    ),
-  ]
+    uniqueIndex("user_round_stats_user_id_round_id_unique").on(table.userId, table.roundId),
+  ],
 );
 
 export const usersRelations = relations(users, ({ many }) => ({

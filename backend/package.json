@@ -1,8 +1,11 @@
 {
   "name": "backend",
   "version": "0.1.2",
-  "main": "src/index.ts",
+  "description": "",
+  "license": "ISC",
+  "author": "vanekt",
   "type": "module",
+  "main": "src/index.ts",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --platform=node --format=cjs --outfile=dist/index.cjs",
     "start": "node dist/index.cjs",
@@ -13,9 +16,6 @@
     "typecheck": "tsc --noEmit",
     "prod": "pnpm typecheck && pnpm lint && pnpm build"
   },
-  "author": "vanekt",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "@fastify/cors": "^11.0.1",
     "bcryptjs": "^3.0.2",

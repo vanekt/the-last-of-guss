@@ -15,7 +15,7 @@ const LoginPage: React.FC = () => {
     },
     () => {
       toast.error("Ошибка входа");
-    }
+    },
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -28,15 +28,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <div
-      className={clsx(
-        "min-h-screen",
-        "flex",
-        "items-center",
-        "justify-center",
-        "p-4"
-      )}
-    >
+    <div className={clsx("min-h-screen", "flex", "items-center", "justify-center", "p-4")}>
       <div className={clsx("w-full", "max-w-md")}>
         <div
           className={clsx(
@@ -48,7 +40,7 @@ const LoginPage: React.FC = () => {
             "sm:shadow-2xl",
             "sm:border",
             "sm:border-white/20",
-            "sm:p-8"
+            "sm:p-8",
           )}
         >
           <div className={clsx("text-center")}>
@@ -62,13 +54,7 @@ const LoginPage: React.FC = () => {
             <div>
               <label
                 htmlFor="username"
-                className={clsx(
-                  "block",
-                  "text-sm",
-                  "font-medium",
-                  "text-gray-200",
-                  "mb-2"
-                )}
+                className={clsx("block", "text-sm", "font-medium", "text-gray-200", "mb-2")}
               >
                 Имя пользователя
               </label>
@@ -82,7 +68,7 @@ const LoginPage: React.FC = () => {
                     "-translate-y-1/2",
                     "text-gray-400",
                     "w-5",
-                    "h-5"
+                    "h-5",
                   )}
                 />
 
@@ -106,7 +92,7 @@ const LoginPage: React.FC = () => {
                     "focus:ring-2",
                     "focus:ring-purple-500",
                     "focus:border-transparent",
-                    "transition-all"
+                    "transition-all",
                   )}
                   placeholder="Введите имя пользователя"
                   disabled={loginMutation.isPending}
@@ -119,13 +105,7 @@ const LoginPage: React.FC = () => {
             <div>
               <label
                 htmlFor="password"
-                className={clsx(
-                  "block",
-                  "text-sm",
-                  "font-medium",
-                  "text-gray-200",
-                  "mb-2"
-                )}
+                className={clsx("block", "text-sm", "font-medium", "text-gray-200", "mb-2")}
               >
                 Пароль
               </label>
@@ -139,7 +119,7 @@ const LoginPage: React.FC = () => {
                     "-translate-y-1/2",
                     "text-gray-400",
                     "w-5",
-                    "h-5"
+                    "h-5",
                   )}
                 />
 
@@ -163,7 +143,7 @@ const LoginPage: React.FC = () => {
                     "focus:ring-2",
                     "focus:ring-purple-500",
                     "focus:border-transparent",
-                    "transition-all"
+                    "transition-all",
                   )}
                   placeholder="Введите пароль"
                   disabled={loginMutation.isPending}
@@ -179,9 +159,7 @@ const LoginPage: React.FC = () => {
             />
           </form>
 
-          <div
-            className={clsx("mt-6", "text-center", "text-sm", "text-gray-400")}
-          >
+          <div className={clsx("mt-6", "text-center", "text-sm", "text-gray-400")}>
             <p>Если аккаунта нет, он будет создан автоматически</p>
           </div>
         </div>

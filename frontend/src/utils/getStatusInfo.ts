@@ -1,9 +1,6 @@
 import { Play, Clock, CheckCircle } from "lucide-react";
 import { getStatusInfo as getStatusInfoOrig } from "@shared/frontend/helpers/getStatusInfo";
-import type {
-  RoundStatusValue,
-  RoundStatusInfo as RoundStatusInfoOrig,
-} from "@shared/types";
+import type { RoundStatusValue, RoundStatusInfo as RoundStatusInfoOrig } from "@shared/types";
 
 interface RoundStatusInfo extends RoundStatusInfoOrig {
   icon: React.ElementType;

@@ -30,7 +30,7 @@ const GreenButton: FC<GreenButtonProps> = ({ title, icon, ...rest }) => (
       "transition-all",
       "transform",
       "hover:scale-105",
-      "cursor-pointer"
+      "cursor-pointer",
     )}
     {...rest}
   >

@@ -32,9 +32,7 @@ const { timeLeft } = useRoundTimer({
   },
 });
 
-const shouldDisplayTimer = computed(
-  () => timeLeft.value > 0 && status.value !== "finished",
-);
+const shouldDisplayTimer = computed(() => timeLeft.value > 0 && status.value !== "finished");
 </script>
 
 <template>
@@ -49,10 +47,7 @@ const shouldDisplayTimer = computed(
       <div class="w-full max-w-full space-y-2">
         <div class="flex items-center space-x-3">
           <div
-            :class="[
-              'hidden h-3 w-3 shrink-0 rounded-full sm:inline',
-              statusInfo.bgColorAlt,
-            ]"
+            :class="['hidden h-3 w-3 shrink-0 rounded-full sm:inline', statusInfo.bgColorAlt]"
           ></div>
           <h3
             class="flex max-w-full flex-col gap-0 font-mono text-sm text-white sm:flex-row sm:gap-2"
@@ -73,16 +68,8 @@ const shouldDisplayTimer = computed(
         </div>
         <div class="my-4 border-t border-white/10"></div>
         <div class="flex items-center justify-between">
-          <div
-            :class="[
-              'flex items-center space-x-2 rounded-full px-3 py-1',
-              statusInfo.bgColor,
-            ]"
-          >
-            <component
-              :is="statusInfo.icon"
-              :class="['h-4 w-4', statusInfo.color]"
-            />
+          <div :class="['flex items-center space-x-2 rounded-full px-3 py-1', statusInfo.bgColor]">
+            <component :is="statusInfo.icon" :class="['h-4 w-4', statusInfo.color]" />
             <span :class="['text-sm font-medium', statusInfo.color]">
               Статус: {{ statusInfo.title }}
             </span>

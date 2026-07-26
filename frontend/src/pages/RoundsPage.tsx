@@ -15,13 +15,7 @@ import { useCreateRoundMutation } from "@/mutations/rounds";
 const RoundsPage: React.FC = () => {
   const navigate = useNavigate();
 
-  const {
-    data: rounds,
-    error,
-    isLoading,
-    isSuccess,
-    refetch,
-  } = useRoundsQuery();
+  const { data: rounds, error, isLoading, isSuccess, refetch } = useRoundsQuery();
 
   const createMutation = useCreateRoundMutation(
     (data) => {
@@ -30,7 +24,7 @@ const RoundsPage: React.FC = () => {
     },
     () => {
       toast.error("Ошибка создания раунда");
-    }
+    },
   );
 
   return (
@@ -55,20 +49,14 @@ const RoundsPage: React.FC = () => {
           <div className={clsx("space-y-6")}>
             {rounds.length === 0 ? (
               <div className={clsx("text-center", "py-12")}>
-                <div className={clsx("text-gray-400", "text-lg")}>
-                  Раундов пока нет
-                </div>
+                <div className={clsx("text-gray-400", "text-lg")}>Раундов пока нет</div>
                 <IfAdmin>
-                  <p className={clsx("text-gray-500", "mt-2")}>
-                    Создайте первый раунд
-                  </p>
+                  <p className={clsx("text-gray-500", "mt-2")}>Создайте первый раунд</p>
                 </IfAdmin>
               </div>
             ) : (
               <>
-                <p className="font-bold text-gray-300">
-                  Выберите раунд для участия:
-                </p>
+                <p className="font-bold text-gray-300">Выберите раунд для участия:</p>
                 {rounds.map((round) => (
                   <RoundCard
                     key={round.id}
