@@ -21,7 +21,7 @@ pnpm dev:vue       # Vue only (vite --open)
 
 pnpm mg            # migrations (drizzle-kit push), proxies into backend
 
-pnpm lint          # eslint across all packages
+pnpm lint          # oxlint (backend, frontend) + eslint (frontend-vue) across all packages
 pnpm typecheck     # tsc --noEmit across all packages
 pnpm test          # stub, no tests yet in any package
 
@@ -29,6 +29,8 @@ pnpm prod:node     # frozen-lockfile install + typecheck + esbuild bundle
 pnpm prod:react    # frozen-lockfile install + typecheck + lint + vite build
 pnpm prod:vue      # frozen-lockfile install + typecheck + lint + vue-tsc + vite build
 ```
+
+Linting is split: `backend`/`frontend` use [Oxlint](https://oxc.rs) (`.oxlintrc.json` in each), `frontend-vue` stays on ESLint (`eslint-plugin-vue`) — Oxlint doesn't lint `.vue` template blocks yet (script-only, tracked upstream), so it can't replace `eslint-plugin-vue` there without losing real coverage (e.g. `v-for` missing `:key`).
 
 Local Postgres/pgAdmin: `make up` / `down` / `recreate` (drops the volume) / `logs` (uses `docker-compose.dev.yml`).
 

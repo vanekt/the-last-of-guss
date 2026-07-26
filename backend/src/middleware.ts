@@ -28,7 +28,7 @@ export function authMiddleware(
     request.user = user;
     request.token = token;
     done();
-  } catch (err) {
+  } catch {
     console.error("[authMiddleware] Invalid or expired token");
     reply.code(401).send();
   }

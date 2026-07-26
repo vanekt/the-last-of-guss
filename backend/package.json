@@ -9,8 +9,9 @@
     "dev": "npx tsx --watch ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "mg": "npx drizzle-kit push",
+    "lint": "oxlint .",
     "typecheck": "tsc --noEmit",
-    "prod": "pnpm typecheck && pnpm build"
+    "prod": "pnpm typecheck && pnpm lint && pnpm build"
   },
   "author": "vanekt",
   "license": "ISC",
@@ -29,6 +30,7 @@
     "@types/pg": "^8.15.4",
     "drizzle-kit": "^0.31.4",
     "esbuild": "^0.25.8",
+    "oxlint": "^1.75.0",
     "tsx": "^4.20.3"
   }
 }

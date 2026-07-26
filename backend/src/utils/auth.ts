@@ -28,16 +28,12 @@ export const generateToken = (user: User): string => {
 };
 
 export const verifyToken = (token: string): UserPayload => {
-  try {
-    const userData = jwt.verify(token, JWT_SECRET) as UserPayload;
-    return {
-      id: userData.id,
-      username: userData.username,
-      role: userData.role,
-    };
-  } catch (e) {
-    throw e;
-  }
+  const userData = jwt.verify(token, JWT_SECRET) as UserPayload;
+  return {
+    id: userData.id,
+    username: userData.username,
+    role: userData.role,
+  };
 };
 
 export const getUserRole = (username: string): string => {

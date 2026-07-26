@@ -22,7 +22,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
           status: RoundService.getRoundStatus(round),
         })),
       });
-    } catch (error) {
+    } catch {
       return reply.status(500).send();
     }
   });
@@ -43,7 +43,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
         ...round,
         status: RoundService.getRoundStatus(round),
       });
-    } catch (error) {
+    } catch {
       return reply.status(500).send();
     }
   });
@@ -64,7 +64,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
         ...round,
         status: RoundService.getRoundStatus(round),
       });
-    } catch (error) {
+    } catch {
       return reply.status(500).send();
     }
   });
@@ -87,7 +87,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
         }
 
         return reply.send(stats);
-      } catch (error) {
+      } catch {
         return reply.status(500).send();
       }
     }
@@ -117,7 +117,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
         const winner = await RoundService.getRoundWinner(round);
 
         return reply.send(winner);
-      } catch (error) {
+      } catch {
         return reply.status(500).send();
       }
     }
@@ -157,7 +157,7 @@ export async function roundRoutes(fastify: FastifyInstance) {
           tapCount
         );
         return reply.send(result);
-      } catch (error) {
+      } catch {
         return reply
           .status(500)
           .send({ error: "Failed to process batch taps" });
